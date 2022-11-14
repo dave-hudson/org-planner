@@ -1,10 +1,12 @@
+import json
 import os
 import sys
-import json 
 
 from PySide6.QtCore import QSize, Qt
 from PySide6.QtGui import QAction, QIcon
-from PySide6.QtWidgets import QApplication, QLabel, QMainWindow, QStatusBar, QToolBar, QListWidget, QSplitter
+from PySide6.QtWidgets import (QApplication, QLabel, QListWidget, QMainWindow,
+                               QSplitter, QMenuBar, QStatusBar, QToolBar)
+
 
 def load_json(json_file_path):
     with open(json_file_path, encoding = 'utf-8') as user_file: 
@@ -16,6 +18,18 @@ class MainWindow(QMainWindow):
         super().__init__()
         
         self.setWindowTitle("org-planner")
+
+        # Create a series of actions for the UI.
+        self.open_action = QAction("&Open...", self)
+        self.copy_action = QAction("&Copy", self)
+
+        # Create a menu bar and menu drop-downs.
+        menu_bar = QMenuBar(self)
+        self.setMenuBar(menu_bar)
+        file_menu = menu_bar.addMenu("&File")
+        file_menu.addAction(self.open_action)
+        edit_menu = menu_bar.addMenu("&Edit")
+        edit_menu.addAction(self.copy_action)
 
 app = QApplication(sys.argv)
 
