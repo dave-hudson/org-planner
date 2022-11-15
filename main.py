@@ -5,8 +5,7 @@ import sys
 from PySide6.QtCore import QSize, Qt
 from PySide6.QtGui import QAction, QIcon
 from PySide6.QtWidgets import (QApplication, QLabel, QListWidget, QMainWindow,
-                               QSplitter, QMenuBar, QStatusBar, QToolBar)
-
+                               QMenuBar, QSplitter, QStatusBar, QToolBar)
 
 def load_json(json_file_path):
     with open(json_file_path, encoding = 'utf-8') as user_file: 
