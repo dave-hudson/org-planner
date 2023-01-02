@@ -48,8 +48,8 @@ def scan_org_tree(people, supervisor_uen, direct_reports, depth):
     return num_reports
 
 json_file_path = r'people.json'
-with open(json_file_path, encoding = 'utf-8') as user_file: 
-    json_data = json.load(user_file) 
+with open(json_file_path, encoding = 'utf-8') as user_file:
+    json_data = json.load(user_file)
 
 fail, all_people, top_level_supervisor, all_reports = scan_json(json_data)
 if fail:
