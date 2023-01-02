@@ -29,6 +29,8 @@ def scan_json(json_data):
     return (failed, people, top_level, direct_reports)
 
 def scan_org_tree(people, supervisor_uen, direct_reports, depth):
+    # Scan each direct report recursively, computing how deep each person is in
+    # the overall org, and how many reports roll up to them in total.
     num_reports = 0
     if supervisor_uen in direct_reports.keys():
         for i in direct_reports[supervisor_uen]:
@@ -36,6 +38,13 @@ def scan_org_tree(people, supervisor_uen, direct_reports, depth):
 
     people[supervisor_uen]["Org Depth"] = depth
     people[supervisor_uen]["Total Reports"] = num_reports
+
+    # Scan each direct report, but this time compute the fraction of the overall
+    # team their subteam represents.
+    if supervisor_uen in direct_reports.keys():
+        for i in direct_reports[supervisor_uen]:
+            people[i]["Supervisor Fraction"] = (people[i]["Total Reports"] + 1) / num_reports
+
     return num_reports
 
 json_file_path = r'people.json'
@@ -47,13 +56,14 @@ if fail:
     exit()
 
 scan_org_tree(all_people, top_level_supervisor, all_reports, 0)
+all_people[top_level_supervisor]["Supervisor Fraction"] = 0
 
 level_count = [0] * 10
 print(level_count)
 for i in all_people:
     p = all_people[i]
     depth = p["Org Depth"]
-    print(p["Person"]["UEN"], ":", p["Org Depth"], ":", p["Total Reports"])
+    print(p["Person"]["UEN"], ":", p["Org Depth"], ":", p["Total Reports"], ":", p["Supervisor Fraction"])
     level_count[depth] += 1
 
 for i in range(len(level_count)):
