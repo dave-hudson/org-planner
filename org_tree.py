@@ -2,6 +2,15 @@ import json
 import sys
 from PySide6 import QtCore, QtGui, QtWidgets
 
+location_colours = {
+    "Ireland": [128, 255, 128],
+    "UK": [255, 128, 128],
+    "Singapore": [255, 255, 128],
+    "Bulgaria": [255, 192, 128],
+    "India": [255, 128, 255],
+    "USA": [128, 128, 255]
+}
+
 def scan_json(json_data):
     people = {}
     top_level = 0
@@ -84,16 +93,28 @@ class SpiralOrgWidget(QtWidgets.QWidget):
         self.drawWidget(qp)
         qp.end()
 
+    def setupBrush(self, painter, uen):
+        brush = QtGui.QBrush("lightgray")
+
+        p = self.people[uen]
+        if "Locations" in p["Person"].keys():
+            location = p["Person"]["Locations"][-1]["Location"]
+            if location in location_colours:
+                colours = location_colours[location]
+                brush = QtGui.QBrush(QtGui.QColor(colours[0], colours[1], colours[2], 255))
+
+        painter.setBrush(brush)
+
     def recurseDrawWidget(self, painter, supervisor_uen, depth, start_angle, start_arc):
         supervisor_person = self.people[supervisor_uen]
 
         angle = start_angle
         for i in supervisor_person["Direct Reports"]:
             radius = (depth + 1) * self.ring_width
-            brush = QtGui.QBrush("lightgray")
-            painter.setBrush(brush)
-            arc = self.people[i]["Supervisor Fraction"] * start_arc
+            p = self.people[i]
+            arc = p["Supervisor Fraction"] * start_arc
             self.recurseDrawWidget(painter, i, depth + 1, angle, arc)
+            self.setupBrush(painter, i)
             painter.drawPie(self.spacing + self.max_radius - radius,
                             self.spacing + self.max_radius - radius,
                             radius * 2, radius * 2,
@@ -111,6 +132,7 @@ class SpiralOrgWidget(QtWidgets.QWidget):
         self.recurseDrawWidget(painter, top_level_supervisor, 1, 0, 360)
 
         # Then draw the inner-most node.
+        self.setupBrush(painter, top_level_supervisor)
         painter.drawEllipse(self.spacing + self.max_radius - self.ring_width,
                             self.spacing + self.max_radius - self.ring_width,
                             self.ring_width * 2, self.ring_width * 2)
