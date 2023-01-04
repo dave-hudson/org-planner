@@ -69,6 +69,15 @@ def scan_org_tree(people, supervisor_uen, depth):
     for i in p["Direct Reports"]:
         people[i]["Supervisor Fraction"] = (people[i]["Total Reports"] + 1) / num_reports
 
+    # Sort the direct reports to put the one with the largest fraction of the org first.
+    drs = p["Direct Reports"]
+    for i in range(len(drs)):
+        for j in range(len(drs) - i - 1):
+            if people[drs[j]]["Supervisor Fraction"] < people[drs[j + 1]]["Supervisor Fraction"]:
+                t = drs[j + 1]
+                drs[j + 1] = drs[j]
+                drs[j] = t
+
     return num_reports
 
 class SpiralOrgWidget(QtWidgets.QWidget):
