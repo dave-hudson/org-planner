@@ -3,12 +3,28 @@ import sys
 from PySide6 import QtCore, QtGui, QtWidgets
 
 location_colours = {
-    "Ireland": [128, 255, 128],
-    "UK": [255, 128, 128],
-    "Singapore": [255, 255, 128],
-    "Bulgaria": [255, 192, 128],
-    "India": [255, 128, 255],
-    "USA": [128, 128, 255]
+    "Ireland": [160, 255, 160],
+    "UK": [255, 160, 160],
+    "Singapore": [255, 255, 160],
+    "Bulgaria": [255, 160, 255],
+    "India": [160, 255, 255],
+    "USA": [160, 160, 255]
+}
+
+grade_colours = {
+    "A": [0xff, 0x33, 0x33],
+    "B": [0xff, 0x99, 0x33],
+    "C.H": [0xff, 0xff, 0x33],
+    "C.L": [0xdd, 0xdd, 0x2a],
+    "C": [0xdd, 0xdd, 0x2a],
+    "D.H": [0x99, 0xff, 0x33],
+    "D.L": [0x80, 0xdd, 0x2a],
+    "D": [0x80, 0xdd, 0x2a],
+    "E.H": [0x40, 0xcc, 0xff],
+    "E.L": [0x33, 0xff, 0xff],
+    "E": [0x33, 0xff, 0xff],
+    "F": [0x80, 0x80, 0xff],
+    "G": [0xcc, 0x33, 0xff]
 }
 
 def scan_json(json_data):
@@ -97,10 +113,15 @@ class SpiralOrgWidget(QtWidgets.QWidget):
         brush = QtGui.QBrush("lightgray")
 
         p = self.people[uen]
-        if "Locations" in p["Person"].keys():
-            location = p["Person"]["Locations"][-1]["Location"]
-            if location in location_colours:
-                colours = location_colours[location]
+        # if "Locations" in p["Person"].keys():
+        #     location = p["Person"]["Locations"][-1]["Location"]
+        #     if location in location_colours:
+        #         colours = location_colours[location]
+        #         brush = QtGui.QBrush(QtGui.QColor(colours[0], colours[1], colours[2], 255))
+        if "Grades" in p["Person"].keys():
+            grade = p["Person"]["Grades"][-1]["Grade"]
+            if grade in grade_colours:
+                colours = grade_colours[grade]
                 brush = QtGui.QBrush(QtGui.QColor(colours[0], colours[1], colours[2], 255))
 
         painter.setBrush(brush)
