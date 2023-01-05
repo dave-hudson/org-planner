@@ -3,12 +3,12 @@ import sys
 from PySide6 import QtCore, QtGui, QtWidgets
 
 location_colours = {
-    "Ireland": [160, 255, 160],
-    "UK": [255, 160, 160],
-    "Singapore": [255, 255, 160],
-    "Bulgaria": [255, 160, 255],
-    "India": [160, 255, 255],
-    "USA": [160, 160, 255]
+    "Ireland": [0xa0, 0xff, 0xa0],
+    "UK": [0xff, 0xa0, 0xa0],
+    "Singapore": [0xff, 0xff, 0xa0],
+    "Bulgaria": [0xff, 0xa0, 0xff],
+    "India": [0xa0, 0xff, 0xff],
+    "USA": [0xa0, 0xa0, 0xff]
 }
 
 grade_colours = {
@@ -25,6 +25,11 @@ grade_colours = {
     "E": [0x33, 0xff, 0xff],
     "F": [0x80, 0x80, 0xff],
     "G": [0xcc, 0x33, 0xff]
+}
+
+gender_colours = {
+    "M": [0x40, 0xcc, 0xff],
+    "F": [0xff, 0xa0, 0xa0]
 }
 
 def scan_json(json_data):
@@ -121,16 +126,21 @@ class SpiralOrgWidget(QtWidgets.QWidget):
         brush = QtGui.QBrush("lightgray")
 
         p = self.people[uen]
-        # if "Locations" in p["Person"].keys():
-        #     location = p["Person"]["Locations"][-1]["Location"]
-        #     if location in location_colours:
-        #         colours = location_colours[location]
-        #         brush = QtGui.QBrush(QtGui.QColor(colours[0], colours[1], colours[2], 255))
-        if "Grades" in p["Person"].keys():
-            grade = p["Person"]["Grades"][-1]["Grade"]
-            if grade in grade_colours:
-                colours = grade_colours[grade]
-                brush = QtGui.QBrush(QtGui.QColor(colours[0], colours[1], colours[2], 255))
+        if "Locations" in p["Person"].keys():
+            location = p["Person"]["Locations"][-1]["Location"]
+            if location in location_colours:
+                colours = location_colours[location]
+                brush = QtGui.QBrush(QtGui.QColor(colours[0], colours[1], colours[2], 0xff))
+        # if "Grades" in p["Person"].keys():
+        #     grade = p["Person"]["Grades"][-1]["Grade"]
+        #     if grade in grade_colours:
+        #         colours = grade_colours[grade]
+        #         brush = QtGui.QBrush(QtGui.QColor(colours[0], colours[1], colours[2], 0xff))
+        # if "Gender" in p["Person"].keys():
+        #     gender = p["Person"]["Gender"]
+        #     if gender in gender_colours:
+        #         colours = gender_colours[gender]
+        #         brush = QtGui.QBrush(QtGui.QColor(colours[0], colours[1], colours[2], 0xff))
 
         painter.setBrush(brush)
 
