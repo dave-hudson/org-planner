@@ -38,26 +38,26 @@ class SpiralOrgWidget(QtWidgets.QWidget):
         self.people = {}
         self.top_level_supervisor = 0
 
+    def scanDepth(self, supervisor):
+        org_depth = self.people[supervisor]["Org Depth"]
+        for i in self.people[supervisor]["Direct Reports"]:
+            d = self.scanDepth(i)
+            if d > org_depth:
+                org_depth = d
+
+        return org_depth
+
     def setPeople(self, people, top_level_supervisor):
         self.people = people
         self.top_level_supervisor = top_level_supervisor
 
+        supervisor_org_depth = people[top_level_supervisor]["Org Depth"]
+
         # Work out how many layers deep the org goes.
-        level_count = [0] * 10
-        for i in people:
-            p = people[i]
-            depth = p["Org Depth"]
-            level_count[depth] += 1
-
-        self.max_depth = 0
-        for j in range((len(level_count) - 1), -1, -1):
-            if level_count[j] != 0:
-                self.max_depth = j
-                break
-
+        self.max_depth = self.scanDepth(top_level_supervisor)
         self.max_radius = 480
         self.spacing = 20
-        self.ring_width = self.max_radius / (self.max_depth + 1)
+        self.ring_width = self.max_radius / (self.max_depth - supervisor_org_depth + 1)
 
         self.setMinimumSize(2 * (self.spacing + self.max_radius),
                             2 * (self.spacing + self.max_radius))
@@ -115,10 +115,10 @@ class SpiralOrgWidget(QtWidgets.QWidget):
         painter.setPen(pen)
 
         # Recursively draw the outer layers of the org chart.
-        self.recurseDrawWidget(painter, top_level_supervisor, 1, 0, 360)
+        self.recurseDrawWidget(painter, self.top_level_supervisor, 1, 0, 360)
 
         # Then draw the inner-most node.
-        self.setupBrush(painter, top_level_supervisor)
+        self.setupBrush(painter, self.top_level_supervisor)
         painter.drawEllipse(self.spacing + self.max_radius - self.ring_width,
                             self.spacing + self.max_radius - self.ring_width,
                             self.ring_width * 2, self.ring_width * 2)
