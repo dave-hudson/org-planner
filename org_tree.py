@@ -32,59 +32,6 @@ gender_colours = {
     "F": [0xff, 0xa0, 0xa0]
 }
 
-def scan_json(json_data):
-    people = {}
-    top_level = 0
-    failed = False
-
-    all_people_list = json_data["People"]
-    for i in all_people_list:
-        uen = i["UEN"]
-        people[uen] = {}
-        people[uen]["Person"] = i
-        people[uen]["Direct Reports"] = []
-
-    for i in all_people_list:
-        uen = i["UEN"]
-        if "Supervisor UEN" not in i.keys():
-            if top_level == 0:
-                top_level = uen
-            else:
-                print(i["Name"], "does not have a supervisor, but", top_level, "is already set as top-level")
-                failed = True
-        else:
-            supervisor_uen = i["Supervisor UEN"]
-            people[supervisor_uen]["Direct Reports"].append(uen)
-
-    return (failed, people, top_level)
-
-def scan_org_tree(people, supervisor_uen, depth):
-    # Scan each direct report recursively, computing how deep each person is in
-    # the overall org, and how many reports roll up to them in total.
-    num_reports = 0
-    p = people[supervisor_uen]
-    for i in p["Direct Reports"]:
-        num_reports += scan_org_tree(people, i, depth + 1) + 1
-
-    p["Org Depth"] = depth
-    p["Total Reports"] = num_reports
-
-    # Scan each direct report, but this time compute the fraction of the overall
-    # team their subteam represents.
-    for i in p["Direct Reports"]:
-        people[i]["Supervisor Fraction"] = (people[i]["Total Reports"] + 1) / num_reports
-
-    # Sort the direct reports to put the one with the largest fraction of the org first.
-    drs = p["Direct Reports"]
-    for i in range(len(drs)):
-        for j in range(len(drs) - i - 1):
-            if people[drs[j]]["Supervisor Fraction"] < people[drs[j + 1]]["Supervisor Fraction"]:
-                t = drs[j + 1]
-                drs[j + 1] = drs[j]
-                drs[j] = t
-
-    return num_reports
-
 class SpiralOrgWidget(QtWidgets.QWidget):
     def __init__(self) -> None:
         super().__init__()
@@ -126,16 +73,16 @@ class SpiralOrgWidget(QtWidgets.QWidget):
         brush = QtGui.QBrush("lightgray")
 
         p = self.people[uen]
-        if "Locations" in p["Person"].keys():
-            location = p["Person"]["Locations"][-1]["Location"]
-            if location in location_colours:
-                colours = location_colours[location]
-                brush = QtGui.QBrush(QtGui.QColor(colours[0], colours[1], colours[2], 0xff))
-        # if "Grades" in p["Person"].keys():
-        #     grade = p["Person"]["Grades"][-1]["Grade"]
-        #     if grade in grade_colours:
-        #         colours = grade_colours[grade]
+        # if "Locations" in p["Person"].keys():
+        #     location = p["Person"]["Locations"][-1]["Location"]
+        #     if location in location_colours:
+        #         colours = location_colours[location]
         #         brush = QtGui.QBrush(QtGui.QColor(colours[0], colours[1], colours[2], 0xff))
+        if "Grades" in p["Person"].keys():
+            grade = p["Person"]["Grades"][-1]["Grade"]
+            if grade in grade_colours:
+                colours = grade_colours[grade]
+                brush = QtGui.QBrush(QtGui.QColor(colours[0], colours[1], colours[2], 0xff))
         # if "Gender" in p["Person"].keys():
         #     gender = p["Person"]["Gender"]
         #     if gender in gender_colours:
@@ -190,6 +137,58 @@ class MainWindow(QtWidgets.QMainWindow):
         self.org_widget.setPeople(people, top_level_supervisor)
         self.update()
 
+def scan_org_tree(people, supervisor_uen, depth):
+    # Scan each direct report recursively, computing how deep each person is in
+    # the overall org, and how many reports roll up to them in total.
+    num_reports = 0
+    p = people[supervisor_uen]
+    for i in p["Direct Reports"]:
+        num_reports += scan_org_tree(people, i, depth + 1) + 1
+
+    p["Org Depth"] = depth
+    p["Total Reports"] = num_reports
+
+    # Scan each direct report, but this time compute the fraction of the overall
+    # team their subteam represents.
+    for i in p["Direct Reports"]:
+        people[i]["Supervisor Fraction"] = (people[i]["Total Reports"] + 1) / num_reports
+
+    # Sort the direct reports to put the one with the largest fraction of the org first.
+    drs = p["Direct Reports"]
+    for i in range(len(drs)):
+        for j in range(len(drs) - i - 1):
+            if people[drs[j]]["Supervisor Fraction"] < people[drs[j + 1]]["Supervisor Fraction"]:
+                t = drs[j + 1]
+                drs[j + 1] = drs[j]
+                drs[j] = t
+
+    return num_reports
+
+def scan_json(json_data):
+    people = {}
+    top_level = 0
+    failed = False
+
+    all_people_list = json_data["People"]
+    for i in all_people_list:
+        uen = i["UEN"]
+        people[uen] = {}
+        people[uen]["Person"] = i
+        people[uen]["Direct Reports"] = []
+
+    for i in all_people_list:
+        uen = i["UEN"]
+        if "Supervisor UEN" not in i.keys():
+            if top_level == 0:
+                top_level = uen
+            else:
+                print(i["Name"], "does not have a supervisor, but", top_level, "is already set as top-level")
+                failed = True
+        else:
+            supervisor_uen = i["Supervisor UEN"]
+            people[supervisor_uen]["Direct Reports"].append(uen)
+
+    return (failed, people, top_level)
 
 json_file_path = r'people.json'
 with open(json_file_path, encoding = 'utf-8') as user_file:
@@ -207,3 +206,4 @@ window = MainWindow()
 window.setPeople(all_people, top_level_supervisor)
 window.show()
 app.exec()
+
