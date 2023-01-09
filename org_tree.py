@@ -35,44 +35,22 @@ gender_colours = {
 class SpiralOrgWidget(QtWidgets.QWidget):
     def __init__(self) -> None:
         super().__init__()
-        self.people = {}
-        self.top_level_supervisor = 0
+        self._people = {}
+        self._top_level_supervisor = 0
 
-    def scanDepth(self, supervisor):
-        org_depth = self.people[supervisor]["Org Depth"]
-        for i in self.people[supervisor]["Direct Reports"]:
-            d = self.scanDepth(i)
+    def _scan_depth(self, supervisor):
+        org_depth = self._people[supervisor]["Org Depth"]
+        for i in self._people[supervisor]["Direct Reports"]:
+            d = self._scan_depth(i)
             if d > org_depth:
                 org_depth = d
 
         return org_depth
 
-    def setPeople(self, people, top_level_supervisor):
-        self.people = people
-        self.top_level_supervisor = top_level_supervisor
-
-        supervisor_org_depth = people[top_level_supervisor]["Org Depth"]
-
-        # Work out how many layers deep the org goes.
-        self.max_depth = self.scanDepth(top_level_supervisor)
-        self.max_radius = 480
-        self.spacing = 20
-        self.ring_width = self.max_radius / (self.max_depth - supervisor_org_depth + 1)
-
-        self.setMinimumSize(2 * (self.spacing + self.max_radius),
-                            2 * (self.spacing + self.max_radius))
-        self.update()
-
-    def paintEvent(self, e):
-        qp = QtGui.QPainter()
-        qp.begin(self)
-        self.drawWidget(qp)
-        qp.end()
-
-    def setupBrush(self, painter, uen):
+    def _setup_brush(self, painter, uen):
         brush = QtGui.QBrush("lightgray")
 
-        p = self.people[uen]
+        p = self._people[uen]
         # if "Locations" in p["Person"].keys():
         #     location = p["Person"]["Locations"][-1]["Location"]
         #     if location in location_colours:
@@ -91,50 +69,72 @@ class SpiralOrgWidget(QtWidgets.QWidget):
 
         painter.setBrush(brush)
 
-    def recurseDrawWidget(self, painter, supervisor_uen, depth, start_angle, start_arc):
-        supervisor_person = self.people[supervisor_uen]
+    def _recurse_draw_widget(self, painter, supervisor_uen, depth, start_angle, start_arc):
+        supervisor_person = self._people[supervisor_uen]
 
         angle = start_angle
         for i in supervisor_person["Direct Reports"]:
-            radius = (depth + 1) * self.ring_width
-            p = self.people[i]
+            radius = (depth + 1) * self._ring_width
+            p = self._people[i]
             arc = p["Supervisor Fraction"] * start_arc
-            self.recurseDrawWidget(painter, i, depth + 1, angle, arc)
-            self.setupBrush(painter, i)
-            painter.drawPie(self.spacing + self.max_radius - radius,
-                            self.spacing + self.max_radius - radius,
+            self._recurse_draw_widget(painter, i, depth + 1, angle, arc)
+            self._setup_brush(painter, i)
+            painter.drawPie(self._spacing + self._max_radius - radius,
+                            self._spacing + self._max_radius - radius,
                             radius * 2, radius * 2,
                             angle * 16, arc * 16)
             angle += arc
 
-    def drawWidget(self, painter):
-        if len(self.people) == 0:
+    def _draw_widget(self, painter):
+        if len(self._people) == 0:
             return
 
         pen = QtGui.QPen(QtCore.Qt.GlobalColor.black, 1, QtCore.Qt.PenStyle.SolidLine)
         painter.setPen(pen)
 
         # Recursively draw the outer layers of the org chart.
-        self.recurseDrawWidget(painter, self.top_level_supervisor, 1, 0, 360)
+        self._recurse_draw_widget(painter, self._top_level_supervisor, 1, 0, 360)
 
         # Then draw the inner-most node.
-        self.setupBrush(painter, self.top_level_supervisor)
-        painter.drawEllipse(self.spacing + self.max_radius - self.ring_width,
-                            self.spacing + self.max_radius - self.ring_width,
-                            self.ring_width * 2, self.ring_width * 2)
+        self._setup_brush(painter, self._top_level_supervisor)
+        painter.drawEllipse(self._spacing + self._max_radius - self._ring_width,
+                            self._spacing + self._max_radius - self._ring_width,
+                            self._ring_width * 2, self._ring_width * 2)
+
+    def paintEvent(self, e):
+        qp = QtGui.QPainter()
+        qp.begin(self)
+        self._draw_widget(qp)
+        qp.end()
+
+    def set_people(self, people, top_level_supervisor):
+        self._people = people
+        self._top_level_supervisor = top_level_supervisor
+
+        supervisor_org_depth = people[top_level_supervisor]["Org Depth"]
+
+        # Work out how many layers deep the org goes.
+        self._max_depth = self._scan_depth(top_level_supervisor)
+        self._max_radius = 480
+        self._spacing = 20
+        self._ring_width = self._max_radius / (self._max_depth - supervisor_org_depth + 1)
+
+        self.setMinimumSize(2 * (self._spacing + self._max_radius),
+                            2 * (self._spacing + self._max_radius))
+        self.update()
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self) -> None:
         super().__init__()
 
-        self.org_widget = SpiralOrgWidget()
-        self.scroll_area = QtWidgets.QScrollArea()
-        self.scroll_area.setWidget(self.org_widget)
-        self.scroll_area.setAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
-        self.setCentralWidget(self.scroll_area)
+        self._org_widget = SpiralOrgWidget()
+        self._scroll_area = QtWidgets.QScrollArea()
+        self._scroll_area.setWidget(self._org_widget)
+        self._scroll_area.setAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+        self.setCentralWidget(self._scroll_area)
 
-    def setPeople(self, people, top_level_supervisor):
-        self.org_widget.setPeople(people, top_level_supervisor)
+    def set_people(self, people, top_level_supervisor):
+        self._org_widget.set_people(people, top_level_supervisor)
         self.update()
 
 def scan_org_tree(people, supervisor_uen, depth):
@@ -203,7 +203,6 @@ all_people[top_level_supervisor]["Supervisor Fraction"] = 1
 
 app = QtWidgets.QApplication(sys.argv)
 window = MainWindow()
-window.setPeople(all_people, top_level_supervisor)
+window.set_people(all_people, top_level_supervisor)
 window.show()
 app.exec()
-
