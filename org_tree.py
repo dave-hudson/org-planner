@@ -37,6 +37,7 @@ class SpiralOrgWidget(QtWidgets.QWidget):
         super().__init__()
         self._people = {}
         self._top_level_supervisor = 0
+        self._render_type = 1
 
     def _scan_depth(self, supervisor):
         org_depth = self._people[supervisor]["Org Depth"]
@@ -48,25 +49,26 @@ class SpiralOrgWidget(QtWidgets.QWidget):
         return org_depth
 
     def _setup_brush(self, painter, uen):
-        brush = QtGui.QBrush("lightgray")
+        colours = [0xc0, 0xc0, 0xc0]
 
         p = self._people[uen]
-        # if "Locations" in p["Person"].keys():
-        #     location = p["Person"]["Locations"][-1]["Location"]
-        #     if location in location_colours:
-        #         colours = location_colours[location]
-        #         brush = QtGui.QBrush(QtGui.QColor(colours[0], colours[1], colours[2], 0xff))
-        if "Grades" in p["Person"].keys():
-            grade = p["Person"]["Grades"][-1]["Grade"]
-            if grade in grade_colours:
-                colours = grade_colours[grade]
-                brush = QtGui.QBrush(QtGui.QColor(colours[0], colours[1], colours[2], 0xff))
-        # if "Gender" in p["Person"].keys():
-        #     gender = p["Person"]["Gender"]
-        #     if gender in gender_colours:
-        #         colours = gender_colours[gender]
-        #         brush = QtGui.QBrush(QtGui.QColor(colours[0], colours[1], colours[2], 0xff))
+        if self._render_type == 0:
+            if "Locations" in p["Person"].keys():
+                location = p["Person"]["Locations"][-1]["Location"]
+                if location in location_colours:
+                    colours = location_colours[location]
+        elif self._render_type == 1:
+            if "Grades" in p["Person"].keys():
+                grade = p["Person"]["Grades"][-1]["Grade"]
+                if grade in grade_colours:
+                    colours = grade_colours[grade]
+        else:
+            if "Gender" in p["Person"].keys():
+                gender = p["Person"]["Gender"]
+                if gender in gender_colours:
+                    colours = gender_colours[gender]
 
+        brush = QtGui.QBrush(QtGui.QColor(colours[0], colours[1], colours[2], 0xff))
         painter.setBrush(brush)
 
     def _recurse_draw_widget(self, painter, supervisor_uen, depth, start_angle, start_arc):
@@ -106,6 +108,10 @@ class SpiralOrgWidget(QtWidgets.QWidget):
         qp.begin(self)
         self._draw_widget(qp)
         qp.end()
+
+    def set_render_type(self, r):
+        self._render_type = r;
+        self.update()
 
     def set_people(self, people, top_level_supervisor):
         self._people = people
