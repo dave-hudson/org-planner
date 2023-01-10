@@ -3,33 +3,51 @@ import sys
 from PySide6 import QtCore, QtGui, QtWidgets
 
 location_colours = {
-    "Ireland": [0xa0, 0xff, 0xa0],
-    "UK": [0xff, 0xa0, 0xa0],
-    "Singapore": [0xff, 0xff, 0xa0],
-    "Bulgaria": [0xff, 0xa0, 0xff],
-    "India": [0xa0, 0xff, 0xff],
-    "USA": [0xa0, 0xa0, 0xff]
+    "Ireland": [0x70, 0xe0, 0x2c],
+    "UK": [0xff, 0x40, 0x33],
+    "Singapore": [0xff, 0x99, 0x33],
+    "Bulgaria": [0x40, 0xcc, 0xff],
+    "India": [0xf0, 0xf0, 0x30],
+    "USA": [0xcc, 0x33, 0xff]
 }
 
 grade_colours = {
-    "A": [0xff, 0x33, 0x33],
+    "A": [0xff, 0x40, 0x33],
     "B": [0xff, 0x99, 0x33],
     "C.H": [0xff, 0xff, 0x33],
     "C.L": [0xe0, 0xe0, 0x2c],
     "C": [0xe0, 0xe0, 0x2c],
     "D.H": [0x99, 0xff, 0x33],
-    "D.L": [0x80, 0xe0, 0x2c],
+    "D.L": [0x70, 0xe0, 0x2c],
     "D": [0x80, 0xe0, 0x2c],
-    "E.H": [0x40, 0xcc, 0xff],
-    "E.L": [0x33, 0xff, 0xff],
-    "E": [0x33, 0xff, 0xff],
-    "F": [0x80, 0x80, 0xff],
+    "E.H": [0x33, 0xff, 0xff],
+    "E.L": [0x40, 0xcc, 0xff],
+    "E": [0x40, 0xcc, 0xff],
+    "F": [0xe0, 0x80, 0xff],
     "G": [0xcc, 0x33, 0xff]
 }
 
 gender_colours = {
-    "M": [0x40, 0xcc, 0xff],
-    "F": [0xff, 0xa0, 0xa0]
+    "M": [0x40, 0xc0, 0xff],
+    "F": [0xff, 0x80, 0x80]
+}
+
+nine_box_colours = {
+    "High": {
+        "High": [0x20, 0x80, 0xe0],
+        "Medium": [0x20, 0xe0, 0x40],
+        "Low": [0xff, 0xff, 0x20]
+    },
+    "Medium": {
+        "High": [0x20, 0xe0, 0x40],
+        "Medium": [0xff, 0xff, 0x20],
+        "Low": [0xff, 0xa0, 0x20]
+    },
+    "Low": {
+        "High": [0xff, 0xff, 0x20],
+        "Medium": [0xff, 0xa0, 0x20],
+        "Low": [0xff, 0x40, 0x40]
+    }
 }
 
 class SpiralOrgWidget(QtWidgets.QWidget):
@@ -62,11 +80,19 @@ class SpiralOrgWidget(QtWidgets.QWidget):
                 grade = p["Person"]["Grades"][-1]["Grade"]
                 if grade in grade_colours:
                     colours = grade_colours[grade]
-        else:
+        elif self._render_type == 2:
             if "Gender" in p["Person"].keys():
                 gender = p["Person"]["Gender"]
                 if gender in gender_colours:
                     colours = gender_colours[gender]
+        else:
+            if "9 Box" in p["Person"].keys():
+                nine_box_potential = p["Person"]["9 Box"][-1]["Potential"]
+                nine_box_performance = p["Person"]["9 Box"][-1]["Performance"]
+                if nine_box_potential in nine_box_colours:
+                    potential_colours = nine_box_colours[nine_box_potential]
+                    if nine_box_performance in potential_colours:
+                        colours = potential_colours[nine_box_performance]
 
         brush = QtGui.QBrush(QtGui.QColor(colours[0], colours[1], colours[2], 0xff))
         painter.setBrush(brush)
@@ -139,11 +165,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self._org_widget_grade.set_render_type(1)
         self._org_widget_gender = SpiralOrgWidget()
         self._org_widget_gender.set_render_type(2)
+        self._org_widget_9_box = SpiralOrgWidget()
+        self._org_widget_9_box.set_render_type(3)
 
         side_layout = QtWidgets.QVBoxLayout()
         side_layout.addWidget(self._org_widget_location)
         side_layout.addWidget(self._org_widget_grade)
         side_layout.addWidget(self._org_widget_gender)
+        side_layout.addWidget(self._org_widget_9_box)
 
         widget = QtWidgets.QWidget()
         widget.setLayout(side_layout)
@@ -158,6 +187,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._org_widget_location.set_people(people, top_level_supervisor)
         self._org_widget_grade.set_people(people, top_level_supervisor)
         self._org_widget_gender.set_people(people, top_level_supervisor)
+        self._org_widget_9_box.set_people(people, top_level_supervisor)
         self.update()
 
 def scan_org_tree(people, supervisor_uen, depth):
