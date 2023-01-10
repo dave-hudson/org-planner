@@ -133,14 +133,31 @@ class MainWindow(QtWidgets.QMainWindow):
     def __init__(self) -> None:
         super().__init__()
 
-        self._org_widget = SpiralOrgWidget()
-        self._scroll_area = QtWidgets.QScrollArea()
-        self._scroll_area.setWidget(self._org_widget)
-        self._scroll_area.setAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
-        self.setCentralWidget(self._scroll_area)
+        self._org_widget_location = SpiralOrgWidget()
+        self._org_widget_location.set_render_type(0)
+        self._org_widget_grade = SpiralOrgWidget()
+        self._org_widget_grade.set_render_type(1)
+        self._org_widget_gender = SpiralOrgWidget()
+        self._org_widget_gender.set_render_type(2)
+
+        side_layout = QtWidgets.QVBoxLayout()
+        side_layout.addWidget(self._org_widget_location)
+        side_layout.addWidget(self._org_widget_grade)
+        side_layout.addWidget(self._org_widget_gender)
+
+        widget = QtWidgets.QWidget()
+        widget.setLayout(side_layout)
+
+        scroll_area = QtWidgets.QScrollArea()
+        scroll_area.setWidget(widget)
+        scroll_area.setWidgetResizable(True)
+        scroll_area.setAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+        self.setCentralWidget(scroll_area)
 
     def set_people(self, people, top_level_supervisor):
-        self._org_widget.set_people(people, top_level_supervisor)
+        self._org_widget_location.set_people(people, top_level_supervisor)
+        self._org_widget_grade.set_people(people, top_level_supervisor)
+        self._org_widget_gender.set_people(people, top_level_supervisor)
         self.update()
 
 def scan_org_tree(people, supervisor_uen, depth):
