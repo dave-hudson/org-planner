@@ -1,5 +1,6 @@
 import json
 import sys
+import time
 from PySide6 import QtCore, QtGui, QtWidgets
 
 location_colours = {
@@ -50,6 +51,19 @@ nine_box_colours = {
     }
 }
 
+start_date_colours = [
+    [0xff, 0x40, 0x33],
+    [0xff, 0x99, 0x33],
+    [0xff, 0xff, 0x33],
+    [0xe0, 0xe0, 0x2c],
+    [0x99, 0xff, 0x33],
+    [0x70, 0xe0, 0x2c],
+    [0x33, 0xff, 0xff],
+    [0x40, 0xcc, 0xff],
+    [0xe0, 0x80, 0xff],
+    [0xcc, 0x33, 0xff]
+]
+
 class SunburstOrgWidget(QtWidgets.QWidget):
     def __init__(self) -> None:
         super().__init__()
@@ -85,6 +99,13 @@ class SunburstOrgWidget(QtWidgets.QWidget):
                 gender = p["Person"]["Gender"]
                 if gender in gender_colours:
                     colours = gender_colours[gender]
+        elif self._render_type == 3:
+            if "Start Date" in p["Person"].keys():
+                start_date = p["Person"]["Start Date"]
+                t = time.strptime(start_date, "%Y-%m-%d")
+                years = int((time.time() - time.mktime(t)) / (3600 * 24 * 365.24))
+                print(years)
+                colours = start_date_colours[years]
         else:
             if "9 Box" in p["Person"].keys():
                 nine_box_potential = p["Person"]["9 Box"][-1]["Potential"]
@@ -165,13 +186,16 @@ class MainWindow(QtWidgets.QMainWindow):
         self._org_widget_grade.set_render_type(1)
         self._org_widget_gender = SunburstOrgWidget()
         self._org_widget_gender.set_render_type(2)
+        self._org_widget_service_duration = SunburstOrgWidget()
+        self._org_widget_service_duration.set_render_type(3)
         self._org_widget_9_box = SunburstOrgWidget()
-        self._org_widget_9_box.set_render_type(3)
+        self._org_widget_9_box.set_render_type(4)
 
         side_layout = QtWidgets.QVBoxLayout()
         side_layout.addWidget(self._org_widget_location)
         side_layout.addWidget(self._org_widget_grade)
         side_layout.addWidget(self._org_widget_gender)
+        side_layout.addWidget(self._org_widget_service_duration)
         side_layout.addWidget(self._org_widget_9_box)
 
         widget = QtWidgets.QWidget()
@@ -188,6 +212,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._org_widget_grade.set_people(people, top_level_supervisor)
         self._org_widget_gender.set_people(people, top_level_supervisor)
         self._org_widget_9_box.set_people(people, top_level_supervisor)
+        self._org_widget_service_duration.set_people(people, top_level_supervisor)
         self.update()
 
 def scan_org_tree(people, supervisor_uen, depth):
