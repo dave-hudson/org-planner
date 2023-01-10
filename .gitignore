@@ -1,0 +1,7 @@
+# Ignore sensitive data
+
+*.json
+
+# Ignore temp files
+
+*~
