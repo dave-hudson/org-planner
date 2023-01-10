@@ -50,7 +50,7 @@ nine_box_colours = {
     }
 }
 
-class SpiralOrgWidget(QtWidgets.QWidget):
+class SunburstOrgWidget(QtWidgets.QWidget):
     def __init__(self) -> None:
         super().__init__()
         self._people = {}
@@ -159,13 +159,13 @@ class MainWindow(QtWidgets.QMainWindow):
     def __init__(self) -> None:
         super().__init__()
 
-        self._org_widget_location = SpiralOrgWidget()
+        self._org_widget_location = SunburstOrgWidget()
         self._org_widget_location.set_render_type(0)
-        self._org_widget_grade = SpiralOrgWidget()
+        self._org_widget_grade = SunburstOrgWidget()
         self._org_widget_grade.set_render_type(1)
-        self._org_widget_gender = SpiralOrgWidget()
+        self._org_widget_gender = SunburstOrgWidget()
         self._org_widget_gender.set_render_type(2)
-        self._org_widget_9_box = SpiralOrgWidget()
+        self._org_widget_9_box = SunburstOrgWidget()
         self._org_widget_9_box.set_render_type(3)
 
         side_layout = QtWidgets.QVBoxLayout()
