@@ -64,7 +64,19 @@ start_date_colours = [
     [0xcc, 0x33, 0xff]
 ]
 
+class HLine(QtWidgets.QFrame):
+    """
+    A widget class used to insert horizontal dividers between other widgets.
+    """
+    def __init__(self):
+        super(HLine, self).__init__()
+        self.setFrameShape(QtWidgets.QFrame.HLine)
+        self.setFrameShadow(QtWidgets.QFrame.Sunken)
+
 class SunburstOrgWidget(QtWidgets.QWidget):
+    """
+    A widget class used to draw sunburt org charts.
+    """
     def __init__(self) -> None:
         super().__init__()
         self._people = {}
@@ -177,6 +189,9 @@ class SunburstOrgWidget(QtWidgets.QWidget):
         self.update()
 
 class MainWindow(QtWidgets.QMainWindow):
+    """
+    The main window class for the application.
+    """
     def __init__(self) -> None:
         super().__init__()
 
@@ -190,12 +205,30 @@ class MainWindow(QtWidgets.QMainWindow):
         self._org_widget_service_duration.set_render_type(3)
         self._org_widget_9_box = SunburstOrgWidget()
         self._org_widget_9_box.set_render_type(4)
+        location_text = QtWidgets.QLabel("Locations")
+        separator1 = HLine()
+        grade_text = QtWidgets.QLabel("Grades")
+        separator2 = HLine()
+        gender_text = QtWidgets.QLabel("Gender")
+        separator3 = HLine()
+        service_duration_text = QtWidgets.QLabel("Service Duration")
+        separator4 = HLine()
+        nine_box_text = QtWidgets.QLabel("Latest 9-box Grid Ratings")
 
         side_layout = QtWidgets.QVBoxLayout()
+        side_layout.addWidget(location_text)
         side_layout.addWidget(self._org_widget_location)
+        side_layout.addWidget(separator1)
+        side_layout.addWidget(grade_text)
         side_layout.addWidget(self._org_widget_grade)
+        side_layout.addWidget(separator2)
+        side_layout.addWidget(gender_text)
         side_layout.addWidget(self._org_widget_gender)
+        side_layout.addWidget(separator3)
+        side_layout.addWidget(service_duration_text)
         side_layout.addWidget(self._org_widget_service_duration)
+        side_layout.addWidget(separator4)
+        side_layout.addWidget(nine_box_text)
         side_layout.addWidget(self._org_widget_9_box)
 
         widget = QtWidgets.QWidget()
