@@ -64,6 +64,7 @@ class ColourBoxWidget(QtWidgets.QLabel):
     def __init__(self, text, colour) -> None:
         super().__init__(text)
         self.setAutoFillBackground(True)
+        self.setMargin(4)
 
         palette = self.palette()
         c = QtGui.QColor(colour[0], colour[1], colour[2], 0xff)
@@ -76,13 +77,23 @@ class ColourKey1DWidget(QtWidgets.QWidget):
     """
     def __init__(self, colour_dict) -> None:
         super().__init__()
-        self._colour_dict = colour_dict
-        self._layout = QtWidgets.QVBoxLayout()
+        self._layout = QtWidgets.QGridLayout()
         self._layout.setContentsMargins(0, 0, 0, 0)
+        self._layout.setSpacing(0)
+        self._layout.setColumnMinimumWidth(1, 80)
 
+        row = 0
         for cd in colour_dict:
-            label_widget = ColourBoxWidget(cd, colour_dict[cd])
-            self._layout.addWidget(label_widget)
+            label_widget = ColourBoxWidget(cd, [0x20, 0x20, 0x20])
+            self._layout.addWidget(label_widget, row, 0)
+
+            colour_widget = ColourBoxWidget("", colour_dict[cd])
+            self._layout.addWidget(colour_widget, row, 1)
+
+            right_spacer = QtWidgets.QSpacerItem(0, 0, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+            self._layout.addItem(right_spacer, row, 2)
+
+            row += 1
 
         self.setLayout(self._layout)
 
@@ -92,19 +103,36 @@ class ColourKey2DWidget(QtWidgets.QWidget):
     """
     def __init__(self, colour_dict) -> None:
         super().__init__()
-        self._colour_dict = colour_dict
-        self._layout = QtWidgets.QVBoxLayout()
+        self._layout = QtWidgets.QGridLayout()
         self._layout.setContentsMargins(0, 0, 0, 0)
+        self._layout.setSpacing(0)
 
+        col = 1
+        for cdj in colour_dict["Low"]:
+            self._layout.setColumnMinimumWidth(col, 80)
+
+            colour_widget = ColourBoxWidget(cdj, [0x20, 0x20, 0x20])
+            self._layout.addWidget(colour_widget, 0, col)
+
+            col += 1
+
+        row = 1
         for cdi in colour_dict:
             print(cdi)
-            row_layout = QtWidgets.QHBoxLayout()
-            row_layout.setContentsMargins(0, 0, 0, 0)
-            for cdj in colour_dict[cdi]:
-                label_widget = ColourBoxWidget(cdj, colour_dict[cdi][cdj])
-                row_layout.addWidget(label_widget)
+            label_widget = ColourBoxWidget(cdi, [0x20, 0x20, 0x20])
+            self._layout.addWidget(label_widget, row, 0)
 
-            self._layout.addLayout(row_layout)
+            col = 1
+            for cdj in colour_dict[cdi]:
+                colour_widget = ColourBoxWidget("", colour_dict[cdi][cdj])
+                self._layout.addWidget(colour_widget, row, col)
+
+                col += 1
+
+            right_spacer = QtWidgets.QSpacerItem(0, 0, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+            self._layout.addItem(right_spacer, row, col)
+
+            row += 1
 
         self.setLayout(self._layout)
 
@@ -234,43 +262,47 @@ class MainWindow(QtWidgets.QMainWindow):
     def __init__(self) -> None:
         super().__init__()
 
-        location_text = QtWidgets.QLabel("Locations")
-        self._location_org_widget = SunburstOrgWidget(0)
-        location_key_widget = ColourKey1DWidget(location_colours)
-        separator1 = HLine()
-        grade_text = QtWidgets.QLabel("Grades")
-        self._grade_org_widget = SunburstOrgWidget(1)
-        grade_key_widget = ColourKey1DWidget(grade_colours)
-        separator2 = HLine()
-        gender_text = QtWidgets.QLabel("Gender")
-        self._gender_org_widget = SunburstOrgWidget(2)
-        gender_key_widget = ColourKey1DWidget(gender_colours)
-        separator3 = HLine()
-        service_duration_text = QtWidgets.QLabel("Service Duration")
-        self._service_duration_org_widget = SunburstOrgWidget(3)
-        separator4 = HLine()
-        nine_box_text = QtWidgets.QLabel("Latest 9-box Grid Ratings")
-        self._nine_box_org_widget = SunburstOrgWidget(4)
-        nine_box_key_widget = ColourKey2DWidget(nine_box_colours)
-
         side_layout = QtWidgets.QVBoxLayout()
+
+        location_text = QtWidgets.QLabel("Locations")
         side_layout.addWidget(location_text)
+        self._location_org_widget = SunburstOrgWidget(0)
         side_layout.addWidget(self._location_org_widget)
+        location_key_widget = ColourKey1DWidget(location_colours)
         side_layout.addWidget(location_key_widget)
+        separator1 = HLine()
         side_layout.addWidget(separator1)
+
+        grade_text = QtWidgets.QLabel("Grades")
         side_layout.addWidget(grade_text)
+        self._grade_org_widget = SunburstOrgWidget(1)
         side_layout.addWidget(self._grade_org_widget)
+        grade_key_widget = ColourKey1DWidget(grade_colours)
         side_layout.addWidget(grade_key_widget)
+        separator2 = HLine()
         side_layout.addWidget(separator2)
+
+        gender_text = QtWidgets.QLabel("Gender")
         side_layout.addWidget(gender_text)
+        self._gender_org_widget = SunburstOrgWidget(2)
         side_layout.addWidget(self._gender_org_widget)
+        gender_key_widget = ColourKey1DWidget(gender_colours)
         side_layout.addWidget(gender_key_widget)
+        separator3 = HLine()
         side_layout.addWidget(separator3)
+
+        service_duration_text = QtWidgets.QLabel("Service Duration")
         side_layout.addWidget(service_duration_text)
+        self._service_duration_org_widget = SunburstOrgWidget(3)
         side_layout.addWidget(self._service_duration_org_widget)
+        separator4 = HLine()
         side_layout.addWidget(separator4)
+
+        nine_box_text = QtWidgets.QLabel("Latest 9-box Grid Ratings")
         side_layout.addWidget(nine_box_text)
+        self._nine_box_org_widget = SunburstOrgWidget(4)
         side_layout.addWidget(self._nine_box_org_widget)
+        nine_box_key_widget = ColourKey2DWidget(nine_box_colours)
         side_layout.addWidget(nine_box_key_widget)
 
         widget = QtWidgets.QWidget()
