@@ -51,19 +51,6 @@ nine_box_colours = {
     }
 }
 
-start_date_colours = [
-    [0xff, 0x40, 0x33],
-    [0xff, 0x99, 0x33],
-    [0xff, 0xff, 0x33],
-    [0xe0, 0xe0, 0x2c],
-    [0x99, 0xff, 0x33],
-    [0x70, 0xe0, 0x2c],
-    [0x33, 0xff, 0xff],
-    [0x40, 0xcc, 0xff],
-    [0xe0, 0x80, 0xff],
-    [0xcc, 0x33, 0xff]
-]
-
 class HLine(QtWidgets.QFrame):
     """
     A widget class used to insert horizontal dividers between other widgets.
@@ -115,9 +102,13 @@ class SunburstOrgWidget(QtWidgets.QWidget):
             if "Start Date" in p["Person"].keys():
                 start_date = p["Person"]["Start Date"]
                 t = time.strptime(start_date, "%Y-%m-%d")
-                years = int((time.time() - time.mktime(t)) / (3600 * 24 * 365.24))
-                print(years)
-                colours = start_date_colours[years]
+                ot = time.strptime("2016-01-01", "%Y-%m-%d")
+                cur_time = time.time()
+                org_elapsed_time = cur_time - time.mktime(ot)
+                worked_time = cur_time - time.mktime(t)
+                worked_fraction = worked_time / org_elapsed_time
+                base_colour = int(0xc0 * worked_fraction)
+                colours = [0xff, 0xff - base_colour, 0xff - base_colour, 0xff]
         else:
             if "9 Box" in p["Person"].keys():
                 nine_box_potential = p["Person"]["9 Box"][-1]["Potential"]
