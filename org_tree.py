@@ -99,11 +99,9 @@ class ColourKey1DWidget(QtWidgets.QWidget):
             colour_widget = ColourBoxWidget("", colour_dict[cd])
             self._layout.addWidget(colour_widget, row, 1)
 
-            right_spacer = QtWidgets.QSpacerItem(0, 0, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
-            self._layout.addItem(right_spacer, row, 2)
-
             row += 1
 
+        self.setSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         self.setLayout(self._layout)
 
 class ColourKey2DWidget(QtWidgets.QWidget):
@@ -137,11 +135,9 @@ class ColourKey2DWidget(QtWidgets.QWidget):
 
                 col += 1
 
-            right_spacer = QtWidgets.QSpacerItem(0, 0, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
-            self._layout.addItem(right_spacer, row, col)
-
             row += 1
 
+        self.setSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         self.setLayout(self._layout)
 
 class SunburstOrgWidget(QtWidgets.QWidget):
@@ -275,7 +271,7 @@ class SunburstOrgWidget(QtWidgets.QWidget):
         self._max_depth = self._scan_depth(top_level_supervisor)
         self._ring_width = 60
         self._max_radius = self._ring_width * (self._max_depth - supervisor_org_depth + 1)
-        self._spacing = 20
+        self._spacing = 0
 
         self.setMinimumSize(2 * (self._spacing + self._max_radius),
                             2 * (self._spacing + self._max_radius))
@@ -290,58 +286,43 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._people = {}
 
-        side_layout = QtWidgets.QVBoxLayout()
+        self._side_layout = QtWidgets.QVBoxLayout()
 
-        location_text = QtWidgets.QLabel("Locations")
-        side_layout.addWidget(location_text)
         self._location_org_widget = SunburstOrgWidget(0)
-        side_layout.addWidget(self._location_org_widget)
         location_key_widget = ColourKey1DWidget(location_colours)
-        side_layout.addWidget(location_key_widget)
+        self._add_sunburst("Locations", self._location_org_widget, location_key_widget)
         separator1 = HLine()
-        side_layout.addWidget(separator1)
+        self._side_layout.addWidget(separator1)
 
-        grade_text = QtWidgets.QLabel("Grades")
-        side_layout.addWidget(grade_text)
         self._grade_org_widget = SunburstOrgWidget(1)
-        side_layout.addWidget(self._grade_org_widget)
         grade_key_widget = ColourKey1DWidget(grade_colours)
-        side_layout.addWidget(grade_key_widget)
+        self._add_sunburst("Grades", self._grade_org_widget, grade_key_widget)
         separator2 = HLine()
-        side_layout.addWidget(separator2)
+        self._side_layout.addWidget(separator2)
 
-        gender_text = QtWidgets.QLabel("Gender")
-        side_layout.addWidget(gender_text)
         self._gender_org_widget = SunburstOrgWidget(2)
-        side_layout.addWidget(self._gender_org_widget)
         gender_key_widget = ColourKey1DWidget(gender_colours)
-        side_layout.addWidget(gender_key_widget)
+        self._add_sunburst("Gender", self._gender_org_widget, gender_key_widget)
         separator3 = HLine()
-        side_layout.addWidget(separator3)
+        self._side_layout.addWidget(separator3)
 
-        service_duration_text = QtWidgets.QLabel("Service Duration")
-        side_layout.addWidget(service_duration_text)
         self._service_duration_org_widget = SunburstOrgWidget(3)
-        side_layout.addWidget(self._service_duration_org_widget)
+        self._add_sunburst("Service Duration", self._service_duration_org_widget, None)
         separator4 = HLine()
-        side_layout.addWidget(separator4)
+        self._side_layout.addWidget(separator4)
 
         nine_box_text = QtWidgets.QLabel("Latest 9-box Grid Ratings")
-        side_layout.addWidget(nine_box_text)
         self._nine_box_org_widget = SunburstOrgWidget(4)
-        side_layout.addWidget(self._nine_box_org_widget)
         nine_box_key_widget = ColourKey2DWidget(nine_box_colours)
-        side_layout.addWidget(nine_box_key_widget)
+        self._add_sunburst("Latest 9-box Grid Ratings", self._nine_box_org_widget, nine_box_key_widget)
         separator5 = HLine()
-        side_layout.addWidget(separator5)
+        self._side_layout.addWidget(separator5)
 
-        comp_text = QtWidgets.QLabel("Compensation")
-        side_layout.addWidget(comp_text)
         self._compensation_org_widget = SunburstOrgWidget(5)
-        side_layout.addWidget(self._compensation_org_widget)
+        self._add_sunburst("Compensation", self._compensation_org_widget, None)
 
         widget = QtWidgets.QWidget()
-        widget.setLayout(side_layout)
+        widget.setLayout(self._side_layout)
 
         scroll_area = QtWidgets.QScrollArea()
         scroll_area.setWidget(widget)
@@ -356,6 +337,22 @@ class MainWindow(QtWidgets.QMainWindow):
         splitter_widget.addWidget(scroll_area)
 
         self.setCentralWidget(splitter_widget)
+
+    def _add_sunburst(self, heading, sunburst, legend):
+        heading_label = QtWidgets.QLabel(heading)
+        self._side_layout.addWidget(heading_label)
+        hbox = QtWidgets.QHBoxLayout()
+        hbox.addWidget(sunburst)
+        hbox_spacer = QtWidgets.QSpacerItem(0, 0, QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed)
+        hbox.addItem(hbox_spacer)
+        hbox_vbox = QtWidgets.QVBoxLayout()
+        hbox_vbox_spacer = QtWidgets.QSpacerItem(0, 0, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.MinimumExpanding)
+        hbox_vbox.addItem(hbox_vbox_spacer)
+        if legend != None:
+            hbox_vbox.addWidget(legend)
+
+        hbox.addLayout(hbox_vbox)
+        self._side_layout.addLayout(hbox)
 
     def _people_list_index_changed(self, list_item):
         for i in self._people:
