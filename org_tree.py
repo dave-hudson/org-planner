@@ -273,9 +273,9 @@ class SunburstOrgWidget(QtWidgets.QWidget):
 
         # Work out how many layers deep the org goes.
         self._max_depth = self._scan_depth(top_level_supervisor)
-        self._max_radius = 480
+        self._ring_width = 60
+        self._max_radius = self._ring_width * (self._max_depth - supervisor_org_depth + 1)
         self._spacing = 20
-        self._ring_width = self._max_radius / (self._max_depth - supervisor_org_depth + 1)
 
         self.setMinimumSize(2 * (self._spacing + self._max_radius),
                             2 * (self._spacing + self._max_radius))
