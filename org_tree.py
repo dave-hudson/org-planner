@@ -218,13 +218,23 @@ class SunburstOrgWidget(QtWidgets.QWidget):
         for i in supervisor_person["Direct Reports"]:
             radius = (depth + 1) * self._ring_width
             p = self._people[i]
-            arc = p["Supervisor Fraction"] * start_arc
+            sf = p["Supervisor Fraction"]
+            arc = sf * start_arc
             self._recurse_draw_widget(painter, i, depth + 1, angle, arc)
             self._setup_brush(painter, i)
-            painter.drawPie(self._spacing + self._max_radius - radius,
-                            self._spacing + self._max_radius - radius,
-                            radius * 2, radius * 2,
-                            angle * 16, arc * 16)
+
+            # If our arc is less than a full circle then we're drawing a pie
+            # segment, but if it's a full circle then draw it as an ellipse
+            # so we don't end up drawing a chord.
+            if arc < 359.9999:
+                painter.drawPie(self._spacing + self._max_radius - radius,
+                                self._spacing + self._max_radius - radius,
+                                radius * 2, radius * 2,
+                                angle * 16, arc * 16)
+            else:
+                painter.drawEllipse(self._spacing + self._max_radius - radius,
+                                    self._spacing + self._max_radius - radius,
+                                    radius * 2, radius * 2)
             angle += arc
 
     def _draw_widget(self, painter):
@@ -253,11 +263,13 @@ class SunburstOrgWidget(QtWidgets.QWidget):
         self._render_type = r;
         self.update()
 
-    def set_people(self, people, top_level_supervisor):
+    def set_people(self, people):
         self._people = people
+
+    def set_supervisor(self, top_level_supervisor):
         self._top_level_supervisor = top_level_supervisor
 
-        supervisor_org_depth = people[top_level_supervisor]["Org Depth"]
+        supervisor_org_depth = self._people[top_level_supervisor]["Org Depth"]
 
         # Work out how many layers deep the org goes.
         self._max_depth = self._scan_depth(top_level_supervisor)
@@ -275,6 +287,8 @@ class MainWindow(QtWidgets.QMainWindow):
     """
     def __init__(self) -> None:
         super().__init__()
+
+        self._people = {}
 
         side_layout = QtWidgets.QVBoxLayout()
 
@@ -333,16 +347,49 @@ class MainWindow(QtWidgets.QMainWindow):
         scroll_area.setWidget(widget)
         scroll_area.setWidgetResizable(True)
         scroll_area.setAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
-        self.setCentralWidget(scroll_area)
 
-    def set_people(self, people, top_level_supervisor):
-        self._location_org_widget.set_people(people, top_level_supervisor)
-        self._grade_org_widget.set_people(people, top_level_supervisor)
-        self._gender_org_widget.set_people(people, top_level_supervisor)
-        self._service_duration_org_widget.set_people(people, top_level_supervisor)
-        self._nine_box_org_widget.set_people(people, top_level_supervisor)
-        self._compensation_org_widget.set_people(people, top_level_supervisor)
+        self._people_list_widget = QtWidgets.QListWidget()
+        self._people_list_widget.currentItemChanged.connect(self._people_list_index_changed)
+
+        splitter_widget = QtWidgets.QSplitter()
+        splitter_widget.addWidget(self._people_list_widget)
+        splitter_widget.addWidget(scroll_area)
+
+        self.setCentralWidget(splitter_widget)
+
+    def _people_list_index_changed(self, list_item):
+        for i in self._people:
+            if self._people[i]["Person"]["Name"] == list_item.text():
+                self.set_supervisor(i)
+                break
+
+    def set_people(self, people):
+        self._people = people
+
+        for i in people:
+            self._people_list_widget.addItem(people[i]["Person"]["Name"])
+
+        self._people_list_widget.sortItems(QtGui.Qt.AscendingOrder)
+
+        self._location_org_widget.set_people(people)
+        self._grade_org_widget.set_people(people)
+        self._gender_org_widget.set_people(people)
+        self._service_duration_org_widget.set_people(people)
+        self._nine_box_org_widget.set_people(people)
+        self._compensation_org_widget.set_people(people)
         self.update()
+
+        # self._people_list_widget.setCurrentItem(people[top_level_supervisor]["Person"]["Name"])
+
+    def set_supervisor(self, top_level_supervisor):
+        self._location_org_widget.set_supervisor(top_level_supervisor)
+        self._grade_org_widget.set_supervisor(top_level_supervisor)
+        self._gender_org_widget.set_supervisor(top_level_supervisor)
+        self._service_duration_org_widget.set_supervisor(top_level_supervisor)
+        self._nine_box_org_widget.set_supervisor(top_level_supervisor)
+        self._compensation_org_widget.set_supervisor(top_level_supervisor)
+        self.update()
+
 
 def scan_org_tree(people, supervisor_uen, depth):
     # Scan each direct report recursively, computing how deep each person is in
@@ -410,6 +457,7 @@ all_people[top_level_supervisor]["Supervisor Fraction"] = 1
 
 app = QtWidgets.QApplication(sys.argv)
 window = MainWindow()
-window.set_people(all_people, top_level_supervisor)
+window.set_people(all_people)
+window.set_supervisor(top_level_supervisor)
 window.show()
 app.exec()
