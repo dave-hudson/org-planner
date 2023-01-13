@@ -256,7 +256,7 @@ class SunburstOrgWidget(QtWidgets.QWidget):
         qp.end()
 
     def set_render_type(self, r):
-        self._render_type = r;
+        self._render_type = r
         self.update()
 
     def set_people(self, people):
