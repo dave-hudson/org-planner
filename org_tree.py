@@ -51,6 +51,15 @@ nine_box_colours = {
     }
 }
 
+fx_rates = {
+    "UK": 1.33,
+    "Ireland": 1.16,
+    "India": 0.014,
+    "Bulgaria": 1.16,
+    "Singapore": 0.76,
+    "USA": 1.0
+}
+
 class HLine(QtWidgets.QFrame):
     """
     A widget class used to insert horizontal dividers between other widgets.
@@ -118,7 +127,6 @@ class ColourKey2DWidget(QtWidgets.QWidget):
 
         row = 1
         for cdi in colour_dict:
-            print(cdi)
             label_widget = ColourBoxWidget(cdi, [0x20, 0x20, 0x20])
             self._layout.addWidget(label_widget, row, 0)
 
@@ -156,7 +164,7 @@ class SunburstOrgWidget(QtWidgets.QWidget):
         return org_depth
 
     def _setup_brush(self, painter, uen):
-        colours = [0xc0, 0xc0, 0xc0]
+        colours = [0x80, 0x80, 0x80]
 
         p = self._people[uen]
         if self._render_type == 0:
@@ -185,7 +193,7 @@ class SunburstOrgWidget(QtWidgets.QWidget):
                 worked_fraction = worked_time / org_elapsed_time
                 base_colour = int(0xc0 * worked_fraction)
                 colours = [0xff, 0xff - base_colour, 0xff - base_colour, 0xff]
-        else:
+        elif self._render_type == 4:
             if "9 Box" in p["Person"].keys():
                 nine_box_potential = p["Person"]["9 Box"][-1]["Potential"]
                 nine_box_performance = p["Person"]["9 Box"][-1]["Performance"]
@@ -193,6 +201,12 @@ class SunburstOrgWidget(QtWidgets.QWidget):
                     potential_colours = nine_box_colours[nine_box_potential]
                     if nine_box_performance in potential_colours:
                         colours = potential_colours[nine_box_performance]
+        else:
+            if "Salaries" in p["Person"].keys():
+                salary = p["Person"]["Salaries"][-1]["Salary"]
+                salary_fraction = salary * fx_rates[p["Person"]["Locations"][-1]["Location"]] / 300000
+                base_colour = int(0xc0 * salary_fraction)
+                colours = [0xff - base_colour, 0xff - base_colour, 0xff, 0xff]
 
         brush = QtGui.QBrush(QtGui.QColor(colours[0], colours[1], colours[2], 0xff))
         painter.setBrush(brush)
@@ -304,6 +318,13 @@ class MainWindow(QtWidgets.QMainWindow):
         side_layout.addWidget(self._nine_box_org_widget)
         nine_box_key_widget = ColourKey2DWidget(nine_box_colours)
         side_layout.addWidget(nine_box_key_widget)
+        separator5 = HLine()
+        side_layout.addWidget(separator5)
+
+        comp_text = QtWidgets.QLabel("Compensation")
+        side_layout.addWidget(comp_text)
+        self._compensation_org_widget = SunburstOrgWidget(5)
+        side_layout.addWidget(self._compensation_org_widget)
 
         widget = QtWidgets.QWidget()
         widget.setLayout(side_layout)
@@ -318,8 +339,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self._location_org_widget.set_people(people, top_level_supervisor)
         self._grade_org_widget.set_people(people, top_level_supervisor)
         self._gender_org_widget.set_people(people, top_level_supervisor)
-        self._nine_box_org_widget.set_people(people, top_level_supervisor)
         self._service_duration_org_widget.set_people(people, top_level_supervisor)
+        self._nine_box_org_widget.set_people(people, top_level_supervisor)
+        self._compensation_org_widget.set_people(people, top_level_supervisor)
         self.update()
 
 def scan_org_tree(people, supervisor_uen, depth):
