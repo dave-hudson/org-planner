@@ -76,8 +76,10 @@ class ColourBoxWidget(QtWidgets.QLabel):
         self.setMargin(4)
 
         palette = self.palette()
-        c = QtGui.QColor(colour[0], colour[1], colour[2], 0xff)
-        palette.setColor(QtGui.QPalette.Window, c)
+        cb = QtGui.QColor(colour[0], colour[1], colour[2], 0xff)
+        palette.setColor(QtGui.QPalette.Window, cb)
+        ct = QtGui.QColor(0xff, 0xff, 0xff, 0xff)
+        palette.setColor(QtGui.QPalette.WindowText, ct)
         self.setPalette(palette)
 
 class ColourKey1DWidget(QtWidgets.QWidget):
@@ -273,8 +275,8 @@ class SunburstOrgWidget(QtWidgets.QWidget):
         self._max_radius = self._ring_width * (self._max_depth - supervisor_org_depth + 1)
         self._spacing = 0
 
-        self.setMinimumSize(2 * (self._spacing + self._max_radius),
-                            2 * (self._spacing + self._max_radius))
+        self.setMinimumSize(2 * (self._spacing + self._max_radius) + 1,
+                            2 * (self._spacing + self._max_radius) + 1)
         self.update()
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -342,10 +344,12 @@ class MainWindow(QtWidgets.QMainWindow):
         heading_label = QtWidgets.QLabel(heading)
         self._side_layout.addWidget(heading_label)
         hbox = QtWidgets.QHBoxLayout()
+        hbox.setContentsMargins(0, 0, 0, 0)
         hbox.addWidget(sunburst)
         hbox_spacer = QtWidgets.QSpacerItem(0, 0, QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed)
         hbox.addItem(hbox_spacer)
         hbox_vbox = QtWidgets.QVBoxLayout()
+        hbox_vbox.setContentsMargins(0, 0, 0, 0)
         hbox_vbox_spacer = QtWidgets.QSpacerItem(0, 0, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.MinimumExpanding)
         hbox_vbox.addItem(hbox_vbox_spacer)
         if legend != None:
