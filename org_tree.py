@@ -290,6 +290,20 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._side_layout = QtWidgets.QVBoxLayout()
 
+        heading_label0 = QtWidgets.QLabel("Summary")
+        self._side_layout.addWidget(heading_label0)
+        self._info_layout = QtWidgets.QGridLayout()
+        self._info_layout.setContentsMargins(0, 0, 0, 0)
+        self._info_layout.addWidget(QtWidgets.QLabel("Name"), 0, 0)
+        self._info_name = QtWidgets.QLabel("")
+        self._info_layout.addWidget(self._info_name, 0, 1)
+        self._info_layout.addWidget(QtWidgets.QLabel("Location"), 1, 0)
+        self._info_location = QtWidgets.QLabel("")
+        self._info_layout.addWidget(self._info_location, 1, 1)
+        self._side_layout.addLayout(self._info_layout)
+        separator0 = HLine()
+        self._side_layout.addWidget(separator0)
+
         self._location_org_widget = SunburstOrgWidget(0)
         location_key_widget = ColourKey1DWidget(location_colours)
         self._add_sunburst("Locations", self._location_org_widget, location_key_widget)
@@ -383,6 +397,10 @@ class MainWindow(QtWidgets.QMainWindow):
         # self._people_list_widget.setCurrentItem(people[top_level_supervisor]["Person"]["Name"])
 
     def set_supervisor(self, top_level_supervisor):
+        p = self._people[top_level_supervisor]["Person"]
+        self._info_name.setText(p["Name"])
+        self._info_location.setText(p["Locations"][-1]["Location"])
+
         self._location_org_widget.set_supervisor(top_level_supervisor)
         self._grade_org_widget.set_supervisor(top_level_supervisor)
         self._gender_org_widget.set_supervisor(top_level_supervisor)
