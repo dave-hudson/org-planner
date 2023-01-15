@@ -228,12 +228,12 @@ class SunburstOrgWidget(QtWidgets.QWidget):
                 painter.drawPie(self._spacing + self._max_radius - radius,
                                 self._spacing + self._max_radius - radius,
                                 radius * 2, radius * 2,
-                                angle * 16, arc * 16)
+                                (90 + angle) * 16, -arc * 16)
             else:
                 painter.drawEllipse(self._spacing + self._max_radius - radius,
                                     self._spacing + self._max_radius - radius,
                                     radius * 2, radius * 2)
-            angle += arc
+            angle -= arc
 
     def _draw_widget(self, painter):
         if len(self._people) == 0:
