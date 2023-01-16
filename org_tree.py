@@ -290,72 +290,117 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._side_layout = QtWidgets.QVBoxLayout()
 
-        heading_label0 = QtWidgets.QLabel("Summary")
-        self._side_layout.addWidget(heading_label0)
-        self._info_layout = QtWidgets.QGridLayout()
-        self._info_layout.setContentsMargins(0, 0, 0, 0)
+        heading_font = QtGui.QFont()
+        heading_font.setBold(True)
+        heading_font.setPointSize(heading_font.pointSize() * 2)
 
-        self._info_layout.addWidget(QtWidgets.QLabel("Name"), 0, 0)
         self._info_name = QtWidgets.QLabel("")
-        self._info_layout.addWidget(self._info_name, 0, 1)
+        self._info_name.setFont(heading_font)
+        self._side_layout.addWidget(self._info_name)
+        self._side_layout.addWidget(QtWidgets.QLabel(""))
 
-        self._info_layout.addWidget(QtWidgets.QLabel("Location"), 1, 0)
-        self._info_location = QtWidgets.QLabel("")
-        self._info_layout.addWidget(self._info_location, 1, 1)
+        info_layout0 = QtWidgets.QGridLayout()
+        self._side_layout.addLayout(info_layout0)
 
-        self._info_layout.addWidget(QtWidgets.QLabel("UEN"), 2, 0)
+        info_layout0.addWidget(QtWidgets.QLabel("UEN"), 0, 0)
         self._info_uen = QtWidgets.QLabel("")
-        self._info_layout.addWidget(self._info_uen, 2, 1)
+        info_layout0.addWidget(self._info_uen, 0, 1)
 
-        self._info_layout.addWidget(QtWidgets.QLabel("Supervisor UEN"), 3, 0)
+        info_layout0.addWidget(QtWidgets.QLabel("Supervisor UEN"), 1, 0)
         self._info_supervisor_uen = QtWidgets.QLabel("")
-        self._info_layout.addWidget(self._info_supervisor_uen, 3, 1)
+        info_layout0.addWidget(self._info_supervisor_uen, 1, 1)
 
-        self._side_layout.addLayout(self._info_layout)
+        self._side_layout.addWidget(QtWidgets.QLabel(""))
         separator0 = HLine()
         self._side_layout.addWidget(separator0)
 
-        heading_label1 = QtWidgets.QLabel("Locations")
-        self._side_layout.addWidget(heading_label1)
+        info_layout1 = QtWidgets.QGridLayout()
+        self._side_layout.addLayout(info_layout1)
+
+        info_layout1.addWidget(QtWidgets.QLabel("Location"), 0, 0)
+        self._info_location = QtWidgets.QLabel("")
+        info_layout1.addWidget(self._info_location, 0, 1)
+
+        info_layout1.addWidget(QtWidgets.QLabel(""), 1, 0)
+
         self._location_org_widget = SunburstOrgWidget(0)
         location_key_widget = ColourKey1DWidget(location_colours)
         self._add_sunburst(self._location_org_widget, location_key_widget)
+
+        self._side_layout.addWidget(QtWidgets.QLabel(""))
         separator1 = HLine()
         self._side_layout.addWidget(separator1)
 
-        heading_label2 = QtWidgets.QLabel("Grades")
-        self._side_layout.addWidget(heading_label2)
+        info_layout2 = QtWidgets.QGridLayout()
+        self._side_layout.addLayout(info_layout2)
+
+        info_layout2.addWidget(QtWidgets.QLabel("Grade"), 0, 0)
+        self._info_grade = QtWidgets.QLabel("")
+        info_layout2.addWidget(self._info_grade, 0, 1)
+
+        info_layout2.addWidget(QtWidgets.QLabel(""), 1, 0)
+
         self._grade_org_widget = SunburstOrgWidget(1)
         grade_key_widget = ColourKey1DWidget(grade_colours)
         self._add_sunburst(self._grade_org_widget, grade_key_widget)
+
+        self._side_layout.addWidget(QtWidgets.QLabel(""))
         separator2 = HLine()
         self._side_layout.addWidget(separator2)
 
-        heading_label3 = QtWidgets.QLabel("Gender")
-        self._side_layout.addWidget(heading_label3)
+        info_layout3 = QtWidgets.QGridLayout()
+        self._side_layout.addLayout(info_layout3)
+
+        info_layout3.addWidget(QtWidgets.QLabel("Gender"), 0, 0)
+        self._info_gender = QtWidgets.QLabel("")
+        info_layout3.addWidget(self._info_gender, 0, 1)
+
+        info_layout3.addWidget(QtWidgets.QLabel(""), 1, 0)
+
         self._gender_org_widget = SunburstOrgWidget(2)
         gender_key_widget = ColourKey1DWidget(gender_colours)
         self._add_sunburst(self._gender_org_widget, gender_key_widget)
+
+        self._side_layout.addWidget(QtWidgets.QLabel(""))
         separator3 = HLine()
         self._side_layout.addWidget(separator3)
 
         heading_label4 = QtWidgets.QLabel("Service Duration")
         self._side_layout.addWidget(heading_label4)
+
+        info_layout4 = QtWidgets.QGridLayout()
+        self._side_layout.addLayout(info_layout4)
+        info_layout4.addWidget(QtWidgets.QLabel(""), 0, 0)
+
         self._service_duration_org_widget = SunburstOrgWidget(3)
         self._add_sunburst(self._service_duration_org_widget, None)
+
+        self._side_layout.addWidget(QtWidgets.QLabel(""))
         separator4 = HLine()
         self._side_layout.addWidget(separator4)
 
         heading_label5 = QtWidgets.QLabel("Latest 9-box Grid Ratings")
         self._side_layout.addWidget(heading_label5)
+
+        info_layout5 = QtWidgets.QGridLayout()
+        self._side_layout.addLayout(info_layout5)
+        info_layout5.addWidget(QtWidgets.QLabel(""), 0, 0)
+
         self._nine_box_org_widget = SunburstOrgWidget(4)
         nine_box_key_widget = ColourKey2DWidget(nine_box_colours)
         self._add_sunburst(self._nine_box_org_widget, nine_box_key_widget)
+
+        self._side_layout.addWidget(QtWidgets.QLabel(""))
         separator5 = HLine()
         self._side_layout.addWidget(separator5)
 
         heading_label6 = QtWidgets.QLabel("Compensation")
         self._side_layout.addWidget(heading_label6)
+
+        info_layout6 = QtWidgets.QGridLayout()
+        self._side_layout.addLayout(info_layout6)
+        info_layout6.addWidget(QtWidgets.QLabel(""), 0, 0)
+
         self._compensation_org_widget = SunburstOrgWidget(5)
         self._add_sunburst(self._compensation_org_widget, None)
 
@@ -419,10 +464,17 @@ class MainWindow(QtWidgets.QMainWindow):
     def set_supervisor(self, top_level_supervisor):
         p = self._people[top_level_supervisor]["Person"]
         self._info_name.setText(p["Name"])
-        self._info_location.setText(p["Locations"][-1]["Location"])
         self._info_uen.setText(str(p["UEN"]))
         if "Supervisor UEN" in p.keys():
             self._info_supervisor_uen.setText(str(p["Supervisor UEN"]))
+
+        self._info_location.setText(p["Locations"][-1]["Location"])
+
+        if "Grades" in p.keys():
+            self._info_grade.setText(p["Grades"][-1]["Grade"])
+
+        if "Gender" in p.keys():
+            self._info_gender.setText(p["Gender"])
 
         self._location_org_widget.set_supervisor(top_level_supervisor)
         self._grade_org_widget.set_supervisor(top_level_supervisor)
