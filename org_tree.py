@@ -294,48 +294,70 @@ class MainWindow(QtWidgets.QMainWindow):
         self._side_layout.addWidget(heading_label0)
         self._info_layout = QtWidgets.QGridLayout()
         self._info_layout.setContentsMargins(0, 0, 0, 0)
+
         self._info_layout.addWidget(QtWidgets.QLabel("Name"), 0, 0)
         self._info_name = QtWidgets.QLabel("")
         self._info_layout.addWidget(self._info_name, 0, 1)
+
         self._info_layout.addWidget(QtWidgets.QLabel("Location"), 1, 0)
         self._info_location = QtWidgets.QLabel("")
         self._info_layout.addWidget(self._info_location, 1, 1)
+
+        self._info_layout.addWidget(QtWidgets.QLabel("UEN"), 2, 0)
+        self._info_uen = QtWidgets.QLabel("")
+        self._info_layout.addWidget(self._info_uen, 2, 1)
+
+        self._info_layout.addWidget(QtWidgets.QLabel("Supervisor UEN"), 3, 0)
+        self._info_supervisor_uen = QtWidgets.QLabel("")
+        self._info_layout.addWidget(self._info_supervisor_uen, 3, 1)
+
         self._side_layout.addLayout(self._info_layout)
         separator0 = HLine()
         self._side_layout.addWidget(separator0)
 
+        heading_label1 = QtWidgets.QLabel("Locations")
+        self._side_layout.addWidget(heading_label1)
         self._location_org_widget = SunburstOrgWidget(0)
         location_key_widget = ColourKey1DWidget(location_colours)
-        self._add_sunburst("Locations", self._location_org_widget, location_key_widget)
+        self._add_sunburst(self._location_org_widget, location_key_widget)
         separator1 = HLine()
         self._side_layout.addWidget(separator1)
 
+        heading_label2 = QtWidgets.QLabel("Grades")
+        self._side_layout.addWidget(heading_label2)
         self._grade_org_widget = SunburstOrgWidget(1)
         grade_key_widget = ColourKey1DWidget(grade_colours)
-        self._add_sunburst("Grades", self._grade_org_widget, grade_key_widget)
+        self._add_sunburst(self._grade_org_widget, grade_key_widget)
         separator2 = HLine()
         self._side_layout.addWidget(separator2)
 
+        heading_label3 = QtWidgets.QLabel("Gender")
+        self._side_layout.addWidget(heading_label3)
         self._gender_org_widget = SunburstOrgWidget(2)
         gender_key_widget = ColourKey1DWidget(gender_colours)
-        self._add_sunburst("Gender", self._gender_org_widget, gender_key_widget)
+        self._add_sunburst(self._gender_org_widget, gender_key_widget)
         separator3 = HLine()
         self._side_layout.addWidget(separator3)
 
+        heading_label4 = QtWidgets.QLabel("Service Duration")
+        self._side_layout.addWidget(heading_label4)
         self._service_duration_org_widget = SunburstOrgWidget(3)
-        self._add_sunburst("Service Duration", self._service_duration_org_widget, None)
+        self._add_sunburst(self._service_duration_org_widget, None)
         separator4 = HLine()
         self._side_layout.addWidget(separator4)
 
-        nine_box_text = QtWidgets.QLabel("Latest 9-box Grid Ratings")
+        heading_label5 = QtWidgets.QLabel("Latest 9-box Grid Ratings")
+        self._side_layout.addWidget(heading_label5)
         self._nine_box_org_widget = SunburstOrgWidget(4)
         nine_box_key_widget = ColourKey2DWidget(nine_box_colours)
-        self._add_sunburst("Latest 9-box Grid Ratings", self._nine_box_org_widget, nine_box_key_widget)
+        self._add_sunburst(self._nine_box_org_widget, nine_box_key_widget)
         separator5 = HLine()
         self._side_layout.addWidget(separator5)
 
+        heading_label6 = QtWidgets.QLabel("Compensation")
+        self._side_layout.addWidget(heading_label6)
         self._compensation_org_widget = SunburstOrgWidget(5)
-        self._add_sunburst("Compensation", self._compensation_org_widget, None)
+        self._add_sunburst(self._compensation_org_widget, None)
 
         widget = QtWidgets.QWidget()
         widget.setLayout(self._side_layout)
@@ -354,9 +376,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.setCentralWidget(splitter_widget)
 
-    def _add_sunburst(self, heading, sunburst, legend):
-        heading_label = QtWidgets.QLabel(heading)
-        self._side_layout.addWidget(heading_label)
+    def _add_sunburst(self, sunburst, legend):
         hbox = QtWidgets.QHBoxLayout()
         hbox.setContentsMargins(0, 0, 0, 0)
         hbox.addWidget(sunburst)
@@ -400,6 +420,9 @@ class MainWindow(QtWidgets.QMainWindow):
         p = self._people[top_level_supervisor]["Person"]
         self._info_name.setText(p["Name"])
         self._info_location.setText(p["Locations"][-1]["Location"])
+        self._info_uen.setText(str(p["UEN"]))
+        if "Supervisor UEN" in p.keys():
+            self._info_supervisor_uen.setText(str(p["Supervisor UEN"]))
 
         self._location_org_widget.set_supervisor(top_level_supervisor)
         self._grade_org_widget.set_supervisor(top_level_supervisor)
