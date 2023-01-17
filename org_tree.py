@@ -51,6 +51,14 @@ nine_box_colours = {
     }
 }
 
+rating_colours = {
+    "1": [0x20, 0x80, 0xe0],
+    "2": [0x20, 0xe0, 0x40],
+    "3": [0xff, 0xff, 0x20],
+    "4": [0xff, 0xa0, 0x20],
+    "5": [0xff, 0x40, 0x40]
+}
+
 fx_rates = {
     "UK": 1.33,
     "Ireland": 1.16,
@@ -191,6 +199,11 @@ class SunburstOrgWidget(QtWidgets.QWidget):
                     potential_colours = nine_box_colours[nine_box_potential]
                     if nine_box_performance in potential_colours:
                         colours = potential_colours[nine_box_performance]
+        elif self._render_type == 5:
+            if "Ratings" in p["Person"].keys():
+                rating = str(p["Person"]["Ratings"][-1]["Rating"])
+                if rating in rating_colours:
+                    colours = rating_colours[rating]
         else:
             if "Salaries" in p["Person"].keys():
                 salary = p["Person"]["Salaries"][-1]["Salary"]
@@ -399,9 +412,21 @@ class MainWindow(QtWidgets.QMainWindow):
 
         info_layout6 = QtWidgets.QGridLayout()
         self._side_layout.addLayout(info_layout6)
-        info_layout6.addWidget(QtWidgets.QLabel("Compensation"), 0, 0)
+        info_layout6.addWidget(QtWidgets.QLabel("Rating"), 0, 0)
+        self._info_rating = QtWidgets.QLabel("")
+        info_layout6.addWidget(self._info_rating, 0, 1)
 
-        self._compensation_org_widget = SunburstOrgKeyWidget(SunburstOrgWidget(5), None)
+        self._rating_org_widget = SunburstOrgKeyWidget(SunburstOrgWidget(5), ColourKey1DWidget(rating_colours))
+        self._side_layout.addWidget(self._rating_org_widget)
+
+        separator6 = HLine()
+        self._side_layout.addWidget(separator6)
+
+        info_layout7 = QtWidgets.QGridLayout()
+        self._side_layout.addLayout(info_layout7)
+        info_layout7.addWidget(QtWidgets.QLabel("Compensation"), 0, 0)
+
+        self._compensation_org_widget = SunburstOrgKeyWidget(SunburstOrgWidget(6), None)
         self._side_layout.addWidget(self._compensation_org_widget)
 
         # Insert a spacer so the layout engine doesn't try to spread out the
@@ -446,6 +471,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._gender_org_widget.set_people(people)
         self._service_duration_org_widget.set_people(people)
         self._nine_box_org_widget.set_people(people)
+        self._rating_org_widget.set_people(people)
         self._compensation_org_widget.set_people(people)
         self.update()
 
@@ -499,6 +525,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self._info_nine_box_performance.setText(nine_box_performance)
         self._nine_box_org_widget.set_supervisor(top_level_supervisor)
         self._nine_box_org_widget.setVisible(manager)
+
+        rating = "None"
+        if "Ratings" in p.keys():
+            rating = str(p["Ratings"][-1]["Rating"])
+
+        self._info_rating.setText(rating)
+        self._rating_org_widget.set_supervisor(top_level_supervisor)
+        self._rating_org_widget.setVisible(manager)
 
         self._compensation_org_widget.set_supervisor(top_level_supervisor)
         self._compensation_org_widget.setVisible(manager)
