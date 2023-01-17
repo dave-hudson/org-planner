@@ -424,10 +424,15 @@ class MainWindow(QtWidgets.QMainWindow):
 
         info_layout7 = QtWidgets.QGridLayout()
         self._side_layout.addLayout(info_layout7)
-        info_layout7.addWidget(QtWidgets.QLabel("Compensation"), 0, 0)
+        info_layout7.addWidget(QtWidgets.QLabel("Salary"), 0, 0)
+        self._info_salary = QtWidgets.QLabel("")
+        info_layout7.addWidget(self._info_salary, 0, 1)
+        info_layout7.addWidget(QtWidgets.QLabel("Salary (USD)"), 1, 0)
+        self._info_salary_usd = QtWidgets.QLabel("")
+        info_layout7.addWidget(self._info_salary_usd, 1, 1)
 
-        self._compensation_org_widget = SunburstOrgKeyWidget(SunburstOrgWidget(6), None)
-        self._side_layout.addWidget(self._compensation_org_widget)
+        self._salary_org_widget = SunburstOrgKeyWidget(SunburstOrgWidget(6), None)
+        self._side_layout.addWidget(self._salary_org_widget)
 
         # Insert a spacer so the layout engine doesn't try to spread out the
         # info panel elements if they take less space than the visible
@@ -472,7 +477,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._service_duration_org_widget.set_people(people)
         self._nine_box_org_widget.set_people(people)
         self._rating_org_widget.set_people(people)
-        self._compensation_org_widget.set_people(people)
+        self._salary_org_widget.set_people(people)
         self.update()
 
         # self._people_list_widget.setCurrentItem(people[top_level_supervisor]["Person"]["Name"])
@@ -534,8 +539,18 @@ class MainWindow(QtWidgets.QMainWindow):
         self._rating_org_widget.set_supervisor(top_level_supervisor)
         self._rating_org_widget.setVisible(manager)
 
-        self._compensation_org_widget.set_supervisor(top_level_supervisor)
-        self._compensation_org_widget.setVisible(manager)
+        salary = "N/A"
+        salary_usd = "N/A"
+        if "Salaries" in p.keys():
+            salary_val = p["Salaries"][-1]["Salary"]
+            salary = str(salary_val)
+            salary_usd_val = salary_val * fx_rates[p["Locations"][-1]["Location"]]
+            salary_usd = str(int(salary_usd_val))
+
+        self._info_salary.setText(salary)
+        self._info_salary_usd.setText(salary_usd)
+        self._salary_org_widget.set_supervisor(top_level_supervisor)
+        self._salary_org_widget.setVisible(manager)
 
         self.update()
 
