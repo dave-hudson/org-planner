@@ -239,9 +239,6 @@ class SunburstOrgWidget(QtWidgets.QWidget):
         if len(self._people) == 0:
             return
 
-        pen = QtGui.QPen(QtCore.Qt.GlobalColor.black, 1, QtCore.Qt.PenStyle.SolidLine)
-        painter.setPen(pen)
-
         # Recursively draw the outer layers of the org chart.
         self._recurse_draw_widget(painter, self._top_level_supervisor, 1, 0, 360)
 
