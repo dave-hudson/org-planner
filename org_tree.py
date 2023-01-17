@@ -336,10 +336,12 @@ class MainWindow(QtWidgets.QMainWindow):
         info_layout0.addWidget(QtWidgets.QLabel("UEN"), 0, 0)
         self._info_uen = QtWidgets.QLabel("")
         info_layout0.addWidget(self._info_uen, 0, 1)
-
         info_layout0.addWidget(QtWidgets.QLabel("Supervisor UEN"), 1, 0)
         self._info_supervisor_uen = QtWidgets.QLabel("")
         info_layout0.addWidget(self._info_supervisor_uen, 1, 1)
+        info_layout0.addWidget(QtWidgets.QLabel("Total Reports"), 2, 0)
+        self._info_total_reports = QtWidgets.QLabel("")
+        info_layout0.addWidget(self._info_total_reports, 2, 1)
 
         separator0 = HLine()
         self._side_layout.addWidget(separator0)
@@ -430,6 +432,9 @@ class MainWindow(QtWidgets.QMainWindow):
         info_layout7.addWidget(QtWidgets.QLabel("Salary (USD)"), 1, 0)
         self._info_salary_usd = QtWidgets.QLabel("")
         info_layout7.addWidget(self._info_salary_usd, 1, 1)
+        info_layout7.addWidget(QtWidgets.QLabel("Rollup Salary (USD)"), 2, 0)
+        self._info_rollup_salary_usd = QtWidgets.QLabel("")
+        info_layout7.addWidget(self._info_rollup_salary_usd, 2, 1)
 
         self._salary_org_widget = SunburstOrgKeyWidget(SunburstOrgWidget(6), None)
         self._side_layout.addWidget(self._salary_org_widget)
@@ -493,10 +498,11 @@ class MainWindow(QtWidgets.QMainWindow):
         if "Supervisor UEN" in p.keys():
             self._info_supervisor_uen.setText(str(p["Supervisor UEN"]))
 
+        self._info_total_reports.setText(str(self._people[top_level_supervisor]["Total Reports"]))
+
         self._info_location.setText(p["Locations"][-1]["Location"])
         self._location_org_widget.set_supervisor(top_level_supervisor)
         self._location_org_widget.setVisible(manager)
-        # self._location_key_widget.setVisible(manager)
 
         grade = "None"
         if "Grades" in p.keys():
@@ -547,8 +553,16 @@ class MainWindow(QtWidgets.QMainWindow):
             salary_usd_val = salary_val * fx_rates[p["Locations"][-1]["Location"]]
             salary_usd = str(int(salary_usd_val))
 
+        rollup_salary_usd = "N/A"
+        rollup_salary_usd_val = int(self._people[top_level_supervisor]["Rollup Salaries"])
+
+        if manager:
+            rollup_missing_salaries = self._people[top_level_supervisor]["Missing Salaries"]
+            rollup_salary_usd = str("{:d} (Missing {:d} people)").format(rollup_salary_usd_val, rollup_missing_salaries)
+
         self._info_salary.setText(salary)
         self._info_salary_usd.setText(salary_usd)
+        self._info_rollup_salary_usd.setText(rollup_salary_usd)
         self._salary_org_widget.set_supervisor(top_level_supervisor)
         self._salary_org_widget.setVisible(manager)
 
@@ -559,12 +573,19 @@ def scan_org_tree(people, supervisor_uen, depth):
     # Scan each direct report recursively, computing how deep each person is in
     # the overall org, and how many reports roll up to them in total.
     num_reports = 0
+    rollup_salaries = 0
+    missing_salaries = 0
     p = people[supervisor_uen]
     for i in p["Direct Reports"]:
-        num_reports += scan_org_tree(people, i, depth + 1) + 1
+        (nr, rs, ms) = scan_org_tree(people, i, depth + 1)
+        num_reports += nr
+        rollup_salaries += rs
+        missing_salaries += ms
 
     p["Org Depth"] = depth
     p["Total Reports"] = num_reports
+    p["Rollup Salaries"] = rollup_salaries
+    p["Missing Salaries"] = missing_salaries
 
     # Scan each direct report, but this time compute the fraction of the overall
     # team their subteam represents.
@@ -589,7 +610,15 @@ def scan_org_tree(people, supervisor_uen, depth):
     p["Service Duration"] = cur_time - time.mktime(t)
     p["Service Duration Fraction"] = worked_time / org_elapsed_time
 
-    return num_reports
+    num_reports += 1
+    if "Salaries" not in p["Person"].keys():
+        missing_salaries += 1
+    else:
+        salary = p["Person"]["Salaries"][-1]["Salary"]
+        salary_usd = salary * fx_rates[p["Person"]["Locations"][-1]["Location"]]
+        rollup_salaries += salary_usd
+
+    return (num_reports, rollup_salaries, missing_salaries)
 
 def scan_json(json_data):
     people = {}
