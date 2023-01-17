@@ -181,15 +181,7 @@ class SunburstOrgWidget(QtWidgets.QWidget):
                 if gender in gender_colours:
                     colours = gender_colours[gender]
         elif self._render_type == 3:
-            if "Start Date" in p["Person"].keys():
-                start_date = p["Person"]["Start Date"]
-                t = time.strptime(start_date, "%Y-%m-%d")
-                ot = time.strptime("2016-01-01", "%Y-%m-%d")
-                cur_time = time.time()
-                org_elapsed_time = cur_time - time.mktime(ot)
-                worked_time = cur_time - time.mktime(t)
-                worked_fraction = worked_time / org_elapsed_time
-                base_colour = int(0xc0 * worked_fraction)
+                base_colour = int(0xc0 * p["Service Duration Fraction"])
                 colours = [0xff, 0xff - base_colour, 0xff - base_colour, 0xff]
         elif self._render_type == 4:
             if "9 Box" in p["Person"].keys():
@@ -377,7 +369,12 @@ class MainWindow(QtWidgets.QMainWindow):
 
         info_layout4 = QtWidgets.QGridLayout()
         self._side_layout.addLayout(info_layout4)
-        info_layout4.addWidget(QtWidgets.QLabel("Service Duration"), 0, 0)
+        info_layout4.addWidget(QtWidgets.QLabel("Start Date"), 0, 0)
+        self._info_start_date = QtWidgets.QLabel("")
+        info_layout4.addWidget(self._info_start_date, 0, 1)
+        info_layout4.addWidget(QtWidgets.QLabel("Service Duration (weeks)"), 1, 0)
+        self._info_service_duration = QtWidgets.QLabel("")
+        info_layout4.addWidget(self._info_service_duration, 1, 1)
 
         self._service_duration_org_widget = SunburstOrgKeyWidget(SunburstOrgWidget(3), None)
         self._side_layout.addWidget(self._service_duration_org_widget)
@@ -486,6 +483,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self._gender_org_widget.set_supervisor(top_level_supervisor)
         self._gender_org_widget.setVisible(manager)
 
+        self._info_start_date.setText(p["Start Date"])
+        service_duration = self._people[top_level_supervisor]["Service Duration"] / (86400 * 7)
+        self._info_service_duration.setText(str("{:.1f}").format(service_duration))
         self._service_duration_org_widget.set_supervisor(top_level_supervisor)
         self._service_duration_org_widget.setVisible(manager)
 
@@ -530,6 +530,15 @@ def scan_org_tree(people, supervisor_uen, depth):
                 t = drs[j + 1]
                 drs[j + 1] = drs[j]
                 drs[j] = t
+
+    start_date = p["Person"]["Start Date"]
+    t = time.strptime(start_date, "%Y-%m-%d")
+    ot = time.strptime("2016-01-01", "%Y-%m-%d")
+    cur_time = time.time()
+    org_elapsed_time = cur_time - time.mktime(ot)
+    worked_time = cur_time - time.mktime(t)
+    p["Service Duration"] = cur_time - time.mktime(t)
+    p["Service Duration Fraction"] = worked_time / org_elapsed_time
 
     return num_reports
 
