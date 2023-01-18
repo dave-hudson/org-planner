@@ -310,6 +310,22 @@ class SunburstOrgKeyWidget(QtWidgets.QWidget):
         self._org_widget.set_supervisor(top_level_supervisor)
 
 
+class PeopleSelectorWidget(QtWidgets.QWidget):
+    """
+    This widget class wraps a list and a tree view of all the people within
+    the org.  It's used to make it easy to hide one or the other and thus
+    let the app use either view.
+    """
+    def __init__(self, list_widget, tree_widget) -> None:
+        super().__init__()
+
+        vbox = QtWidgets.QVBoxLayout()
+        vbox.setContentsMargins(0, 0, 0, 0)
+        vbox.addWidget(list_widget)
+        vbox.addWidget(tree_widget)
+        self.setLayout(vbox)
+
+
 class MainWindow(QtWidgets.QMainWindow):
     """
     The main window class for the application.
@@ -318,6 +334,33 @@ class MainWindow(QtWidgets.QMainWindow):
         super().__init__()
 
         self._people = {}
+
+        self._view_type = 0
+        self._list_view_action = QtGui.QAction("&List View", self)
+        self._list_view_action.setCheckable(True)
+        self._list_view_action.setChecked(True)
+        self._list_view_action.triggered.connect(self._list_view_checked)
+        self._tree_view_action = QtGui.QAction("&Tree View", self)
+        self._tree_view_action.setCheckable(True)
+        self._tree_view_action.setChecked(False)
+        self._tree_view_action.triggered.connect(self._tree_view_checked)
+
+        # Create a menu bar and menu drop-downs.
+        menu_bar = QtWidgets.QMenuBar(self)
+        self.setMenuBar(menu_bar)
+        edit_menu = menu_bar.addMenu("&View")
+        edit_menu.addAction(self._list_view_action)
+        edit_menu.addAction(self._tree_view_action)
+        edit_menu.addSeparator()
+
+        self._people_list_widget = QtWidgets.QListWidget()
+        self._people_list_widget.currentItemChanged.connect(self._people_list_index_changed)
+        self._people_list_widget.setFocus()
+        self._people_tree_widget = QtWidgets.QTreeWidget()
+        self._people_tree_widget.currentItemChanged.connect(self._people_tree_item_changed)
+        self._people_tree_widget.setHeaderHidden(True)
+        self._people_tree_widget.setHidden(True)
+        people_selector_widget = PeopleSelectorWidget(self._people_list_widget, self._people_tree_widget)
 
         self._side_layout = QtWidgets.QVBoxLayout()
 
@@ -453,14 +496,53 @@ class MainWindow(QtWidgets.QMainWindow):
         scroll_area.setWidgetResizable(True)
         scroll_area.setAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
 
-        self._people_list_widget = QtWidgets.QListWidget()
-        self._people_list_widget.currentItemChanged.connect(self._people_list_index_changed)
-
         splitter_widget = QtWidgets.QSplitter()
-        splitter_widget.addWidget(self._people_list_widget)
+        splitter_widget.addWidget(people_selector_widget)
         splitter_widget.addWidget(scroll_area)
 
         self.setCentralWidget(splitter_widget)
+
+    def _list_view_checked(self, s):
+        """
+        Called when the "List View" menu item is checked.
+
+        We flip the application view type, flip the checkbox on the
+        list/tree view, hide the tree view and unhide the list view.
+        """
+
+        self._view_type = 0
+        self._list_view_action.setChecked(True)
+        self._tree_view_action.setChecked(False)
+        self._people_list_widget.setHidden(False)
+        self._people_tree_widget.setHidden(True)
+
+        # For UI continuity we take the current selected item from the tree
+        # view and select the same entry in the list view.
+        tree_selected = self._people_tree_widget.currentItem()
+        item = self._people_list_widget.findItems(tree_selected.text(0), QtCore.Qt.MatchExactly | QtCore.Qt.MatchRecursive)
+        self._people_list_widget.setCurrentItem(item[0])
+        self._people_list_widget.setFocus()
+
+    def _tree_view_checked(self, s):
+        """
+        Called when the "Tree View" menu item is checked.
+
+        We flip the application view type, flip the checkbox on the
+        list/tree view, hide the list view and unhide the tree view.
+        """
+
+        self._view_type = 1
+        self._list_view_action.setChecked(False)
+        self._tree_view_action.setChecked(True)
+        self._people_list_widget.setHidden(True)
+        self._people_tree_widget.setHidden(False)
+
+        # For UI continuity we take the current selected item from the list
+        # view and select the same entry in the tree view.
+        list_selected = self._people_list_widget.currentItem()
+        item = self._people_tree_widget.findItems(list_selected.text(), QtCore.Qt.MatchExactly | QtCore.Qt.MatchRecursive)
+        self._people_tree_widget.setCurrentItem(item[0])
+        self._people_tree_widget.setFocus()
 
     def _people_list_index_changed(self, list_item):
         for i in self._people:
@@ -468,13 +550,32 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.set_supervisor(i)
                 break
 
-    def set_people(self, people):
+    def _people_tree_item_changed(self, tree_item):
+        for i in self._people:
+            if self._people[i]["Person"]["Name"] == tree_item.text(0):
+                self.set_supervisor(i)
+                break
+
+    def _set_people_tree(self, supervisor_uen, supervisor_item):
+        for p in self._people[supervisor_uen]["Direct Reports"]:
+            twi = QtWidgets.QTreeWidgetItem()
+            twi.setText(0, self._people[p]["Person"]["Name"])
+            supervisor_item.addChild(twi)
+            self._set_people_tree(p, twi)
+
+    def set_people(self, people, top_level_supervisor):
         self._people = people
 
         for i in people:
             self._people_list_widget.addItem(people[i]["Person"]["Name"])
 
         self._people_list_widget.sortItems(QtGui.Qt.AscendingOrder)
+
+        top_level = QtWidgets.QTreeWidgetItem()
+        top_level.setText(0, people[top_level_supervisor]["Person"]["Name"])
+        self._set_people_tree(top_level_supervisor, top_level)
+        self._people_tree_widget.insertTopLevelItem(0, top_level)
+        self._people_tree_widget.expandAll()
 
         self._location_org_widget.set_people(people)
         self._grade_org_widget.set_people(people)
@@ -483,11 +584,15 @@ class MainWindow(QtWidgets.QMainWindow):
         self._nine_box_org_widget.set_people(people)
         self._rating_org_widget.set_people(people)
         self._salary_org_widget.set_people(people)
+
+        list_selected = self._people_list_widget.item(0)
+        print(list_selected)
+        self._people_list_widget.setCurrentItem(list_selected)
+
         self.update()
 
-        # self._people_list_widget.setCurrentItem(people[top_level_supervisor]["Person"]["Name"])
-
     def set_supervisor(self, top_level_supervisor):
+        print("set supervisor", top_level_supervisor)
         manager = False
         if len(self._people[top_level_supervisor]["Direct Reports"]) != 0:
             manager = True
@@ -659,7 +764,6 @@ all_people[top_level_supervisor]["Supervisor Fraction"] = 1
 
 app = QtWidgets.QApplication(sys.argv)
 window = MainWindow()
-window.set_people(all_people)
-window.set_supervisor(top_level_supervisor)
+window.set_people(all_people, top_level_supervisor)
 window.show()
 app.exec()
