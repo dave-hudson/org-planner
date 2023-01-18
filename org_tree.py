@@ -13,6 +13,19 @@ location_colours = {
     "USA": [0xcc, 0x33, 0xff]
 }
 
+team_colours = [
+    [0xff, 0x40, 0x33],
+    [0xff, 0x99, 0x33],
+    [0xff, 0xff, 0x33],
+    [0xe0, 0xe0, 0x2c],
+    [0x99, 0xff, 0x33],
+    [0x70, 0xe0, 0x2c],
+    [0x33, 0xff, 0xff],
+    [0x40, 0xcc, 0xff],
+    [0xe0, 0x80, 0xff],
+    [0xcc, 0x33, 0xff]
+]
+
 grade_colours = {
     "A": [0xff, 0x40, 0x33],
     "B": [0xff, 0x99, 0x33],
@@ -92,6 +105,38 @@ fx_rates = {
     "Singapore": 0.76,
     "USA": 1.0
 }
+
+team_colours_list = [
+    [0xff, 0xc0, 0xc0],
+    [0xc0, 0xff, 0xc0],
+    [0xc0, 0xc0, 0xff],
+    [0xff, 0xff, 0xc0],
+    [0xc0, 0xff, 0xff],
+    [0xff, 0xc0, 0xff],
+    [0xc0, 0x80, 0x80],
+    [0x80, 0xc0, 0x80],
+    [0x80, 0x80, 0xc0],
+    [0xc0, 0xc0, 0x80],
+    [0x80, 0xc0, 0xc0],
+    [0xc0, 0x80, 0xc0],
+    [0x80, 0x40, 0x40],
+    [0x40, 0x80, 0x40],
+    [0x40, 0x40, 0x80],
+    [0x80, 0x80, 0x40],
+    [0x40, 0x80, 0x80],
+    [0x80, 0x40, 0x80],
+    [0x40, 0x00, 0x00],
+    [0x00, 0x40, 0x00],
+    [0x00, 0x00, 0x40],
+    [0x40, 0x40, 0x00],
+    [0x00, 0x40, 0x40],
+    [0x40, 0x00, 0x40],
+    [0xff, 0xff, 0xff],
+    [0xc0, 0xc0, 0xc0],
+    [0x80, 0x80, 0x80],
+    [0x40, 0x40, 0x40],
+    [0x00, 0x00, 0x00]
+]
 
 class HLine(QtWidgets.QFrame):
     """
@@ -239,14 +284,17 @@ class SunburstOrgWidget(QtWidgets.QWidget):
 
                 base_colour = int(0x70 * log_salary_usd)
                 colours = [0x20 + base_colour, 0x20 + base_colour, 0xff - base_colour, 0xff]
-        else:
+        elif self._render_type == 7:
             rollup_salary = p["Rollup Salaries"]
-            log_rollup_salary = 0
             if rollup_salary > 0:
                 log_rollup_salary = math.log10(rollup_salary) - 4
-
-            base_colour = int(0x38 * log_rollup_salary)
-            colours = [0x20 + base_colour, 0xff - base_colour, 0x20 + base_colour, 0xff]
+                base_colour = int(0x38 * log_rollup_salary)
+                colours = [0x20 + base_colour, 0xff - base_colour, 0x20 + base_colour, 0xff]
+        else:
+            if "Team" in p["Person"].keys():
+                location = p["Person"]["Team"]
+                if location in team_colours:
+                    colours = team_colours[location]
 
         brush = QtGui.QBrush(QtGui.QColor(colours[0], colours[1], colours[2], 0xff))
         painter.setBrush(brush)
@@ -383,7 +431,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._tree_view_action.triggered.connect(self._tree_view_checked)
 
         # Create a menu bar and menu drop-downs.
-        menu_bar = QtWidgets.QMenuBar(self)
+        menu_bar = QtWidgets.QMenuBar()
         self.setMenuBar(menu_bar)
         edit_menu = menu_bar.addMenu("&View")
         edit_menu.addAction(self._list_view_action)
@@ -425,6 +473,18 @@ class MainWindow(QtWidgets.QMainWindow):
 
         separator0 = HLine()
         self._side_layout.addWidget(separator0)
+
+        info_layout10 = QtWidgets.QGridLayout()
+        self._side_layout.addLayout(info_layout10)
+        info_layout10.addWidget(QtWidgets.QLabel("Team"), 0, 0)
+        self._info_team = QtWidgets.QLabel("")
+        info_layout10.addWidget(self._info_team, 0, 1)
+
+        self._team_org_widget = SunburstOrgKeyWidget(SunburstOrgWidget(8), ColourKey1DWidget(team_colours))
+        self._side_layout.addWidget(self._team_org_widget)
+
+        separator10 = HLine()
+        self._side_layout.addWidget(separator10)
 
         info_layout1 = QtWidgets.QGridLayout()
         self._side_layout.addLayout(info_layout1)
@@ -623,6 +683,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._people_tree_widget.insertTopLevelItem(0, top_level)
         self._people_tree_widget.expandAll()
 
+        self._team_org_widget.set_people(people)
         self._location_org_widget.set_people(people)
         self._grade_org_widget.set_people(people)
         self._gender_org_widget.set_people(people)
@@ -649,6 +710,10 @@ class MainWindow(QtWidgets.QMainWindow):
             self._info_supervisor_uen.setText(str(p["Supervisor UEN"]))
 
         self._info_total_reports.setText(str(self._people[top_level_supervisor]["Total Reports"]))
+
+        self._info_team.setText(p["Team"])
+        self._team_org_widget.set_supervisor(top_level_supervisor)
+        self._team_org_widget.setVisible(manager)
 
         self._info_location.setText(p["Locations"][-1]["Location"])
         self._location_org_widget.set_supervisor(top_level_supervisor)
@@ -721,6 +786,16 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.update()
 
+
+def scan_teams(people):
+    teams = []
+
+    for i in people:
+        team = people[i]["Person"]["Team"]
+        if team not in teams:
+            teams.append(team)
+
+    return teams
 
 def scan_org_tree(people, supervisor_uen, depth):
     # Scan each direct report recursively, computing how deep each person is in
@@ -810,6 +885,13 @@ if fail:
 
 scan_org_tree(all_people, top_level_supervisor, 0)
 all_people[top_level_supervisor]["Supervisor Fraction"] = 1
+
+team_colours = {}
+all_teams = scan_teams(all_people)
+ci = 0
+for i in all_teams:
+    team_colours[i] = team_colours_list[ci]
+    ci += 1
 
 app = QtWidgets.QApplication(sys.argv)
 window = MainWindow()
