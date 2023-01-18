@@ -1,4 +1,5 @@
 import json
+import math
 import sys
 import time
 from PySide6 import QtCore, QtGui, QtWidgets
@@ -57,6 +58,30 @@ rating_colours = {
     "3": [0xff, 0xff, 0x20],
     "4": [0xff, 0xa0, 0x20],
     "5": [0xff, 0x40, 0x40]
+}
+
+salary_colours = {
+    "10000": [0x20, 0x20, 0xff],
+    "17783": [0x3c, 0x3c, 0xe4],
+    "31600": [0x58, 0x58, 0xd8],
+    "56234": [0x74, 0x74, 0xac],
+    "100000": [0x90, 0x90, 0x90],
+    "177830": [0xac, 0xac, 0x74],
+    "316000": [0xc8, 0xc8, 0x58],
+    "562340": [0xe4, 0xe4, 0x3c],
+    "1000000": [0xff, 0xff, 0x20]
+}
+
+rollup_salary_colours = {
+    "10000": [0x20, 0xff, 0x20],
+    "31600": [0x3c, 0xe4, 0x3c],
+    "100000": [0x58, 0xd8, 0x58],
+    "316000": [0x74, 0xac, 0x74],
+    "1000000": [0x90, 0x90, 0x90],
+    "3160000": [0xac, 0x74, 0xac],
+    "10000000": [0xc8, 0x58, 0xc8],
+    "31600000": [0xe4, 0x3c, 0xe4],
+    "100000000": [0xff, 0x20, 0xff]
 }
 
 fx_rates = {
@@ -189,7 +214,7 @@ class SunburstOrgWidget(QtWidgets.QWidget):
                 if gender in gender_colours:
                     colours = gender_colours[gender]
         elif self._render_type == 3:
-                base_colour = int(0xc0 * p["Service Duration Fraction"])
+                base_colour = int(0xff * p["Service Duration Fraction"])
                 colours = [0xff, 0xff - base_colour, 0xff - base_colour, 0xff]
         elif self._render_type == 4:
             if "9 Box" in p["Person"].keys():
@@ -204,12 +229,24 @@ class SunburstOrgWidget(QtWidgets.QWidget):
                 rating = str(p["Person"]["Ratings"][-1]["Rating"])
                 if rating in rating_colours:
                     colours = rating_colours[rating]
-        else:
+        elif self._render_type == 6:
             if "Salaries" in p["Person"].keys():
                 salary = p["Person"]["Salaries"][-1]["Salary"]
-                salary_fraction = salary * fx_rates[p["Person"]["Locations"][-1]["Location"]] / 300000
-                base_colour = int(0xc0 * salary_fraction)
-                colours = [0xff - base_colour, 0xff - base_colour, 0xff, 0xff]
+                salary_usd = salary * fx_rates[p["Person"]["Locations"][-1]["Location"]]
+                log_salary_usd = 0
+                if salary > 0:
+                    log_salary_usd = math.log10(salary_usd) - 4
+
+                base_colour = int(0x70 * log_salary_usd)
+                colours = [0x20 + base_colour, 0x20 + base_colour, 0xff - base_colour, 0xff]
+        else:
+            rollup_salary = p["Rollup Salaries"]
+            log_rollup_salary = 0
+            if rollup_salary > 0:
+                log_rollup_salary = math.log10(rollup_salary) - 4
+
+            base_colour = int(0x38 * log_rollup_salary)
+            colours = [0x20 + base_colour, 0xff - base_colour, 0x20 + base_colour, 0xff]
 
         brush = QtGui.QBrush(QtGui.QColor(colours[0], colours[1], colours[2], 0xff))
         painter.setBrush(brush)
@@ -475,12 +512,21 @@ class MainWindow(QtWidgets.QMainWindow):
         info_layout7.addWidget(QtWidgets.QLabel("Salary (USD)"), 1, 0)
         self._info_salary_usd = QtWidgets.QLabel("")
         info_layout7.addWidget(self._info_salary_usd, 1, 1)
-        info_layout7.addWidget(QtWidgets.QLabel("Rollup Salary (USD)"), 2, 0)
-        self._info_rollup_salary_usd = QtWidgets.QLabel("")
-        info_layout7.addWidget(self._info_rollup_salary_usd, 2, 1)
 
-        self._salary_org_widget = SunburstOrgKeyWidget(SunburstOrgWidget(6), None)
+        self._salary_org_widget = SunburstOrgKeyWidget(SunburstOrgWidget(6), ColourKey1DWidget(salary_colours))
         self._side_layout.addWidget(self._salary_org_widget)
+
+        separator7 = HLine()
+        self._side_layout.addWidget(separator7)
+
+        info_layout8 = QtWidgets.QGridLayout()
+        self._side_layout.addLayout(info_layout8)
+        info_layout8.addWidget(QtWidgets.QLabel("Rollup Salary (USD)"), 0, 0)
+        self._info_rollup_salary_usd = QtWidgets.QLabel("")
+        info_layout8.addWidget(self._info_rollup_salary_usd, 0, 1)
+
+        self._rollup_salary_org_widget = SunburstOrgKeyWidget(SunburstOrgWidget(7), ColourKey1DWidget(rollup_salary_colours))
+        self._side_layout.addWidget(self._rollup_salary_org_widget)
 
         # Insert a spacer so the layout engine doesn't try to spread out the
         # info panel elements if they take less space than the visible
@@ -584,15 +630,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self._nine_box_org_widget.set_people(people)
         self._rating_org_widget.set_people(people)
         self._salary_org_widget.set_people(people)
+        self._rollup_salary_org_widget.set_people(people)
 
         list_selected = self._people_list_widget.item(0)
-        print(list_selected)
         self._people_list_widget.setCurrentItem(list_selected)
 
         self.update()
 
     def set_supervisor(self, top_level_supervisor):
-        print("set supervisor", top_level_supervisor)
         manager = False
         if len(self._people[top_level_supervisor]["Direct Reports"]) != 0:
             manager = True
@@ -658,6 +703,11 @@ class MainWindow(QtWidgets.QMainWindow):
             salary_usd_val = salary_val * fx_rates[p["Locations"][-1]["Location"]]
             salary_usd = str(int(salary_usd_val))
 
+        self._info_salary.setText(salary)
+        self._info_salary_usd.setText(salary_usd)
+        self._salary_org_widget.set_supervisor(top_level_supervisor)
+        self._salary_org_widget.setVisible(manager)
+
         rollup_salary_usd = "N/A"
         rollup_salary_usd_val = int(self._people[top_level_supervisor]["Rollup Salaries"])
 
@@ -665,11 +715,9 @@ class MainWindow(QtWidgets.QMainWindow):
             rollup_missing_salaries = self._people[top_level_supervisor]["Missing Salaries"]
             rollup_salary_usd = str("{:d} (Missing {:d} people)").format(rollup_salary_usd_val, rollup_missing_salaries)
 
-        self._info_salary.setText(salary)
-        self._info_salary_usd.setText(salary_usd)
         self._info_rollup_salary_usd.setText(rollup_salary_usd)
-        self._salary_org_widget.set_supervisor(top_level_supervisor)
-        self._salary_org_widget.setVisible(manager)
+        self._rollup_salary_org_widget.set_supervisor(top_level_supervisor)
+        self._rollup_salary_org_widget.setVisible(manager)
 
         self.update()
 
@@ -689,8 +737,6 @@ def scan_org_tree(people, supervisor_uen, depth):
 
     p["Org Depth"] = depth
     p["Total Reports"] = num_reports
-    p["Rollup Salaries"] = rollup_salaries
-    p["Missing Salaries"] = missing_salaries
 
     # Scan each direct report, but this time compute the fraction of the overall
     # team their subteam represents.
@@ -722,6 +768,9 @@ def scan_org_tree(people, supervisor_uen, depth):
         salary = p["Person"]["Salaries"][-1]["Salary"]
         salary_usd = salary * fx_rates[p["Person"]["Locations"][-1]["Location"]]
         rollup_salaries += salary_usd
+
+    p["Rollup Salaries"] = rollup_salaries
+    p["Missing Salaries"] = missing_salaries
 
     return (num_reports, rollup_salaries, missing_salaries)
 
