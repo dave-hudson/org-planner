@@ -706,9 +706,11 @@ class MainWindow(QtWidgets.QMainWindow):
         p = self._people[top_level_supervisor]["Person"]
         self._info_name.setText(p["Name"])
         self._info_uen.setText(str(p["UEN"]))
+        supervisor_uen = "N/A"
         if "Supervisor UEN" in p.keys():
-            self._info_supervisor_uen.setText(str(p["Supervisor UEN"]))
+            supervisor_uen = str(p["Supervisor UEN"])
 
+        self._info_supervisor_uen.setText(supervisor_uen)
         self._info_total_reports.setText(str(self._people[top_level_supervisor]["Total Reports"]))
 
         self._info_team.setText(p["Team"])
