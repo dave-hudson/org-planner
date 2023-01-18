@@ -195,7 +195,7 @@ class SunburstOrgWidget(QtWidgets.QWidget):
         return org_depth
 
     def _setup_brush(self, painter, uen):
-        colours = [0x80, 0x80, 0x80]
+        colours = [0x40, 0x40, 0x40]
 
         p = self._people[uen]
         if self._render_type == 0:
