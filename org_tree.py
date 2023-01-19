@@ -225,7 +225,7 @@ class SunburstOrgWidget(QtWidgets.QWidget):
     def __init__(self, render_type) -> None:
         super().__init__()
         self._people = {}
-        self._top_level_supervisor = 0
+        self._uen = 0
         self._render_type = render_type
 
     def _scan_depth(self, supervisor):
@@ -333,10 +333,10 @@ class SunburstOrgWidget(QtWidgets.QWidget):
             return
 
         # Recursively draw the outer layers of the org chart.
-        self._recurse_draw_widget(painter, self._top_level_supervisor, 1, 0, 360)
+        self._recurse_draw_widget(painter, self._uen, 1, 0, 360)
 
         # Then draw the inner-most node.
-        self._setup_brush(painter, self._top_level_supervisor)
+        self._setup_brush(painter, self._uen)
         painter.drawEllipse(self._spacing + self._max_radius - self._ring_width,
                             self._spacing + self._max_radius - self._ring_width,
                             self._ring_width * 2, self._ring_width * 2)
@@ -354,13 +354,13 @@ class SunburstOrgWidget(QtWidgets.QWidget):
     def set_people(self, people):
         self._people = people
 
-    def set_supervisor(self, top_level_supervisor):
-        self._top_level_supervisor = top_level_supervisor
+    def set_uen(self, uen):
+        self._uen = uen
 
-        supervisor_org_depth = self._people[top_level_supervisor]["Org Depth"]
+        supervisor_org_depth = self._people[uen]["Org Depth"]
 
         # Work out how many layers deep the org goes.
-        self._max_depth = self._scan_depth(top_level_supervisor)
+        self._max_depth = self._scan_depth(uen)
         self._ring_width = 60
         self._max_radius = self._ring_width * (self._max_depth - supervisor_org_depth + 1)
         self._spacing = 10
@@ -394,8 +394,8 @@ class SunburstOrgKeyWidget(QtWidgets.QWidget):
     def set_people(self, people):
         self._org_widget.set_people(people)
 
-    def set_supervisor(self, top_level_supervisor):
-        self._org_widget.set_supervisor(top_level_supervisor)
+    def set_uen(self, uen):
+        self._org_widget.set_uen(uen)
 
 
 class PeopleSelectorWidget(QtWidgets.QWidget):
@@ -668,13 +668,13 @@ class MainWindow(QtWidgets.QMainWindow):
     def _people_list_index_changed(self, list_item):
         for i in self._people:
             if self._people[i]["Person"]["Name"] == list_item.text():
-                self.set_supervisor(i)
+                self.set_uen(i)
                 break
 
     def _people_tree_item_changed(self, tree_item):
         for i in self._people:
             if self._people[i]["Person"]["Name"] == tree_item.text(0):
-                self.set_supervisor(i)
+                self.set_uen(i)
                 break
 
     def _set_people_tree(self, supervisor_uen, supervisor_item):
@@ -684,7 +684,7 @@ class MainWindow(QtWidgets.QMainWindow):
             supervisor_item.addChild(twi)
             self._set_people_tree(p, twi)
 
-    def set_people(self, people, top_level_supervisor):
+    def set_people(self, people, uen):
         self._people = people
 
         for i in people:
@@ -693,8 +693,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self._people_list_widget.sortItems(QtGui.Qt.AscendingOrder)
 
         top_level = QtWidgets.QTreeWidgetItem()
-        top_level.setText(0, people[top_level_supervisor]["Person"]["Name"])
-        self._set_people_tree(top_level_supervisor, top_level)
+        top_level.setText(0, people[uen]["Person"]["Name"])
+        self._set_people_tree(uen, top_level)
         self._people_tree_widget.insertTopLevelItem(0, top_level)
         self._people_tree_widget.expandAll()
 
@@ -714,12 +714,12 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.update()
 
-    def set_supervisor(self, top_level_supervisor):
+    def set_uen(self, uen):
         manager = False
-        if len(self._people[top_level_supervisor]["Direct Reports"]) != 0:
+        if len(self._people[uen]["Direct Reports"]) != 0:
             manager = True
 
-        p = self._people[top_level_supervisor]["Person"]
+        p = self._people[uen]["Person"]
         self._info_name.setText(p["Name"])
         self._info_uen.setText(str(p["UEN"]))
         supervisor_uen = "N/A"
@@ -728,18 +728,18 @@ class MainWindow(QtWidgets.QMainWindow):
             supervisor_uen = str("{:d} ({:s})").format(supervisor, self._people[supervisor]["Person"]["Name"])
 
         self._info_supervisor_uen.setText(supervisor_uen)
-        self._info_total_reports.setText(str(self._people[top_level_supervisor]["Total Reports"]))
+        self._info_total_reports.setText(str(self._people[uen]["Total Reports"]))
 
         self._info_team.setText(p["Team"])
-        self._team_org_widget.set_supervisor(top_level_supervisor)
+        self._team_org_widget.set_uen(uen)
         self._team_org_widget.setVisible(manager)
 
         self._info_type.setText(p["Type"])
-        self._type_org_widget.set_supervisor(top_level_supervisor)
+        self._type_org_widget.set_uen(uen)
         self._type_org_widget.setVisible(manager)
 
         self._info_location.setText(p["Locations"][-1]["Location"])
-        self._location_org_widget.set_supervisor(top_level_supervisor)
+        self._location_org_widget.set_uen(uen)
         self._location_org_widget.setVisible(manager)
 
         grade = "None"
@@ -747,7 +747,7 @@ class MainWindow(QtWidgets.QMainWindow):
             grade = p["Grades"][-1]["Grade"]
 
         self._info_grade.setText(grade)
-        self._grade_org_widget.set_supervisor(top_level_supervisor)
+        self._grade_org_widget.set_uen(uen)
         self._grade_org_widget.setVisible(manager)
 
         gender = "None"
@@ -755,13 +755,13 @@ class MainWindow(QtWidgets.QMainWindow):
             gender = p["Gender"]
 
         self._info_gender.setText(gender)
-        self._gender_org_widget.set_supervisor(top_level_supervisor)
+        self._gender_org_widget.set_uen(uen)
         self._gender_org_widget.setVisible(manager)
 
         self._info_start_date.setText(p["Start Date"])
-        service_duration = self._people[top_level_supervisor]["Service Duration"] / (86400 * 7)
+        service_duration = self._people[uen]["Service Duration"] / (86400 * 7)
         self._info_service_duration.setText(str("{:.1f}").format(service_duration))
-        self._service_duration_org_widget.set_supervisor(top_level_supervisor)
+        self._service_duration_org_widget.set_uen(uen)
         self._service_duration_org_widget.setVisible(manager)
 
         nine_box_potential = "None"
@@ -772,7 +772,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._info_nine_box_potential.setText(nine_box_potential)
         self._info_nine_box_performance.setText(nine_box_performance)
-        self._nine_box_org_widget.set_supervisor(top_level_supervisor)
+        self._nine_box_org_widget.set_uen(uen)
         self._nine_box_org_widget.setVisible(manager)
 
         rating = "None"
@@ -780,7 +780,7 @@ class MainWindow(QtWidgets.QMainWindow):
             rating = str(p["Ratings"][-1]["Rating"])
 
         self._info_rating.setText(rating)
-        self._rating_org_widget.set_supervisor(top_level_supervisor)
+        self._rating_org_widget.set_uen(uen)
         self._rating_org_widget.setVisible(manager)
 
         salary = "N/A"
@@ -793,18 +793,18 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._info_salary.setText(salary)
         self._info_salary_usd.setText(salary_usd)
-        self._salary_org_widget.set_supervisor(top_level_supervisor)
+        self._salary_org_widget.set_uen(uen)
         self._salary_org_widget.setVisible(manager)
 
         rollup_salary_usd = "N/A"
-        rollup_salary_usd_val = int(self._people[top_level_supervisor]["Rollup Salaries"])
+        rollup_salary_usd_val = int(self._people[uen]["Rollup Salaries"])
 
         if manager:
-            rollup_missing_salaries = self._people[top_level_supervisor]["Missing Salaries"]
+            rollup_missing_salaries = self._people[uen]["Missing Salaries"]
             rollup_salary_usd = str("{:d} (Missing {:d} people)").format(rollup_salary_usd_val, rollup_missing_salaries)
 
         self._info_rollup_salary_usd.setText(rollup_salary_usd)
-        self._rollup_salary_org_widget.set_supervisor(top_level_supervisor)
+        self._rollup_salary_org_widget.set_uen(uen)
         self._rollup_salary_org_widget.setVisible(manager)
 
         self.update()
@@ -907,12 +907,12 @@ json_file_path = r'people.json'
 with open(json_file_path, encoding = 'utf-8') as user_file:
     json_data = json.load(user_file)
 
-fail, all_people, top_level_supervisor = scan_json(json_data)
+fail, all_people, uen = scan_json(json_data)
 if fail:
     exit()
 
-scan_org_tree(all_people, top_level_supervisor, 0)
-all_people[top_level_supervisor]["Supervisor Fraction"] = 1
+scan_org_tree(all_people, uen, 0)
+all_people[uen]["Supervisor Fraction"] = 1
 
 all_teams, all_types = scan_teams_and_types(all_people)
 
@@ -930,6 +930,6 @@ for i in all_types:
 
 app = QtWidgets.QApplication(sys.argv)
 window = MainWindow()
-window.set_people(all_people, top_level_supervisor)
+window.set_people(all_people, uen)
 window.show()
 app.exec()
