@@ -461,134 +461,60 @@ class MainWindow(QtWidgets.QMainWindow):
         self._side_layout.addWidget(self._info_name)
         self._side_layout.addWidget(QtWidgets.QLabel(""))
 
-        info_layout0 = QtWidgets.QGridLayout()
-        self._side_layout.addLayout(info_layout0)
-        info_layout0.addWidget(QtWidgets.QLabel("UEN"), 0, 0)
-        self._info_uen = QtWidgets.QLabel("")
-        info_layout0.addWidget(self._info_uen, 0, 1)
-        info_layout0.addWidget(QtWidgets.QLabel("Supervisor UEN"), 1, 0)
-        self._info_supervisor_uen = QtWidgets.QLabel("")
-        info_layout0.addWidget(self._info_supervisor_uen, 1, 1)
-        info_layout0.addWidget(QtWidgets.QLabel("Total Reports"), 2, 0)
-        self._info_total_reports = QtWidgets.QLabel("")
-        info_layout0.addWidget(self._info_total_reports, 2, 1)
+        self._info_uen = self._add_info_text("UEN")
+        self._info_supervisor_uen = self._add_info_text("Supervisor UEN")
+        self._info_total_reports = self._add_info_text("Total Reports")
 
         self._side_layout.addWidget(HLine())
-
-        info_layout10 = QtWidgets.QGridLayout()
-        self._side_layout.addLayout(info_layout10)
-        info_layout10.addWidget(QtWidgets.QLabel("Team"), 0, 0)
-        self._info_team = QtWidgets.QLabel("")
-        info_layout10.addWidget(self._info_team, 0, 1)
-
+        self._info_team = self._add_info_text("Team")
         self._team_org_widget = SunburstOrgKeyWidget(SunburstOrgWidget(8), ColourKey1DWidget(team_colours))
         self._side_layout.addWidget(self._team_org_widget)
 
         self._side_layout.addWidget(HLine())
-
-        info_layout11 = QtWidgets.QGridLayout()
-        self._side_layout.addLayout(info_layout11)
-        info_layout11.addWidget(QtWidgets.QLabel("Type"), 0, 0)
-        self._info_type = QtWidgets.QLabel("")
-        info_layout11.addWidget(self._info_type, 0, 1)
-
+        self._info_type = self._add_info_text("Type")
         self._type_org_widget = SunburstOrgKeyWidget(SunburstOrgWidget(9), ColourKey1DWidget(type_colours))
         self._side_layout.addWidget(self._type_org_widget)
 
         self._side_layout.addWidget(HLine())
-
-        info_layout1 = QtWidgets.QGridLayout()
-        self._side_layout.addLayout(info_layout1)
-        info_layout1.addWidget(QtWidgets.QLabel("Location"), 0, 0)
-        self._info_location = QtWidgets.QLabel("")
-        info_layout1.addWidget(self._info_location, 0, 1)
-
+        self._info_location = self._add_info_text("Location")
         self._location_org_widget = SunburstOrgKeyWidget(SunburstOrgWidget(0), ColourKey1DWidget(location_colours))
         self._side_layout.addWidget(self._location_org_widget)
 
         self._side_layout.addWidget(HLine())
-
-        info_layout2 = QtWidgets.QGridLayout()
-        self._side_layout.addLayout(info_layout2)
-        info_layout2.addWidget(QtWidgets.QLabel("Grade"), 0, 0)
-        self._info_grade = QtWidgets.QLabel("")
-        info_layout2.addWidget(self._info_grade, 0, 1)
-
+        self._info_grade = self._add_info_text("Grade")
         self._grade_org_widget = SunburstOrgKeyWidget(SunburstOrgWidget(1), ColourKey1DWidget(grade_colours))
         self._side_layout.addWidget(self._grade_org_widget)
 
         self._side_layout.addWidget(HLine())
-
-        info_layout3 = QtWidgets.QGridLayout()
-        self._side_layout.addLayout(info_layout3)
-        info_layout3.addWidget(QtWidgets.QLabel("Gender"), 0, 0)
-        self._info_gender = QtWidgets.QLabel("")
-        info_layout3.addWidget(self._info_gender, 0, 1)
-
+        self._info_gender = self._add_info_text("Gender")
         self._gender_org_widget = SunburstOrgKeyWidget(SunburstOrgWidget(2), ColourKey1DWidget(gender_colours))
         self._side_layout.addWidget(self._gender_org_widget)
 
         self._side_layout.addWidget(HLine())
-
-        info_layout4 = QtWidgets.QGridLayout()
-        self._side_layout.addLayout(info_layout4)
-        info_layout4.addWidget(QtWidgets.QLabel("Start Date"), 0, 0)
-        self._info_start_date = QtWidgets.QLabel("")
-        info_layout4.addWidget(self._info_start_date, 0, 1)
-        info_layout4.addWidget(QtWidgets.QLabel("Service Duration (weeks)"), 1, 0)
-        self._info_service_duration = QtWidgets.QLabel("")
-        info_layout4.addWidget(self._info_service_duration, 1, 1)
-
+        self._info_start_date = self._add_info_text("Start Date")
+        self._info_service_duration = self._add_info_text("Service Duration (weeks)")
         self._service_duration_org_widget = SunburstOrgKeyWidget(SunburstOrgWidget(3), None)
         self._side_layout.addWidget(self._service_duration_org_widget)
 
         self._side_layout.addWidget(HLine())
-
-        info_layout5 = QtWidgets.QGridLayout()
-        self._side_layout.addLayout(info_layout5)
-        info_layout5.addWidget(QtWidgets.QLabel("9-box Grid Potential"), 0, 0)
-        self._info_nine_box_potential = QtWidgets.QLabel("")
-        info_layout5.addWidget(self._info_nine_box_potential, 0, 1)
-        info_layout5.addWidget(QtWidgets.QLabel("9-box Grid Performance"), 1, 0)
-        self._info_nine_box_performance = QtWidgets.QLabel("")
-        info_layout5.addWidget(self._info_nine_box_performance, 1, 1)
-
+        self._info_nine_box_potential = self._add_info_text("9-box Grid Potential")
+        self._info_nine_box_performance = self._add_info_text("9-box Grid Performance")
         self._nine_box_org_widget = SunburstOrgKeyWidget(SunburstOrgWidget(4), ColourKey2DWidget(nine_box_colours))
         self._side_layout.addWidget(self._nine_box_org_widget)
 
         self._side_layout.addWidget(HLine())
-
-        info_layout6 = QtWidgets.QGridLayout()
-        self._side_layout.addLayout(info_layout6)
-        info_layout6.addWidget(QtWidgets.QLabel("Rating"), 0, 0)
-        self._info_rating = QtWidgets.QLabel("")
-        info_layout6.addWidget(self._info_rating, 0, 1)
-
+        self._info_rating = self._add_info_text("Rating")
         self._rating_org_widget = SunburstOrgKeyWidget(SunburstOrgWidget(5), ColourKey1DWidget(rating_colours))
         self._side_layout.addWidget(self._rating_org_widget)
 
         self._side_layout.addWidget(HLine())
-
-        info_layout7 = QtWidgets.QGridLayout()
-        self._side_layout.addLayout(info_layout7)
-        info_layout7.addWidget(QtWidgets.QLabel("Salary"), 0, 0)
-        self._info_salary = QtWidgets.QLabel("")
-        info_layout7.addWidget(self._info_salary, 0, 1)
-        info_layout7.addWidget(QtWidgets.QLabel("Salary (USD)"), 1, 0)
-        self._info_salary_usd = QtWidgets.QLabel("")
-        info_layout7.addWidget(self._info_salary_usd, 1, 1)
-
+        self._info_salary = self._add_info_text("Salary")
+        self._info_salary_usd = self._add_info_text("Salary (USD)")
         self._salary_org_widget = SunburstOrgKeyWidget(SunburstOrgWidget(6), ColourKey1DWidget(salary_colours))
         self._side_layout.addWidget(self._salary_org_widget)
 
         self._side_layout.addWidget(HLine())
-
-        info_layout8 = QtWidgets.QGridLayout()
-        self._side_layout.addLayout(info_layout8)
-        info_layout8.addWidget(QtWidgets.QLabel("Rollup Salary (USD)"), 0, 0)
-        self._info_rollup_salary_usd = QtWidgets.QLabel("")
-        info_layout8.addWidget(self._info_rollup_salary_usd, 0, 1)
-
+        self._info_rollup_salary_usd = self._add_info_text("Rollup Salary (USD")
         self._rollup_salary_org_widget = SunburstOrgKeyWidget(SunburstOrgWidget(7), ColourKey1DWidget(rollup_salary_colours))
         self._side_layout.addWidget(self._rollup_salary_org_widget)
 
@@ -611,6 +537,14 @@ class MainWindow(QtWidgets.QMainWindow):
         splitter_widget.addWidget(scroll_area)
 
         self.setCentralWidget(splitter_widget)
+
+    def _add_info_text(self, text):
+        info_layout = QtWidgets.QGridLayout()
+        self._side_layout.addLayout(info_layout)
+        info_layout.addWidget(QtWidgets.QLabel(text), 0, 0)
+        info_widget = QtWidgets.QLabel("")
+        info_layout.addWidget(info_widget, 0, 1)
+        return info_widget
 
     def _list_view_checked(self, s):
         """
