@@ -394,7 +394,8 @@ class SunburstOrgKeyWidget(QtWidgets.QWidget):
     def set_people(self, people):
         self._org_widget.set_people(people)
 
-    def set_uen(self, uen):
+    def set_uen(self, uen, is_manager):
+        self.setVisible(is_manager)
         self._org_widget.set_uen(uen)
 
 
@@ -638,9 +639,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.update()
 
     def set_uen(self, uen):
-        manager = False
+        is_manager = False
         if len(self._people[uen]["Direct Reports"]) != 0:
-            manager = True
+            is_manager = True
 
         p = self._people[uen]["Person"]
         self._info_name.setText(p["Name"])
@@ -654,38 +655,32 @@ class MainWindow(QtWidgets.QMainWindow):
         self._info_total_reports.setText(str(self._people[uen]["Total Reports"]))
 
         self._info_team.setText(p["Team"])
-        self._team_org_widget.set_uen(uen)
-        self._team_org_widget.setVisible(manager)
+        self._team_org_widget.set_uen(uen, is_manager)
 
         self._info_type.setText(p["Type"])
-        self._type_org_widget.set_uen(uen)
-        self._type_org_widget.setVisible(manager)
+        self._type_org_widget.set_uen(uen, is_manager)
 
         self._info_location.setText(p["Locations"][-1]["Location"])
-        self._location_org_widget.set_uen(uen)
-        self._location_org_widget.setVisible(manager)
+        self._location_org_widget.set_uen(uen, is_manager)
 
         grade = "None"
         if "Grades" in p.keys():
             grade = p["Grades"][-1]["Grade"]
 
         self._info_grade.setText(grade)
-        self._grade_org_widget.set_uen(uen)
-        self._grade_org_widget.setVisible(manager)
+        self._grade_org_widget.set_uen(uen, is_manager)
 
         gender = "None"
         if "Gender" in p.keys():
             gender = p["Gender"]
 
         self._info_gender.setText(gender)
-        self._gender_org_widget.set_uen(uen)
-        self._gender_org_widget.setVisible(manager)
+        self._gender_org_widget.set_uen(uen, is_manager)
 
         self._info_start_date.setText(p["Start Date"])
         service_duration = self._people[uen]["Service Duration"] / (86400 * 7)
         self._info_service_duration.setText(str("{:.1f}").format(service_duration))
-        self._service_duration_org_widget.set_uen(uen)
-        self._service_duration_org_widget.setVisible(manager)
+        self._service_duration_org_widget.set_uen(uen, is_manager)
 
         nine_box_potential = "None"
         nine_box_performance = "None"
@@ -695,16 +690,14 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._info_nine_box_potential.setText(nine_box_potential)
         self._info_nine_box_performance.setText(nine_box_performance)
-        self._nine_box_org_widget.set_uen(uen)
-        self._nine_box_org_widget.setVisible(manager)
+        self._nine_box_org_widget.set_uen(uen, is_manager)
 
         rating = "None"
         if "Ratings" in p.keys():
             rating = str(p["Ratings"][-1]["Rating"])
 
         self._info_rating.setText(rating)
-        self._rating_org_widget.set_uen(uen)
-        self._rating_org_widget.setVisible(manager)
+        self._rating_org_widget.set_uen(uen, is_manager)
 
         salary = "N/A"
         salary_usd = "N/A"
@@ -716,19 +709,17 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._info_salary.setText(salary)
         self._info_salary_usd.setText(salary_usd)
-        self._salary_org_widget.set_uen(uen)
-        self._salary_org_widget.setVisible(manager)
+        self._salary_org_widget.set_uen(uen, is_manager)
 
         rollup_salary_usd = "N/A"
         rollup_salary_usd_val = int(self._people[uen]["Rollup Salaries"])
 
-        if manager:
+        if is_manager:
             rollup_missing_salaries = self._people[uen]["Missing Salaries"]
             rollup_salary_usd = str("{:d} (Missing {:d} people)").format(rollup_salary_usd_val, rollup_missing_salaries)
 
         self._info_rollup_salary_usd.setText(rollup_salary_usd)
-        self._rollup_salary_org_widget.set_uen(uen)
-        self._rollup_salary_org_widget.setVisible(manager)
+        self._rollup_salary_org_widget.set_uen(uen, is_manager)
 
         self.update()
 
