@@ -915,6 +915,7 @@ scan_org_tree(all_people, uen, 0)
 all_people[uen]["Supervisor Fraction"] = 1
 
 all_teams, all_types = scan_teams_and_types(all_people)
+all_teams.sort()
 
 team_colours = {}
 ci = 0
