@@ -31,7 +31,8 @@ grade_colours = {
 
 gender_colours = {
     "M": [0x40, 0xc0, 0xff],
-    "F": [0xff, 0x80, 0x80]
+    "F": [0xff, 0x80, 0x80],
+    "NB": [0xc0, 0xc0, 0x40]
 }
 
 nine_box_colours = {
@@ -154,7 +155,11 @@ class ColourBoxWidget(QtWidgets.QLabel):
         palette = self.palette()
         cb = QtGui.QColor(colour[0], colour[1], colour[2], 0xff)
         palette.setColor(QtGui.QPalette.Window, cb)
-        ct = QtGui.QColor(0xff, 0xff, 0xff, 0xff)
+        if colour[0] + colour[1] + colour[2] > 0x100:
+            ct = QtGui.QColor(0x00, 0x00, 0x00, 0xff)
+        else:
+            ct = QtGui.QColor(0xff, 0xff, 0xff, 0xff)
+
         palette.setColor(QtGui.QPalette.WindowText, ct)
         self.setPalette(palette)
 
@@ -162,12 +167,15 @@ class ColourKey1DWidget(QtWidgets.QWidget):
     """
     A widget class used to draw colour keys in 1 dimension.
     """
-    def __init__(self, colour_dict) -> None:
+    def __init__(self, colour_dict, count_key = None) -> None:
         super().__init__()
         self._layout = QtWidgets.QGridLayout()
         self._layout.setContentsMargins(0, 0, 0, 0)
         self._layout.setSpacing(0)
         self._layout.setColumnMinimumWidth(1, 80)
+        self._people = {}
+        self._colour_box_widgets = []
+        self._count_key = count_key
 
         row = 0
         for cd in colour_dict:
@@ -176,21 +184,35 @@ class ColourKey1DWidget(QtWidgets.QWidget):
 
             colour_widget = ColourBoxWidget("", colour_dict[cd])
             self._layout.addWidget(colour_widget, row, 1)
+            self._colour_box_widgets.append(colour_widget)
 
             row += 1
 
         self.setSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         self.setLayout(self._layout)
 
+    def set_people(self, people):
+        self._people = people
+
+    def set_uen(self, uen):
+        if self._count_key == None:
+            return
+
+        for i in range(len(self._colour_box_widgets)):
+            self._colour_box_widgets[i].setText(str(self._people[uen][self._count_key][i]))
+
 class ColourKey2DWidget(QtWidgets.QWidget):
     """
     A widget class used to draw colour keys in 2 dimensions.
     """
-    def __init__(self, colour_dict) -> None:
+    def __init__(self, colour_dict, count_key = None) -> None:
         super().__init__()
         self._layout = QtWidgets.QGridLayout()
         self._layout.setContentsMargins(0, 0, 0, 0)
         self._layout.setSpacing(0)
+        self._people = {}
+        self._colour_box_widgets = []
+        self._count_key = count_key
 
         col = 1
         for cdj in colour_dict["Low"]:
@@ -207,16 +229,30 @@ class ColourKey2DWidget(QtWidgets.QWidget):
             self._layout.addWidget(label_widget, row, 0)
 
             col = 1
+            widget_list = []
             for cdj in colour_dict[cdi]:
                 colour_widget = ColourBoxWidget("", colour_dict[cdi][cdj])
                 self._layout.addWidget(colour_widget, row, col)
+                widget_list.append(colour_widget)
 
                 col += 1
 
+            self._colour_box_widgets.append(widget_list)
             row += 1
 
         self.setSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         self.setLayout(self._layout)
+
+    def set_people(self, people):
+        self._people = people
+
+    def set_uen(self, uen):
+        if self._count_key == None:
+            return
+
+        for i in range(len(self._colour_box_widgets)):
+            for j in range(len(self._colour_box_widgets[i])):
+                self._colour_box_widgets[i][j].setText(str(self._people[uen][self._count_key][i][j]))
 
 class SunburstOrgWidget(QtWidgets.QWidget):
     """
@@ -375,6 +411,7 @@ class SunburstOrgKeyWidget(QtWidgets.QWidget):
         super().__init__()
 
         self._org_widget = org_widget
+        self._key_widget = key_widget
 
         hbox = QtWidgets.QHBoxLayout()
         hbox.setContentsMargins(0, 0, 0, 0)
@@ -393,10 +430,14 @@ class SunburstOrgKeyWidget(QtWidgets.QWidget):
 
     def set_people(self, people):
         self._org_widget.set_people(people)
+        if self._key_widget:
+            self._key_widget.set_people(people)
 
     def set_uen(self, uen, is_manager):
         self.setVisible(is_manager)
         self._org_widget.set_uen(uen)
+        if self._key_widget:
+            self._key_widget.set_uen(uen)
 
 
 class PeopleSelectorWidget(QtWidgets.QWidget):
@@ -468,27 +509,27 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._side_layout.addWidget(HLine())
         self._info_team = self._add_info_text("Team")
-        self._team_org_widget = SunburstOrgKeyWidget(SunburstOrgWidget(8), ColourKey1DWidget(team_colours))
+        self._team_org_widget = SunburstOrgKeyWidget(SunburstOrgWidget(8), ColourKey1DWidget(team_colours, "Team Counts"))
         self._side_layout.addWidget(self._team_org_widget)
 
         self._side_layout.addWidget(HLine())
         self._info_type = self._add_info_text("Type")
-        self._type_org_widget = SunburstOrgKeyWidget(SunburstOrgWidget(9), ColourKey1DWidget(type_colours))
+        self._type_org_widget = SunburstOrgKeyWidget(SunburstOrgWidget(9), ColourKey1DWidget(type_colours, "Type Counts"))
         self._side_layout.addWidget(self._type_org_widget)
 
         self._side_layout.addWidget(HLine())
         self._info_location = self._add_info_text("Location")
-        self._location_org_widget = SunburstOrgKeyWidget(SunburstOrgWidget(0), ColourKey1DWidget(location_colours))
+        self._location_org_widget = SunburstOrgKeyWidget(SunburstOrgWidget(0), ColourKey1DWidget(location_colours, "Location Counts"))
         self._side_layout.addWidget(self._location_org_widget)
 
         self._side_layout.addWidget(HLine())
         self._info_grade = self._add_info_text("Grade")
-        self._grade_org_widget = SunburstOrgKeyWidget(SunburstOrgWidget(1), ColourKey1DWidget(grade_colours))
+        self._grade_org_widget = SunburstOrgKeyWidget(SunburstOrgWidget(1), ColourKey1DWidget(grade_colours, "Grade Counts"))
         self._side_layout.addWidget(self._grade_org_widget)
 
         self._side_layout.addWidget(HLine())
         self._info_gender = self._add_info_text("Gender")
-        self._gender_org_widget = SunburstOrgKeyWidget(SunburstOrgWidget(2), ColourKey1DWidget(gender_colours))
+        self._gender_org_widget = SunburstOrgKeyWidget(SunburstOrgWidget(2), ColourKey1DWidget(gender_colours, "Gender Counts"))
         self._side_layout.addWidget(self._gender_org_widget)
 
         self._side_layout.addWidget(HLine())
@@ -500,12 +541,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self._side_layout.addWidget(HLine())
         self._info_nine_box_potential = self._add_info_text("9-box Grid Potential")
         self._info_nine_box_performance = self._add_info_text("9-box Grid Performance")
-        self._nine_box_org_widget = SunburstOrgKeyWidget(SunburstOrgWidget(4), ColourKey2DWidget(nine_box_colours))
+        self._nine_box_org_widget = SunburstOrgKeyWidget(SunburstOrgWidget(4), ColourKey2DWidget(nine_box_colours, "9 Box Counts"))
         self._side_layout.addWidget(self._nine_box_org_widget)
 
         self._side_layout.addWidget(HLine())
         self._info_rating = self._add_info_text("Rating")
-        self._rating_org_widget = SunburstOrgKeyWidget(SunburstOrgWidget(5), ColourKey1DWidget(rating_colours))
+        self._rating_org_widget = SunburstOrgKeyWidget(SunburstOrgWidget(5), ColourKey1DWidget(rating_colours, "Rating Counts"))
         self._side_layout.addWidget(self._rating_org_widget)
 
         self._side_layout.addWidget(HLine())
@@ -742,26 +783,88 @@ def scan_teams_and_types(people):
 def scan_org_tree(people, supervisor_uen, depth):
     # Scan each direct report recursively, computing how deep each person is in
     # the overall org, and how many reports roll up to them in total.
-    num_reports = 0
-    rollup_salaries = 0
-    missing_salaries = 0
     p = people[supervisor_uen]
+    p["Location Counts"] = [0] * len(location_colours)
+    p["Team Counts"] = [0] * len(team_colours)
+    p["Type Counts"] = [0] * len(type_colours)
+    p["Grade Counts"] = [0] * len(grade_colours)
+    p["Gender Counts"] = [0] * len(gender_colours)
+    p["9 Box Counts"] = [[] for i in range(3)]
+    for i in range(3):
+        p["9 Box Counts"][i] = [0] * 3
+    p["Rating Counts"] = [0] * len(rating_colours)
+    p["Total Reports"] = 0
+    p["Rollup Salaries"] = 0
+    p["Missing Salaries"] = 0
+
     for i in p["Direct Reports"]:
-        (nr, rs, ms) = scan_org_tree(people, i, depth + 1)
-        num_reports += nr
-        rollup_salaries += rs
-        missing_salaries += ms
+        scan_org_tree(people, i, depth + 1)
+        dr = people[i]
+
+        for j in range(len(p["Team Counts"])):
+            p["Team Counts"][j] += dr["Team Counts"][j]
+
+        for j in range(len(p["Type Counts"])):
+            p["Type Counts"][j] += dr["Type Counts"][j]
+
+        for j in range(len(p["Location Counts"])):
+            p["Location Counts"][j] += dr["Location Counts"][j]
+
+        for j in range(len(p["Grade Counts"])):
+            p["Grade Counts"][j] += dr["Grade Counts"][j]
+
+        for j in range(len(p["Gender Counts"])):
+            p["Gender Counts"][j] += dr["Gender Counts"][j]
+
+        for j in range(len(p["9 Box Counts"])):
+            for k in range(len(p["9 Box Counts"][j])):
+                p["9 Box Counts"][j][k] += dr["9 Box Counts"][j][k]
+
+        for j in range(len(p["Rating Counts"])):
+            p["Rating Counts"][j] += dr["Rating Counts"][j]
+
+        p["Total Reports"] += (dr["Total Reports"] + 1)
+        p["Rollup Salaries"] += dr["Rollup Salaries"]
+        p["Missing Salaries"] += dr["Missing Salaries"]
+
+    team = p["Person"]["Team"]
+    p["Team Counts"][list(team_colours).index(team)] += 1
+
+    type = p["Person"]["Type"]
+    p["Type Counts"][list(type_colours).index(type)] += 1
+
+    location = p["Person"]["Locations"][-1]["Location"]
+    p["Location Counts"][list(location_colours).index(location)] += 1
+
+    if "Grades" in p["Person"].keys():
+        grade = p["Person"]["Grades"][-1]["Grade"]
+        p["Grade Counts"][list(grade_colours).index(grade)] += 1
+
+    if "Gender" in p["Person"].keys():
+        gender = p["Person"]["Gender"]
+        p["Gender Counts"][list(gender_colours).index(gender)] += 1
+
+    if "9 Box" in p["Person"].keys():
+        nine_box_potential = p["Person"]["9 Box"][-1]["Potential"]
+        nine_box_potential_index = list(nine_box_colours).index(nine_box_potential)
+        nine_box_performance = p["Person"]["9 Box"][-1]["Performance"]
+        nine_box_performance_index = list(nine_box_colours[nine_box_potential]).index(nine_box_performance)
+        p["9 Box Counts"][nine_box_potential_index][nine_box_performance_index] += 1
+
+    if "Ratings" in p["Person"].keys():
+        rating = str(p["Person"]["Ratings"][-1]["Rating"])
+        p["Rating Counts"][list(rating_colours).index(rating)] += 1
 
     p["Org Depth"] = depth
-    p["Total Reports"] = num_reports
 
     # Scan each direct report, but this time compute the fraction of the overall
     # team their subteam represents.
-    for i in p["Direct Reports"]:
+    drs = p["Direct Reports"]
+    num_reports = p["Total Reports"]
+    for i in drs:
         people[i]["Supervisor Fraction"] = (people[i]["Total Reports"] + 1) / num_reports
 
     # Sort the direct reports to put the one with the largest fraction of the org first.
-    drs = p["Direct Reports"]
     for i in range(len(drs)):
         for j in range(len(drs) - i - 1):
             if people[drs[j]]["Supervisor Fraction"] < people[drs[j + 1]]["Supervisor Fraction"]:
@@ -778,18 +881,12 @@ def scan_org_tree(people, supervisor_uen, depth):
     p["Service Duration"] = cur_time - time.mktime(t)
     p["Service Duration Fraction"] = worked_time / org_elapsed_time
 
-    num_reports += 1
     if "Salaries" not in p["Person"].keys():
-        missing_salaries += 1
+        p["Missing Salaries"] += 1
     else:
         salary = p["Person"]["Salaries"][-1]["Salary"]
-        salary_usd = salary * fx_rates[p["Person"]["Locations"][-1]["Location"]]
-        rollup_salaries += salary_usd
-
-    p["Rollup Salaries"] = rollup_salaries
-    p["Missing Salaries"] = missing_salaries
-
-    return (num_reports, rollup_salaries, missing_salaries)
+        salary_usd = salary * fx_rates[location]
+        p["Rollup Salaries"] += salary_usd
 
 def scan_json(json_data):
     people = {}
@@ -825,9 +922,6 @@ fail, all_people, uen = scan_json(json_data)
 if fail:
     exit()
 
-scan_org_tree(all_people, uen, 0)
-all_people[uen]["Supervisor Fraction"] = 1
-
 all_teams, all_types = scan_teams_and_types(all_people)
 all_teams.sort()
 
@@ -842,6 +936,9 @@ ci = 0
 for i in all_types:
     type_colours[i] = type_colours_list[ci]
     ci += 1
+
+scan_org_tree(all_people, uen, 0)
+all_people[uen]["Supervisor Fraction"] = 1
 
 app = QtWidgets.QApplication(sys.argv)
 window = MainWindow()
