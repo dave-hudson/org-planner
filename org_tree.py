@@ -463,7 +463,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         info_layout0 = QtWidgets.QGridLayout()
         self._side_layout.addLayout(info_layout0)
-
         info_layout0.addWidget(QtWidgets.QLabel("UEN"), 0, 0)
         self._info_uen = QtWidgets.QLabel("")
         info_layout0.addWidget(self._info_uen, 0, 1)
@@ -474,8 +473,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._info_total_reports = QtWidgets.QLabel("")
         info_layout0.addWidget(self._info_total_reports, 2, 1)
 
-        separator0 = HLine()
-        self._side_layout.addWidget(separator0)
+        self._side_layout.addWidget(HLine())
 
         info_layout10 = QtWidgets.QGridLayout()
         self._side_layout.addLayout(info_layout10)
@@ -486,8 +484,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._team_org_widget = SunburstOrgKeyWidget(SunburstOrgWidget(8), ColourKey1DWidget(team_colours))
         self._side_layout.addWidget(self._team_org_widget)
 
-        separator11 = HLine()
-        self._side_layout.addWidget(separator11)
+        self._side_layout.addWidget(HLine())
 
         info_layout11 = QtWidgets.QGridLayout()
         self._side_layout.addLayout(info_layout11)
@@ -498,8 +495,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._type_org_widget = SunburstOrgKeyWidget(SunburstOrgWidget(9), ColourKey1DWidget(type_colours))
         self._side_layout.addWidget(self._type_org_widget)
 
-        separator10 = HLine()
-        self._side_layout.addWidget(separator10)
+        self._side_layout.addWidget(HLine())
 
         info_layout1 = QtWidgets.QGridLayout()
         self._side_layout.addLayout(info_layout1)
@@ -510,8 +506,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._location_org_widget = SunburstOrgKeyWidget(SunburstOrgWidget(0), ColourKey1DWidget(location_colours))
         self._side_layout.addWidget(self._location_org_widget)
 
-        separator1 = HLine()
-        self._side_layout.addWidget(separator1)
+        self._side_layout.addWidget(HLine())
 
         info_layout2 = QtWidgets.QGridLayout()
         self._side_layout.addLayout(info_layout2)
@@ -522,8 +517,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._grade_org_widget = SunburstOrgKeyWidget(SunburstOrgWidget(1), ColourKey1DWidget(grade_colours))
         self._side_layout.addWidget(self._grade_org_widget)
 
-        separator2 = HLine()
-        self._side_layout.addWidget(separator2)
+        self._side_layout.addWidget(HLine())
 
         info_layout3 = QtWidgets.QGridLayout()
         self._side_layout.addLayout(info_layout3)
@@ -534,8 +528,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._gender_org_widget = SunburstOrgKeyWidget(SunburstOrgWidget(2), ColourKey1DWidget(gender_colours))
         self._side_layout.addWidget(self._gender_org_widget)
 
-        separator3 = HLine()
-        self._side_layout.addWidget(separator3)
+        self._side_layout.addWidget(HLine())
 
         info_layout4 = QtWidgets.QGridLayout()
         self._side_layout.addLayout(info_layout4)
@@ -549,8 +542,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._service_duration_org_widget = SunburstOrgKeyWidget(SunburstOrgWidget(3), None)
         self._side_layout.addWidget(self._service_duration_org_widget)
 
-        separator4 = HLine()
-        self._side_layout.addWidget(separator4)
+        self._side_layout.addWidget(HLine())
 
         info_layout5 = QtWidgets.QGridLayout()
         self._side_layout.addLayout(info_layout5)
@@ -564,8 +556,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._nine_box_org_widget = SunburstOrgKeyWidget(SunburstOrgWidget(4), ColourKey2DWidget(nine_box_colours))
         self._side_layout.addWidget(self._nine_box_org_widget)
 
-        separator5 = HLine()
-        self._side_layout.addWidget(separator5)
+        self._side_layout.addWidget(HLine())
 
         info_layout6 = QtWidgets.QGridLayout()
         self._side_layout.addLayout(info_layout6)
@@ -576,8 +567,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._rating_org_widget = SunburstOrgKeyWidget(SunburstOrgWidget(5), ColourKey1DWidget(rating_colours))
         self._side_layout.addWidget(self._rating_org_widget)
 
-        separator6 = HLine()
-        self._side_layout.addWidget(separator6)
+        self._side_layout.addWidget(HLine())
 
         info_layout7 = QtWidgets.QGridLayout()
         self._side_layout.addLayout(info_layout7)
@@ -591,8 +581,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._salary_org_widget = SunburstOrgKeyWidget(SunburstOrgWidget(6), ColourKey1DWidget(salary_colours))
         self._side_layout.addWidget(self._salary_org_widget)
 
-        separator7 = HLine()
-        self._side_layout.addWidget(separator7)
+        self._side_layout.addWidget(HLine())
 
         info_layout8 = QtWidgets.QGridLayout()
         self._side_layout.addLayout(info_layout8)
