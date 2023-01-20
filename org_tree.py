@@ -864,13 +864,28 @@ def scan_org_tree(people, supervisor_uen, depth):
     for i in drs:
         people[i]["Supervisor Fraction"] = (people[i]["Total Reports"] + 1) / num_reports
 
-    # Sort the direct reports to put the one with the largest fraction of the org first.
+    # Sort the direct reports to put the one with the largest fraction of the
+    # org first.
     for i in range(len(drs)):
         for j in range(len(drs) - i - 1):
             if people[drs[j]]["Supervisor Fraction"] < people[drs[j + 1]]["Supervisor Fraction"]:
                 t = drs[j + 1]
                 drs[j + 1] = drs[j]
                 drs[j] = t
+
+    # Then sort any direct reports from the same team to cluster them.  While
+    # this slightly undoes the sort it's a more natural view over the org,
+    # placing people who do the same sorts of things in one grouping.
+    for i in range(1, len(drs)):
+        if people[drs[i - 1]]["Person"]["Team"] == people[drs[i]]["Person"]["Team"]:
+            continue
+
+        for j in range(i + 1, len(drs)):
+            if people[drs[i - 1]]["Person"]["Team"] == people[drs[j]]["Person"]["Team"]:
+                for k in range(j, i, -1):
+                    t = drs[j - 1]
+                    drs[j - 1] = drs[j]
+                    drs[j] = t
 
     start_date = p["Person"]["Start Date"]
     t = time.strptime(start_date, "%Y-%m-%d")
