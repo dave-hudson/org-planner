@@ -14,19 +14,39 @@ location_colours = {
 }
 
 grade_colours = {
-    "A": [0xff, 0x40, 0x33],
-    "B": [0xff, 0x99, 0x33],
-    "C.H": [0xff, 0xff, 0x33],
-    "C.L": [0xe0, 0xe0, 0x2c],
-    "C": [0xe0, 0xe0, 0x2c],
-    "D.H": [0x99, 0xff, 0x33],
-    "D.L": [0x70, 0xe0, 0x2c],
-    "D": [0x80, 0xe0, 0x2c],
-    "E.H": [0x33, 0xff, 0xff],
-    "E.L": [0x40, 0xcc, 0xff],
-    "E": [0x40, 0xcc, 0xff],
-    "F": [0xe0, 0x80, 0xff],
-    "G": [0xcc, 0x33, 0xff]
+    "A": [0xdb, 0x1f, 0x00],
+    "B": [0xf5, 0x78, 0x04],
+    "C.H": [0xf8, 0xc7, 0x10],
+    "C": [0xfb, 0xeb, 0x17],
+    "C.L": [0xfd, 0xfa, 0x19],
+    "D.H": [0x90, 0xc6, 0x12],
+    "D": [0x60, 0xb8, 0x10],
+    "D.L": [0x38, 0xaa, 0x0e],
+    "E.H": [0x33, 0x9e, 0xc5],
+    "E": [0x28, 0x7e, 0xbb],
+    "E.L": [0x1e, 0x60, 0xb4],
+    "F": [0x63, 0x40, 0xb5],
+    "G": [0xa9, 0x2c, 0xb6]
+}
+
+num_direct_reports_colours = {
+    "0": [0x40, 0x40, 0x40],
+    "1": [0x0c, 0x20, 0xaa],
+    "2": [0x18, 0x3c, 0xb6],
+    "3": [0x1e, 0x60, 0xb4],
+    "4": [0x30, 0x8e, 0xc0],
+    "5": [0x38, 0xaa, 0x0e],
+    "6": [0x90, 0xc6, 0x12],
+    "7": [0xfd, 0xfa, 0x19],
+    "8": [0xf8, 0xc7, 0x10],
+    "9": [0xf6, 0x8d, 0x06],
+    "10": [0xf5, 0x61, 0x01],
+    "11": [0xdb, 0x1f, 0x00],
+    "12": [0xcb, 0x23, 0x3c],
+    "13": [0xbb, 0x23, 0x7c],
+    "14": [0xa9, 0x2c, 0xb6],
+    "16": [0x8c, 0x23, 0xae],
+    "15": [0x5c, 0x21, 0xa1]
 }
 
 gender_colours = {
@@ -329,11 +349,15 @@ class SunburstOrgWidget(QtWidgets.QWidget):
                 team = p["Person"]["Team"]
                 if team in team_colours:
                     colours = team_colours[team]
-        else:
+        elif self._render_type == 9:
             if "Type" in p["Person"].keys():
                 type = p["Person"]["Type"]
                 if type in type_colours:
                     colours = type_colours[type]
+        else:
+            num_direct_reports = str(p["Num Direct Reports"])
+            if num_direct_reports in num_direct_reports_colours:
+                colours = num_direct_reports_colours[num_direct_reports]
 
         brush = QtGui.QBrush(QtGui.QColor(colours[0], colours[1], colours[2], 0xff))
         painter.setBrush(brush)
@@ -458,6 +482,10 @@ class PeopleSelectorWidget(QtWidgets.QWidget):
 
 class MainWindow(QtWidgets.QMainWindow):
     """
+
+
+
+
     The main window class for the application.
     """
     def __init__(self) -> None:
@@ -505,7 +533,12 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._info_uen = self._add_info_text("UEN")
         self._info_supervisor_uen = self._add_info_text("Supervisor UEN")
+
+        self._side_layout.addWidget(HLine())
+        self._info_num_direct_reports = self._add_info_text("Direct Reports")
         self._info_total_reports = self._add_info_text("Total Reports")
+        self._num_direct_reports_org_widget = SunburstOrgKeyWidget(SunburstOrgWidget(10), ColourKey1DWidget(num_direct_reports_colours, "Num Direct Reports Counts"))
+        self._side_layout.addWidget(self._num_direct_reports_org_widget)
 
         self._side_layout.addWidget(HLine())
         self._info_team = self._add_info_text("Team")
@@ -663,6 +696,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._people_tree_widget.insertTopLevelItem(0, top_level)
         self._people_tree_widget.expandAll()
 
+        self._num_direct_reports_org_widget.set_people(people)
         self._team_org_widget.set_people(people)
         self._type_org_widget.set_people(people)
         self._location_org_widget.set_people(people)
@@ -693,7 +727,10 @@ class MainWindow(QtWidgets.QMainWindow):
             supervisor_uen = str("{:d} ({:s})").format(supervisor, self._people[supervisor]["Person"]["Name"])
 
         self._info_supervisor_uen.setText(supervisor_uen)
+
+        self._info_num_direct_reports.setText(str(self._people[uen]["Num Direct Reports"]))
         self._info_total_reports.setText(str(self._people[uen]["Total Reports"]))
+        self._num_direct_reports_org_widget.set_uen(uen, is_manager)
 
         self._info_team.setText(p["Team"])
         self._team_org_widget.set_uen(uen, is_manager)
@@ -784,6 +821,8 @@ def scan_org_tree(people, supervisor_uen, depth):
     # Scan each direct report recursively, computing how deep each person is in
     # the overall org, and how many reports roll up to them in total.
     p = people[supervisor_uen]
+    p["Num Direct Reports"] = len(p["Direct Reports"])
+    p["Num Direct Reports Counts"] = [0] * len(num_direct_reports_colours)
     p["Location Counts"] = [0] * len(location_colours)
     p["Team Counts"] = [0] * len(team_colours)
     p["Type Counts"] = [0] * len(type_colours)
@@ -800,6 +839,9 @@ def scan_org_tree(people, supervisor_uen, depth):
     for i in p["Direct Reports"]:
         scan_org_tree(people, i, depth + 1)
         dr = people[i]
+
+        for j in range(len(p["Num Direct Reports Counts"])):
+            p["Num Direct Reports Counts"][j] += dr["Num Direct Reports Counts"][j]
 
         for j in range(len(p["Team Counts"])):
             p["Team Counts"][j] += dr["Team Counts"][j]
@@ -826,6 +868,9 @@ def scan_org_tree(people, supervisor_uen, depth):
         p["Total Reports"] += (dr["Total Reports"] + 1)
         p["Rollup Salaries"] += dr["Rollup Salaries"]
         p["Missing Salaries"] += dr["Missing Salaries"]
+
+    num_direct_reports = str(p["Num Direct Reports"])
+    p["Num Direct Reports Counts"][list(num_direct_reports_colours).index(num_direct_reports)] += 1
 
     team = p["Person"]["Team"]
     p["Team Counts"][list(team_colours).index(team)] += 1
