@@ -485,10 +485,6 @@ class PeopleSelectorWidget(QtWidgets.QWidget):
 
 class MainWindow(QtWidgets.QMainWindow):
     """
-
-
-
-
     The main window class for the application.
     """
     def __init__(self) -> None:
@@ -496,23 +492,31 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._people = {}
 
+        self._dark_mode = True
+        self._dark_mode_action = QtGui.QAction("&Dark Mode", self)
+        self._dark_mode_action.setCheckable(True)
+        self._dark_mode_action.setChecked(True)
+        self._dark_mode_action.triggered.connect(self._dark_mode_triggered)
+
         self._view_type = 0
         self._list_view_action = QtGui.QAction("&List View", self)
         self._list_view_action.setCheckable(True)
         self._list_view_action.setChecked(True)
-        self._list_view_action.triggered.connect(self._list_view_checked)
+        self._list_view_action.triggered.connect(self._list_view_triggered)
         self._tree_view_action = QtGui.QAction("&Tree View", self)
         self._tree_view_action.setCheckable(True)
         self._tree_view_action.setChecked(False)
-        self._tree_view_action.triggered.connect(self._tree_view_checked)
+        self._tree_view_action.triggered.connect(self._tree_view_triggered)
 
         # Create a menu bar and menu drop-downs.
         menu_bar = QtWidgets.QMenuBar()
         self.setMenuBar(menu_bar)
-        edit_menu = menu_bar.addMenu("&View")
-        edit_menu.addAction(self._list_view_action)
-        edit_menu.addAction(self._tree_view_action)
-        edit_menu.addSeparator()
+        view_menu = menu_bar.addMenu("&View")
+        view_menu.addAction(self._dark_mode_action)
+        view_menu.addSeparator()
+        view_menu.addAction(self._list_view_action)
+        view_menu.addAction(self._tree_view_action)
+        view_menu.addSeparator()
 
         self._people_list_widget = QtWidgets.QListWidget()
         self._people_list_widget.currentItemChanged.connect(self._people_list_index_changed)
@@ -624,9 +628,17 @@ class MainWindow(QtWidgets.QMainWindow):
         info_layout.addWidget(info_widget, 0, 1)
         return info_widget
 
-    def _list_view_checked(self, s):
+    def _dark_mode_triggered(self, s):
         """
-        Called when the "List View" menu item is checked.
+        Called when the "Dark Mode" menu item is triggered.
+        """
+
+        self._dark_mode = not self._dark_mode
+        self._dark_mode_action.setChecked(self._dark_mode)
+
+    def _list_view_triggered(self, s):
+        """
+        Called when the "List View" menu item is triggered.
 
         We flip the application view type, flip the checkbox on the
         list/tree view, hide the tree view and unhide the list view.
@@ -645,9 +657,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self._people_list_widget.setCurrentItem(item[0])
         self._people_list_widget.setFocus()
 
-    def _tree_view_checked(self, s):
+    def _tree_view_triggered(self, s):
         """
-        Called when the "Tree View" menu item is checked.
+        Called when the "Tree View" menu item is triggered.
 
         We flip the application view type, flip the checkbox on the
         list/tree view, hide the list view and unhide the tree view.
