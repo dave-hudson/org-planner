@@ -45,8 +45,8 @@ num_direct_reports_colours = {
     "12": [0xcb, 0x23, 0x3c],
     "13": [0xbb, 0x23, 0x7c],
     "14": [0xa9, 0x2c, 0xb6],
-    "16": [0x8c, 0x23, 0xae],
-    "15": [0x5c, 0x21, 0xa1]
+    "15": [0x8c, 0x23, 0xae],
+    "16": [0x5c, 0x21, 0xa1]
 }
 
 gender_colours = {
@@ -175,7 +175,7 @@ class ColourBoxWidget(QtWidgets.QLabel):
         palette = self.palette()
         cb = QtGui.QColor(colour[0], colour[1], colour[2], 0xff)
         palette.setColor(QtGui.QPalette.Window, cb)
-        if colour[0] + colour[1] + colour[2] > 0x100:
+        if colour[0] + colour[1] > 0xc0:
             ct = QtGui.QColor(0x00, 0x00, 0x00, 0xff)
         else:
             ct = QtGui.QColor(0xff, 0xff, 0xff, 0xff)
