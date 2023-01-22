@@ -172,19 +172,15 @@ class ColourBoxWidget(QtWidgets.QLabel):
         self.setAutoFillBackground(True)
         self.setMargin(4)
 
-        palette = self.palette()
-        cb = QtGui.QColor(colour[0], colour[1], colour[2], 0xff)
-        palette.setColor(QtGui.QPalette.Window, cb)
-
         # Set the text colour based on the intensity of the red and green
         # components of the background colour.  We ignore blue!
         if colour[0] + colour[1] > 0xc0:
-            ct = QtGui.QColor(0x00, 0x00, 0x00, 0xff)
+            ct = "black"
         else:
-            ct = QtGui.QColor(0xff, 0xff, 0xff, 0xff)
+            ct = "white"
 
-        palette.setColor(QtGui.QPalette.WindowText, ct)
-        self.setPalette(palette)
+        qss = "background-color: rgb({:d}, {:d}, {:d}); color: {:s}".format(colour[0], colour[1], colour[2], ct)
+        self.setStyleSheet(qss)
 
 class ColourKey1DWidget(QtWidgets.QWidget):
     """
@@ -510,19 +506,21 @@ class MainWindow(QtWidgets.QMainWindow):
         self._tree_view_action.triggered.connect(self._tree_view_triggered)
 
         # Create a menu bar and menu drop-downs.
-        menu_bar = QtWidgets.QMenuBar()
-        self.setMenuBar(menu_bar)
-        view_menu = menu_bar.addMenu("&View")
+        self._menu_bar = QtWidgets.QMenuBar(self)
+        self.setMenuBar(self._menu_bar)
+        view_menu = self._menu_bar.addMenu("&View")
         view_menu.addAction(self._dark_mode_action)
         view_menu.addSeparator()
         view_menu.addAction(self._list_view_action)
         view_menu.addAction(self._tree_view_action)
         view_menu.addSeparator()
+        view_menu.setWindowFlags(view_menu.windowFlags() | QtCore.Qt.FramelessWindowHint | QtCore.Qt.NoDropShadowWindowHint)
+        view_menu.setAttribute(QtCore.Qt.WA_TranslucentBackground)
 
-        self._people_list_widget = QtWidgets.QListWidget()
+        self._people_list_widget = QtWidgets.QListWidget(self)
         self._people_list_widget.currentItemChanged.connect(self._people_list_index_changed)
         self._people_list_widget.setFocus()
-        self._people_tree_widget = QtWidgets.QTreeWidget()
+        self._people_tree_widget = QtWidgets.QTreeWidget(self)
         self._people_tree_widget.currentItemChanged.connect(self._people_tree_item_changed)
         self._people_tree_widget.setHeaderHidden(True)
         self._people_tree_widget.setHidden(True)
@@ -610,12 +608,12 @@ class MainWindow(QtWidgets.QMainWindow):
         widget = QtWidgets.QWidget()
         widget.setLayout(self._side_layout)
 
-        scroll_area = QtWidgets.QScrollArea()
+        scroll_area = QtWidgets.QScrollArea(self)
         scroll_area.setWidget(widget)
         scroll_area.setWidgetResizable(True)
         scroll_area.setAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
 
-        splitter_widget = QtWidgets.QSplitter()
+        splitter_widget = QtWidgets.QSplitter(self)
         splitter_widget.addWidget(people_selector_widget)
         splitter_widget.addWidget(scroll_area)
 
@@ -630,38 +628,10 @@ class MainWindow(QtWidgets.QMainWindow):
         return info_widget
 
     def _set_app_palette(self):
-        palette = QtGui.QPalette()
-
         if (self._dark_mode):
-            palette.setColor(QtGui.QPalette.Window, QtGui.QColor(0x35, 0x35, 0x35))
-            palette.setColor(QtGui.QPalette.WindowText, QtGui.Qt.white)
-            palette.setColor(QtGui.QPalette.Base, QtGui.QColor(0x19, 0x19, 0x19))
-            palette.setColor(QtGui.QPalette.AlternateBase, QtGui.QColor(0x35, 0x35, 0x35))
-            palette.setColor(QtGui.QPalette.ToolTipBase, QtGui.Qt.black)
-            palette.setColor(QtGui.QPalette.ToolTipText, QtGui.Qt.white)
-            palette.setColor(QtGui.QPalette.Text, QtGui.Qt.white)
-            palette.setColor(QtGui.QPalette.Button, QtGui.QColor(0x35, 0x35, 0x35))
-            palette.setColor(QtGui.QPalette.ButtonText, QtGui.Qt.white)
-            palette.setColor(QtGui.QPalette.BrightText, QtGui.Qt.red)
-            palette.setColor(QtGui.QPalette.Link, QtGui.QColor(0x2a, 0x82, 0xda))
-            palette.setColor(QtGui.QPalette.Highlight, QtGui.QColor(0x2a, 0x82, 0xda))
-            palette.setColor(QtGui.QPalette.HighlightedText, QtGui.Qt.black)
+            self.setStyleSheet(dark_qss)
         else:
-            palette.setColor(QtGui.QPalette.Window, QtGui.QColor(0xf0, 0xf0, 0xf0))
-            palette.setColor(QtGui.QPalette.WindowText, QtGui.Qt.black)
-            palette.setColor(QtGui.QPalette.Base, QtGui.Qt.white)
-            palette.setColor(QtGui.QPalette.AlternateBase, QtGui.QColor(0xf6, 0xf6, 0xf6))
-            palette.setColor(QtGui.QPalette.ToolTipBase, QtGui.Qt.black)
-            palette.setColor(QtGui.QPalette.ToolTipText, QtGui.QColor(0xff, 0xff, 0xda))
-            palette.setColor(QtGui.QPalette.Text, QtGui.Qt.black)
-            palette.setColor(QtGui.QPalette.Button, QtGui.Qt.black)
-            palette.setColor(QtGui.QPalette.ButtonText, QtGui.QColor(0xf0, 0xf0, 0xf0))
-            palette.setColor(QtGui.QPalette.BrightText, QtGui.Qt.black)
-            palette.setColor(QtGui.QPalette.Link, QtGui.Qt.white)
-            palette.setColor(QtGui.QPalette.Highlight, QtGui.Qt.blue)
-            palette.setColor(QtGui.QPalette.HighlightedText, QtGui.Qt.white)
-
-        self.setPalette(palette)
+            self.setStyleSheet(light_qss)
 
     def _dark_mode_triggered(self, s):
         """
@@ -1024,6 +994,122 @@ def scan_json(json_data):
             people[supervisor_uen]["Direct Reports"].append(uen)
 
     return (failed, people, top_level)
+
+dark_qss = """
+QWidget {
+    background-color: #202020;
+    color: white;
+    font-family: "Lucida Grande";
+}
+
+QMenuBar {
+    background-color: #353535;
+    padding: 4px;
+}
+
+QMenuBar::item {
+    border-radius: 4px;
+    padding: 4px;
+}
+
+QMenuBar::item:selected {
+    background-color: #484848;
+}
+
+QMenu {
+    background-color: #353535;
+    border-color: #808080;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 4px;
+}
+
+QMenu::item {
+    margin: 3px 5px;
+    padding: 4px;
+}
+
+QMenu::item:selected {
+    background-color: #6060c0;
+    border-radius: 4px;
+}
+
+QListWidget {
+    border-style: solid;
+    border-width: 0px;
+}
+
+QListWidget::item {
+    padding: 4px;
+}
+
+QTreeWidget {
+    border-style: solid;
+    border-width: 0px;
+}
+
+QTreeWidget::item {
+    padding: 4px;
+}
+"""
+
+light_qss = """
+QWidget {
+    background-color: #f0f0f0;
+    color: black;
+    font-family: "Lucida Grande";
+}
+
+QMenuBar {
+    background-color: #c0c0c0;
+    padding: 4px;
+}
+
+QMenuBar::item {
+    border-radius: 4px;
+    padding: 4px;
+}
+
+QMenuBar::item:selected {
+    background-color: #d8d8d8;
+}
+
+QMenu {
+    background-color: #f8f8f8;
+    border-color: #808080;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 4px;
+}
+
+QMenu::item {
+    margin: 3px 5px;
+    padding: 4px;
+}
+
+QMenu::item:selected {
+    background-color: #6060c0;
+    border-radius: 4px;
+}
+
+QListWidget {
+    border-style: solid;
+    border-width: 0px;
+}
+
+QListWidget::item {
+    padding: 4px;
+}
+
+QTreeWidget {
+    border-style: solid;
+    border-width: 0px;
+}
+
+QTreeWidget::item {
+    padding: 4px;
+}
+"""
 
 json_file_path = r'people.json'
 with open(json_file_path, encoding = 'utf-8') as user_file:
