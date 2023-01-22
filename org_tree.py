@@ -1051,6 +1051,22 @@ QTreeWidget {
 QTreeWidget::item {
     padding: 4px;
 }
+
+QScrollBar {
+    background: #505050;
+}
+
+QScrollBar::add-page {
+    background: none;
+}
+
+QScrollBar::sub-page {
+    background: none;
+}
+
+QScrollBar::handle {
+    background: #808080;
+}
 """
 
 light_qss = """
@@ -1108,6 +1124,22 @@ QTreeWidget {
 
 QTreeWidget::item {
     padding: 4px;
+}
+
+QScrollBar {
+    background: #b0b0b0;
+}
+
+QScrollBar::add-page {
+    background: none;
+}
+
+QScrollBar::sub-page {
+    background: none;
+}
+
+QScrollBar::handle {
+    background: #808080;
 }
 """
 
