@@ -497,6 +497,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._dark_mode_action.setCheckable(True)
         self._dark_mode_action.setChecked(True)
         self._dark_mode_action.triggered.connect(self._dark_mode_triggered)
+        self._set_app_palette()
 
         self._view_type = 0
         self._list_view_action = QtGui.QAction("&List View", self)
@@ -628,6 +629,40 @@ class MainWindow(QtWidgets.QMainWindow):
         info_layout.addWidget(info_widget, 0, 1)
         return info_widget
 
+    def _set_app_palette(self):
+        palette = QtGui.QPalette()
+
+        if (self._dark_mode):
+            palette.setColor(QtGui.QPalette.Window, QtGui.QColor(0x35, 0x35, 0x35))
+            palette.setColor(QtGui.QPalette.WindowText, QtGui.Qt.white)
+            palette.setColor(QtGui.QPalette.Base, QtGui.QColor(0x19, 0x19, 0x19))
+            palette.setColor(QtGui.QPalette.AlternateBase, QtGui.QColor(0x35, 0x35, 0x35))
+            palette.setColor(QtGui.QPalette.ToolTipBase, QtGui.Qt.black)
+            palette.setColor(QtGui.QPalette.ToolTipText, QtGui.Qt.white)
+            palette.setColor(QtGui.QPalette.Text, QtGui.Qt.white)
+            palette.setColor(QtGui.QPalette.Button, QtGui.QColor(0x35, 0x35, 0x35))
+            palette.setColor(QtGui.QPalette.ButtonText, QtGui.Qt.white)
+            palette.setColor(QtGui.QPalette.BrightText, QtGui.Qt.red)
+            palette.setColor(QtGui.QPalette.Link, QtGui.QColor(0x2a, 0x82, 0xda))
+            palette.setColor(QtGui.QPalette.Highlight, QtGui.QColor(0x2a, 0x82, 0xda))
+            palette.setColor(QtGui.QPalette.HighlightedText, QtGui.Qt.black)
+        else:
+            palette.setColor(QtGui.QPalette.Window, QtGui.QColor(0xf0, 0xf0, 0xf0))
+            palette.setColor(QtGui.QPalette.WindowText, QtGui.Qt.black)
+            palette.setColor(QtGui.QPalette.Base, QtGui.Qt.white)
+            palette.setColor(QtGui.QPalette.AlternateBase, QtGui.QColor(0xf6, 0xf6, 0xf6))
+            palette.setColor(QtGui.QPalette.ToolTipBase, QtGui.Qt.black)
+            palette.setColor(QtGui.QPalette.ToolTipText, QtGui.QColor(0xff, 0xff, 0xda))
+            palette.setColor(QtGui.QPalette.Text, QtGui.Qt.black)
+            palette.setColor(QtGui.QPalette.Button, QtGui.Qt.black)
+            palette.setColor(QtGui.QPalette.ButtonText, QtGui.QColor(0xf0, 0xf0, 0xf0))
+            palette.setColor(QtGui.QPalette.BrightText, QtGui.Qt.black)
+            palette.setColor(QtGui.QPalette.Link, QtGui.Qt.white)
+            palette.setColor(QtGui.QPalette.Highlight, QtGui.Qt.blue)
+            palette.setColor(QtGui.QPalette.HighlightedText, QtGui.Qt.white)
+
+        self.setPalette(palette)
+
     def _dark_mode_triggered(self, s):
         """
         Called when the "Dark Mode" menu item is triggered.
@@ -635,6 +670,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._dark_mode = not self._dark_mode
         self._dark_mode_action.setChecked(self._dark_mode)
+        self._set_app_palette()
 
     def _list_view_triggered(self, s):
         """
