@@ -999,7 +999,7 @@ dark_qss = """
 QWidget {
     background-color: #202020;
     color: white;
-    font-family: "Lucida Grande";
+    font-family: "Verdana";
 }
 
 QMenuBar {
@@ -1073,7 +1073,7 @@ light_qss = """
 QWidget {
     background-color: #f0f0f0;
     color: black;
-    font-family: "Lucida Grande";
+    font-family: "Verdana";
 }
 
 QMenuBar {
