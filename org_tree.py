@@ -157,6 +157,190 @@ type_colours_list = [
     [0x00, 0x00, 0x00]
 ]
 
+dark_qss = """
+QWidget {
+    background-color: #202020;
+    color: white;
+    font-family: "Verdana";
+    border-style: solid;
+    border-width: 0px;
+}
+
+QMenuBar {
+    background-color: #353535;
+    padding: 4px;
+}
+
+QMenuBar::item {
+    border-radius: 4px;
+    padding: 4px;
+}
+
+QMenuBar::item:selected {
+    background-color: #484848;
+}
+
+QMenu {
+    background-color: #353535;
+    border-color: #808080;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 4px;
+}
+
+QMenu::item {
+    margin: 3px 5px;
+    padding: 4px;
+}
+
+QMenu::item:selected {
+    background-color: #6060c0;
+    border-radius: 4px;
+}
+
+QListWidget::item {
+    padding: 4px;
+}
+
+QTreeWidget::item {
+    padding: 4px;
+}
+
+QScrollBar {
+    background: #505050;
+}
+
+QScrollBar::add-page {
+    background: none;
+}
+
+QScrollBar::sub-page {
+    background: none;
+}
+
+QScrollBar::handle {
+    background: #808080;
+}
+
+ColourBoxLabelWidget {
+    background-color: #404040;
+    color: white;
+}
+
+HLine {
+    max-height: 0;
+    max-widgth: 0;
+    border-top: 1px;
+    border-style: solid;
+    border-color: white;
+}
+
+PeopleListWidget {
+    background-color: #303030;
+}
+
+PeopleTreeWidget {
+    background-color: #303030;
+}
+
+MainSplitter::handle {
+    width: 1px;
+    background-color: #c0c0c0;
+}
+"""
+
+light_qss = """
+QWidget {
+    background-color: #f0f0f0;
+    color: black;
+    font-family: "Verdana";
+    border-style: solid;
+    border-width: 0px;
+}
+
+QMenuBar {
+    background-color: #c0c0c0;
+    padding: 4px;
+}
+
+QMenuBar::item {
+    border-radius: 4px;
+    padding: 4px;
+}
+
+QMenuBar::item:selected {
+    background-color: #d8d8d8;
+}
+
+QMenu {
+    background-color: #f8f8f8;
+    border-color: #808080;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 4px;
+}
+
+QMenu::item {
+    margin: 3px 5px;
+    padding: 4px;
+}
+
+QMenu::item:selected {
+    background-color: #6060c0;
+    border-radius: 4px;
+}
+
+QListWidget::item {
+    padding: 4px;
+}
+
+QTreeWidget::item {
+    padding: 4px;
+}
+
+QScrollBar {
+    background: #b0b0b0;
+}
+
+QScrollBar::add-page {
+    background: none;
+}
+
+QScrollBar::sub-page {
+    background: none;
+}
+
+QScrollBar::handle {
+    background: #808080;
+}
+
+ColourBoxLabelWidget {
+    background-color: #c0c0c0;
+    color: black;
+}
+
+HLine {
+    max-height: 0;
+    max-widgth: 0;
+    border-top: 1px;
+    border-style: solid;
+    border-color: black;
+}
+
+PeopleListWidget {
+    background-color: #d0d0d0;
+}
+
+PeopleTreeWidget {
+    background-color: #d0d0d0;
+}
+
+MainSplitter::handle {
+    width: 1px;
+    background-color: #404040;
+}
+"""
+
 class HLine(QtWidgets.QFrame):
     """
     A widget class used to insert horizontal dividers between other widgets.
@@ -166,12 +350,17 @@ class HLine(QtWidgets.QFrame):
         self.setFrameShape(QtWidgets.QFrame.HLine)
         self.setFrameShadow(QtWidgets.QFrame.Plain)
 
+
 class ColourBoxWidget(QtWidgets.QLabel):
-    def __init__(self, text, colour) -> None:
+    """
+    A widget class used to draw coloured boxes with text in them.
+    """
+    def __init__(self, text) -> None:
         super().__init__(text)
         self.setAutoFillBackground(True)
         self.setMargin(4)
 
+    def set_background_colour(self, colour):
         # Set the text colour based on the intensity of the red and green
         # components of the background colour.  We ignore blue!
         if colour[0] + colour[1] > 0xc0:
@@ -181,6 +370,17 @@ class ColourBoxWidget(QtWidgets.QLabel):
 
         qss = "background-color: rgb({:d}, {:d}, {:d}); color: {:s}".format(colour[0], colour[1], colour[2], ct)
         self.setStyleSheet(qss)
+
+
+class ColourBoxLabelWidget(ColourBoxWidget):
+    """
+    Essentially the same class as ColourBoxWidget but with a different name to
+    allow QSS styling effects to set the background and text colour.  This one
+    is used specifically for labels.
+    """
+    def __init__(self, text) -> None:
+        super().__init__(text)
+
 
 class ColourKey1DWidget(QtWidgets.QWidget):
     """
@@ -198,10 +398,11 @@ class ColourKey1DWidget(QtWidgets.QWidget):
 
         row = 0
         for cd in colour_dict:
-            label_widget = ColourBoxWidget(cd, [0x20, 0x20, 0x20])
+            label_widget = ColourBoxLabelWidget(cd)
             self._layout.addWidget(label_widget, row, 0)
 
-            colour_widget = ColourBoxWidget("", colour_dict[cd])
+            colour_widget = ColourBoxWidget("")
+            colour_widget.set_background_colour(colour_dict[cd])
             self._layout.addWidget(colour_widget, row, 1)
             self._colour_box_widgets.append(colour_widget)
 
@@ -237,20 +438,21 @@ class ColourKey2DWidget(QtWidgets.QWidget):
         for cdj in colour_dict["Low"]:
             self._layout.setColumnMinimumWidth(col, 80)
 
-            colour_widget = ColourBoxWidget(cdj, [0x20, 0x20, 0x20])
+            colour_widget = ColourBoxLabelWidget(cdj)
             self._layout.addWidget(colour_widget, 0, col)
 
             col += 1
 
         row = 1
         for cdi in colour_dict:
-            label_widget = ColourBoxWidget(cdi, [0x20, 0x20, 0x20])
+            label_widget = ColourBoxLabelWidget(cdi)
             self._layout.addWidget(label_widget, row, 0)
 
             col = 1
             widget_list = []
             for cdj in colour_dict[cdi]:
-                colour_widget = ColourBoxWidget("", colour_dict[cdi][cdj])
+                colour_widget = ColourBoxWidget("")
+                colour_widget.set_background_colour(colour_dict[cdi][cdj])
                 self._layout.addWidget(colour_widget, row, col)
                 widget_list.append(colour_widget)
 
@@ -312,8 +514,8 @@ class SunburstOrgWidget(QtWidgets.QWidget):
                 if gender in gender_colours:
                     colours = gender_colours[gender]
         elif self._render_type == 3:
-                base_colour = int(0xff * p["Service Duration Fraction"])
-                colours = [0xff, 0xff - base_colour, 0xff - base_colour, 0xff]
+                base_colour = int(0xe0 * p["Service Duration Fraction"])
+                colours = [0xe0, 0xe0 - base_colour, 0xe0 - base_colour, 0xff]
         elif self._render_type == 4:
             if "9 Box" in p["Person"].keys():
                 nine_box_potential = p["Person"]["9 Box"][-1]["Potential"]
@@ -463,14 +665,38 @@ class SunburstOrgKeyWidget(QtWidgets.QWidget):
             self._key_widget.set_uen(uen)
 
 
+class PeopleListWidget(QtWidgets.QListWidget):
+    """
+    A wrapper around QListWidget, designed solely to let QSS style things.
+    """
+    def __init__(self, parent = None) -> None:
+        super().__init__(parent)
+
+
+class PeopleTreeWidget(QtWidgets.QTreeWidget):
+    """
+    A wrapper around QTreeWidget, designed solely to let QSS style things.
+    """
+    def __init__(self, parent = None) -> None:
+        super().__init__(parent)
+
+
+class MainSplitter(QtWidgets.QSplitter):
+    """
+    A wrapper around QSplitter, designed solely to let QSS style things.
+    """
+    def __init__(self, parent = None) -> None:
+        super().__init__(parent)
+
+
 class PeopleSelectorWidget(QtWidgets.QWidget):
     """
     This widget class wraps a list and a tree view of all the people within
     the org.  It's used to make it easy to hide one or the other and thus
     let the app use either view.
     """
-    def __init__(self, list_widget, tree_widget) -> None:
-        super().__init__()
+    def __init__(self, parent, list_widget, tree_widget) -> None:
+        super().__init__(parent)
 
         vbox = QtWidgets.QVBoxLayout()
         vbox.setContentsMargins(0, 0, 0, 0)
@@ -517,14 +743,14 @@ class MainWindow(QtWidgets.QMainWindow):
         view_menu.setWindowFlags(view_menu.windowFlags() | QtCore.Qt.FramelessWindowHint | QtCore.Qt.NoDropShadowWindowHint)
         view_menu.setAttribute(QtCore.Qt.WA_TranslucentBackground)
 
-        self._people_list_widget = QtWidgets.QListWidget(self)
+        self._people_list_widget = PeopleListWidget(self)
         self._people_list_widget.currentItemChanged.connect(self._people_list_index_changed)
         self._people_list_widget.setFocus()
-        self._people_tree_widget = QtWidgets.QTreeWidget(self)
+        self._people_tree_widget = PeopleTreeWidget(self)
         self._people_tree_widget.currentItemChanged.connect(self._people_tree_item_changed)
         self._people_tree_widget.setHeaderHidden(True)
         self._people_tree_widget.setHidden(True)
-        people_selector_widget = PeopleSelectorWidget(self._people_list_widget, self._people_tree_widget)
+        people_selector_widget = PeopleSelectorWidget(self, self._people_list_widget, self._people_tree_widget)
 
         self._side_layout = QtWidgets.QVBoxLayout()
 
@@ -613,7 +839,7 @@ class MainWindow(QtWidgets.QMainWindow):
         scroll_area.setWidgetResizable(True)
         scroll_area.setAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
 
-        splitter_widget = QtWidgets.QSplitter(self)
+        splitter_widget = MainSplitter(self)
         splitter_widget.addWidget(people_selector_widget)
         splitter_widget.addWidget(scroll_area)
 
@@ -995,153 +1221,6 @@ def scan_json(json_data):
 
     return (failed, people, top_level)
 
-dark_qss = """
-QWidget {
-    background-color: #202020;
-    color: white;
-    font-family: "Verdana";
-}
-
-QMenuBar {
-    background-color: #353535;
-    padding: 4px;
-}
-
-QMenuBar::item {
-    border-radius: 4px;
-    padding: 4px;
-}
-
-QMenuBar::item:selected {
-    background-color: #484848;
-}
-
-QMenu {
-    background-color: #353535;
-    border-color: #808080;
-    border-width: 1px;
-    border-style: solid;
-    border-radius: 4px;
-}
-
-QMenu::item {
-    margin: 3px 5px;
-    padding: 4px;
-}
-
-QMenu::item:selected {
-    background-color: #6060c0;
-    border-radius: 4px;
-}
-
-QListWidget {
-    border-style: solid;
-    border-width: 0px;
-}
-
-QListWidget::item {
-    padding: 4px;
-}
-
-QTreeWidget {
-    border-style: solid;
-    border-width: 0px;
-}
-
-QTreeWidget::item {
-    padding: 4px;
-}
-
-QScrollBar {
-    background: #505050;
-}
-
-QScrollBar::add-page {
-    background: none;
-}
-
-QScrollBar::sub-page {
-    background: none;
-}
-
-QScrollBar::handle {
-    background: #808080;
-}
-"""
-
-light_qss = """
-QWidget {
-    background-color: #f0f0f0;
-    color: black;
-    font-family: "Verdana";
-}
-
-QMenuBar {
-    background-color: #c0c0c0;
-    padding: 4px;
-}
-
-QMenuBar::item {
-    border-radius: 4px;
-    padding: 4px;
-}
-
-QMenuBar::item:selected {
-    background-color: #d8d8d8;
-}
-
-QMenu {
-    background-color: #f8f8f8;
-    border-color: #808080;
-    border-width: 1px;
-    border-style: solid;
-    border-radius: 4px;
-}
-
-QMenu::item {
-    margin: 3px 5px;
-    padding: 4px;
-}
-
-QMenu::item:selected {
-    background-color: #6060c0;
-    border-radius: 4px;
-}
-
-QListWidget {
-    border-style: solid;
-    border-width: 0px;
-}
-
-QListWidget::item {
-    padding: 4px;
-}
-
-QTreeWidget {
-    border-style: solid;
-    border-width: 0px;
-}
-
-QTreeWidget::item {
-    padding: 4px;
-}
-
-QScrollBar {
-    background: #b0b0b0;
-}
-
-QScrollBar::add-page {
-    background: none;
-}
-
-QScrollBar::sub-page {
-    background: none;
-}
-
-QScrollBar::handle {
-    background: #808080;
-}
-"""
 
 json_file_path = r'people.json'
 with open(json_file_path, encoding = 'utf-8') as user_file:
