@@ -157,189 +157,133 @@ type_colours_list = [
     [0x00, 0x00, 0x00]
 ]
 
-dark_qss = """
-QWidget {
-    background-color: #202020;
-    color: white;
+qss = """
+QWidget {{
+    background-color: {};
+    color: {};
     font-family: "Verdana";
     border-style: solid;
     border-width: 0px;
-}
+}}
 
-QMenuBar {
-    background-color: #353535;
+QMenuBar {{
+    background-color: {};
     padding: 4px;
-}
+}}
 
-QMenuBar::item {
+QMenuBar::item {{
     border-radius: 4px;
     padding: 4px;
-}
+}}
 
-QMenuBar::item:selected {
-    background-color: #484848;
-}
+QMenuBar::item:selected {{
+    background-color: {};
+}}
 
-QMenu {
-    background-color: #353535;
-    border-color: #808080;
+QMenu {{
+    background-color: {};
+    border-color: {};
     border-width: 1px;
     border-style: solid;
     border-radius: 4px;
-}
+}}
 
-QMenu::item {
+QMenu::item {{
     margin: 3px 5px;
     padding: 4px;
-}
+}}
 
-QMenu::item:selected {
-    background-color: #6060c0;
+QMenu::item:selected {{
+    background-color: {};
     border-radius: 4px;
-}
+}}
 
-QListWidget::item {
+QListWidget::item {{
     padding: 4px;
-}
+}}
 
-QTreeWidget::item {
+QTreeWidget::item {{
     padding: 4px;
-}
+}}
 
-QScrollBar {
-    background: #505050;
-}
+QScrollBar {{
+    background: {};
+}}
 
-QScrollBar::add-page {
+QScrollBar::add-page {{
     background: none;
-}
+}}
 
-QScrollBar::sub-page {
+QScrollBar::sub-page {{
     background: none;
-}
+}}
 
-QScrollBar::handle {
-    background: #808080;
-}
+QScrollBar::handle {{
+    background: {};
+}}
 
-ColourBoxLabelWidget {
-    background-color: #404040;
-    color: white;
-}
+ColourBoxLabelWidget {{
+    background-color: {};
+    color: {};
+}}
 
-HLine {
+HLine {{
     max-height: 0;
-    max-widgth: 0;
     border-top: 1px;
     border-style: solid;
-    border-color: white;
-}
+    border-color: {};
+}}
 
-PeopleListWidget {
-    background-color: #303030;
-}
+PeopleListWidget {{
+    background-color: {};
+}}
 
-PeopleTreeWidget {
-    background-color: #303030;
-}
+PeopleTreeWidget {{
+    background-color: {};
+}}
 
-MainSplitter::handle {
+MainSplitter::handle {{
     width: 1px;
-    background-color: #c0c0c0;
-}
+    background-color: {};
+}}
 """
 
-light_qss = """
-QWidget {
-    background-color: #f0f0f0;
-    color: black;
-    font-family: "Verdana";
-    border-style: solid;
-    border-width: 0px;
-}
+dark_qss_config = [
+    "#202020",
+    "white",
+    "#353535",
+    "#484848",
+    "#353535",
+    "#808080",
+    "#6060c0",
+    "#505050",
+    "#808080",
+    "#404040",
+    "white",
+    "white",
+    "#303030",
+    "#303030",
+    "#c0c0c0"
+]
 
-QMenuBar {
-    background-color: #c0c0c0;
-    padding: 4px;
-}
+light_qss_config = [
+    "#f0f0f0",
+    "black",
+    "#c0c0c0",
+    "#d8d8d8",
+    "#f8f8f8",
+    "#808080",
+    "#6060c0",
+    "#b0b0b0",
+    "#808080",
+    "#c0c0c0",
+    "black",
+    "black",
+    "#d0d0d0",
+    "#d0d0d0",
+    "#404040"
+]
 
-QMenuBar::item {
-    border-radius: 4px;
-    padding: 4px;
-}
-
-QMenuBar::item:selected {
-    background-color: #d8d8d8;
-}
-
-QMenu {
-    background-color: #f8f8f8;
-    border-color: #808080;
-    border-width: 1px;
-    border-style: solid;
-    border-radius: 4px;
-}
-
-QMenu::item {
-    margin: 3px 5px;
-    padding: 4px;
-}
-
-QMenu::item:selected {
-    background-color: #6060c0;
-    border-radius: 4px;
-}
-
-QListWidget::item {
-    padding: 4px;
-}
-
-QTreeWidget::item {
-    padding: 4px;
-}
-
-QScrollBar {
-    background: #b0b0b0;
-}
-
-QScrollBar::add-page {
-    background: none;
-}
-
-QScrollBar::sub-page {
-    background: none;
-}
-
-QScrollBar::handle {
-    background: #808080;
-}
-
-ColourBoxLabelWidget {
-    background-color: #c0c0c0;
-    color: black;
-}
-
-HLine {
-    max-height: 0;
-    max-widgth: 0;
-    border-top: 1px;
-    border-style: solid;
-    border-color: black;
-}
-
-PeopleListWidget {
-    background-color: #d0d0d0;
-}
-
-PeopleTreeWidget {
-    background-color: #d0d0d0;
-}
-
-MainSplitter::handle {
-    width: 1px;
-    background-color: #404040;
-}
-"""
 
 class HLine(QtWidgets.QFrame):
     """
@@ -681,14 +625,6 @@ class PeopleTreeWidget(QtWidgets.QTreeWidget):
         super().__init__(parent)
 
 
-class MainSplitter(QtWidgets.QSplitter):
-    """
-    A wrapper around QSplitter, designed solely to let QSS style things.
-    """
-    def __init__(self, parent = None) -> None:
-        super().__init__(parent)
-
-
 class PeopleSelectorWidget(QtWidgets.QWidget):
     """
     This widget class wraps a list and a tree view of all the people within
@@ -703,6 +639,22 @@ class PeopleSelectorWidget(QtWidgets.QWidget):
         vbox.addWidget(list_widget)
         vbox.addWidget(tree_widget)
         self.setLayout(vbox)
+
+
+class PersonWidget(QtWidgets.QWidget):
+    """
+    A wrapper around QWidget, designed solely to let QSS style things.
+    """
+    def __init__(self, parent = None) -> None:
+        super().__init__(parent)
+
+
+class MainSplitter(QtWidgets.QSplitter):
+    """
+    A wrapper around QSplitter, designed solely to let QSS style things.
+    """
+    def __init__(self, parent = None) -> None:
+        super().__init__(parent)
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -753,6 +705,7 @@ class MainWindow(QtWidgets.QMainWindow):
         people_selector_widget = PeopleSelectorWidget(self, self._people_list_widget, self._people_tree_widget)
 
         self._side_layout = QtWidgets.QVBoxLayout()
+        self._side_layout.setSpacing(12)
 
         heading_font = QtGui.QFont()
         heading_font.setBold(True)
@@ -831,7 +784,7 @@ class MainWindow(QtWidgets.QMainWindow):
         spacer = QtWidgets.QSpacerItem(0, 0, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.MinimumExpanding)
         self._side_layout.addItem(spacer)
 
-        widget = QtWidgets.QWidget()
+        widget = PersonWidget(self)
         widget.setLayout(self._side_layout)
 
         scroll_area = QtWidgets.QScrollArea(self)
@@ -855,9 +808,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _set_app_palette(self):
         if (self._dark_mode):
-            self.setStyleSheet(dark_qss)
+            self.setStyleSheet(qss.format(*dark_qss_config))
         else:
-            self.setStyleSheet(light_qss)
+            self.setStyleSheet(qss.format(*light_qss_config))
 
     def _dark_mode_triggered(self, s):
         """
