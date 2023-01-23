@@ -298,7 +298,7 @@ dark_qss_config = [
 ]
 
 light_qss_config = [
-    "#f0f0f0",
+    "#f8f8f8",
     "black",
     "#c0c0c0",
     "#d8d8d8",
@@ -310,8 +310,8 @@ light_qss_config = [
     "#c0c0c0",
     "black",
     "black",
-    "#d0d0d0",
-    "#d0d0d0",
+    "#d8d8d8",
+    "#d8d8d8",
     "#404040"
 ]
 
