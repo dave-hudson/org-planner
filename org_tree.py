@@ -222,9 +222,26 @@ QScrollBar::handle {{
     background: {};
 }}
 
+ColourBoxWidget {{
+    border-top: 1px solid #808080;
+    border-left: 1px solid #808080;
+}}
+
 ColourBoxLabelWidget {{
     background-color: {};
     color: {};
+    border-top: 1px solid #808080;
+    border-left: 1px solid #808080;
+}}
+
+ColourKey1DWidget {{
+    border-right: 1px solid #808080;
+    border-bottom: 1px solid #808080;
+}}
+
+ColourKey2DWidget {{
+    border-right: 1px solid #808080;
+    border-bottom: 1px solid #808080;
 }}
 
 HLine {{
@@ -326,7 +343,7 @@ class ColourBoxLabelWidget(ColourBoxWidget):
         super().__init__(text)
 
 
-class ColourKey1DWidget(QtWidgets.QWidget):
+class ColourKey1DWidget(QtWidgets.QFrame):
     """
     A widget class used to draw colour keys in 1 dimension.
     """
@@ -365,7 +382,7 @@ class ColourKey1DWidget(QtWidgets.QWidget):
         for i in range(len(self._colour_box_widgets)):
             self._colour_box_widgets[i].setText(str(self._people[uen][self._count_key][i]))
 
-class ColourKey2DWidget(QtWidgets.QWidget):
+class ColourKey2DWidget(QtWidgets.QFrame):
     """
     A widget class used to draw colour keys in 2 dimensions.
     """
