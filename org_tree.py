@@ -157,6 +157,9 @@ type_colours_list = [
     [0x00, 0x00, 0x00]
 ]
 
+# This is the QSS used to ensure the app renders correctly.  It's parameterized
+# using string.format() form so dark and light mode parameters can be provided,
+# but doing this means there's only one QSS to maintain.
 qss = """
 QWidget {{
     background-color: {};
@@ -1222,6 +1225,7 @@ all_people[uen]["Supervisor Fraction"] = 1
 
 app = QtWidgets.QApplication(sys.argv)
 window = MainWindow()
+window.resize(1536, 900)
 window.set_people(all_people, uen)
 window.show()
 app.exec()
