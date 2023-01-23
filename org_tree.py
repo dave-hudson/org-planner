@@ -684,6 +684,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def __init__(self) -> None:
         super().__init__()
 
+        self.setWindowTitle("Org Planner")
         self._people = {}
 
         self._dark_mode = True
