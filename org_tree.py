@@ -213,6 +213,17 @@ QScrollBar {{
     background: {};
 }}
 
+/*
+ * We don't want the arrows on scroll bars.
+ */
+QScrollBar::add-line {{
+    height: 0px;
+}}
+
+QScrollBar::sub-line {{
+    height: 0px;
+}}
+
 QScrollBar::add-page {{
     background: none;
 }}
