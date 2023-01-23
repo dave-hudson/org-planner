@@ -812,15 +812,17 @@ class MainWindow(QtWidgets.QMainWindow):
         splitter_widget = MainSplitter(self)
         splitter_widget.addWidget(people_selector_widget)
         splitter_widget.addWidget(scroll_area)
+        splitter_widget.setStretchFactor(0, 1)
+        splitter_widget.setStretchFactor(1, 3)
 
         self.setCentralWidget(splitter_widget)
 
     def _add_info_text(self, text):
         info_layout = QtWidgets.QGridLayout()
         self._side_layout.addLayout(info_layout)
-        info_layout.addWidget(QtWidgets.QLabel(text), 0, 0)
+        info_layout.addWidget(QtWidgets.QLabel(text), 0, 0, 1, 1)
         info_widget = QtWidgets.QLabel("")
-        info_layout.addWidget(info_widget, 0, 1)
+        info_layout.addWidget(info_widget, 0, 1, 1, 4)
         return info_widget
 
     def _set_app_palette(self):
