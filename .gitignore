@@ -1,7 +1,12 @@
 # Ignore sensitive data
 
-*.json
+people.json
+data/*
 
 # Ignore temp files
 
 *~
+
+# Ignore pycache
+
+__pycache__

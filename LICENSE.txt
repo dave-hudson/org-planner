@@ -1,4 +1,4 @@
-Copyright 2022, David J. Hudson
+Copyright 2022, 2023, David J. Hudson
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
