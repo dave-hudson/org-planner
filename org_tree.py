@@ -220,7 +220,11 @@ def scan_json(json_data):
     return (failed, people, top_level)
 
 def main():
-    json_file_path = r'people.json'
+    if len(sys.argv) != 2:
+        print("Usage: org-planner <file>")
+        return
+
+    json_file_path = sys.argv[1]
     with open(json_file_path, encoding = 'utf-8') as user_file:
         json_data = json.load(user_file)
 
