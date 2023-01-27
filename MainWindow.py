@@ -57,7 +57,7 @@ QMenu {{
 
 QMenu::item {{
     margin: 3px 5px;
-    padding: 4px;
+    padding: 4px 4px 4px 10px;
 }}
 
 QMenu::item:selected {{
