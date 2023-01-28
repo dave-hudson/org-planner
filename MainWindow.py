@@ -17,6 +17,7 @@ from NineBoxSunburstOrgWidget import NineBoxSunburstOrgWidget, nine_box_colours
 from RatingSunburstOrgWidget import RatingSunburstOrgWidget, rating_colours
 from RollupSalarySunburstOrgWidget import RollupSalarySunburstOrgWidget, rollup_salary_colours
 from SalarySunburstOrgWidget import SalarySunburstOrgWidget, salary_colours
+from SalaryOffsetSunburstOrgWidget import SalaryOffsetSunburstOrgWidget, salary_offset_colours
 from ServiceDurationSunburstOrgWidget import ServiceDurationSunburstOrgWidget
 from TeamSunburstOrgWidget import TeamSunburstOrgWidget, team_colours
 from TypeSunburstOrgWidget import TypeSunburstOrgWidget, type_colours
@@ -309,6 +310,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self._side_layout.addWidget(self._salary_org_widget)
 
         self._side_layout.addWidget(HLine())
+        self._info_salary_offset = self._add_info_text("Salary Mid-band Offset")
+        self._salary_offset_org_widget = SunburstOrgKeyWidget(SalaryOffsetSunburstOrgWidget(), ColourKey1DWidget(salary_offset_colours))
+        self._side_layout.addWidget(self._salary_offset_org_widget)
+
+        self._side_layout.addWidget(HLine())
         self._info_rollup_salary_usd = self._add_info_text("Rollup Salary (USD)")
         self._rollup_salary_org_widget = SunburstOrgKeyWidget(RollupSalarySunburstOrgWidget(), ColourKey1DWidget(rollup_salary_colours))
         self._side_layout.addWidget(self._rollup_salary_org_widget)
@@ -443,6 +449,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._nine_box_org_widget.set_locations(locations)
         self._rating_org_widget.set_locations(locations)
         self._salary_org_widget.set_locations(locations)
+        self._salary_offset_org_widget.set_locations(locations)
         self._rollup_salary_org_widget.set_locations(locations)
 
         self.update()
@@ -471,6 +478,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._nine_box_org_widget.set_people(people)
         self._rating_org_widget.set_people(people)
         self._salary_org_widget.set_people(people)
+        self._salary_offset_org_widget.set_people(people)
         self._rollup_salary_org_widget.set_people(people)
 
         list_selected = self._people_list_widget.item(0)
@@ -573,6 +581,16 @@ class MainWindow(QtWidgets.QMainWindow):
         self._info_salary_usd.setText(salary_usd)
         self._salary_org_widget.set_uen(uen, is_manager)
 
+        salary_offset = "N/A"
+        if self._hide_sensitive_data:
+            salary_offset = "Hidden"
+        else:
+            if "Salary Offset Percentage" in self._people[uen].keys():
+                salary_offset = "{:.1f}%".format(self._people[uen]["Salary Offset Percentage"])
+
+        self._info_salary_offset.setText(salary_offset)
+        self._salary_offset_org_widget.set_uen(uen, is_manager)
+
         rollup_salary_usd = "N/A"
         rollup_salary_usd_val = int(self._people[uen]["Rollup Salaries"])
         if self._hide_sensitive_data:
@@ -597,6 +615,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._rating_org_widget.set_redacted(is_redacted)
         self._nine_box_org_widget.set_redacted(is_redacted)
         self._salary_org_widget.set_redacted(is_redacted)
+        self._salary_offset_org_widget.set_redacted(is_redacted)
         self._rollup_salary_org_widget.set_redacted(is_redacted)
 
         self._render_uen()

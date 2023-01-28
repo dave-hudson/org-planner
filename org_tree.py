@@ -62,7 +62,7 @@ def scan_teams_and_types(people):
 
     return (teams, types)
 
-def scan_org_tree(people, supervisor_uen, depth):
+def scan_org_tree(people, locations, supervisor_uen, depth):
     # Scan each direct report recursively, computing how deep each person is in
     # the overall org, and how many reports roll up to them in total.
     p = people[supervisor_uen]
@@ -82,7 +82,7 @@ def scan_org_tree(people, supervisor_uen, depth):
     p["Missing Salaries"] = 0
 
     for i in p["Direct Reports"]:
-        scan_org_tree(people, i, depth + 1)
+        scan_org_tree(people, locations, i, depth + 1)
         dr = people[i]
 
         for j in range(len(p["Num Direct Reports Counts"])):
@@ -126,6 +126,7 @@ def scan_org_tree(people, supervisor_uen, depth):
     location = p["Person"]["Locations"][-1]["Location"]
     p["Location Counts"][list(location_colours).index(location)] += 1
 
+    grade = ""
     if "Grades" in p["Person"].keys():
         grade = p["Person"]["Grades"][-1]["Grade"]
         p["Grade Counts"][list(grade_colours).index(grade)] += 1
@@ -186,6 +187,7 @@ def scan_org_tree(people, supervisor_uen, depth):
     p["Service Duration"] = cur_time - time.mktime(t)
     p["Service Duration Fraction"] = worked_time / org_elapsed_time
 
+    salary = 0
     if "Salaries" not in p["Person"].keys():
         p["Missing Salaries"] += 1
     else:
@@ -193,8 +195,13 @@ def scan_org_tree(people, supervisor_uen, depth):
         salary_usd = salary * fx_rates[location]
         p["Rollup Salaries"] += salary_usd
 
-    #if "Grades" in p["Person"].keys():
-    #    band_lower_salary = 
+    if ("Grades" in p["Person"].keys()) and ("Salaries" in p["Person"].keys()):
+        band_lower_salary = locations[location][grade]["Low"]
+        band_upper_salary = locations[location][grade]["High"]
+        band_mid_salary = (band_upper_salary + band_lower_salary) // 2
+        salary_offset = (salary - band_mid_salary) / band_mid_salary
+        salary_offset_percentage = salary_offset * 100
+        p["Salary Offset Percentage"] = salary_offset_percentage
 
 def scan_json_people(json_data):
     people = {}
@@ -250,7 +257,7 @@ def main():
         type_colours[i] = type_colours_list[ci]
         ci += 1
 
-    scan_org_tree(all_people, supervisor_uen, 0)
+    scan_org_tree(all_people, all_locations, supervisor_uen, 0)
     all_people[supervisor_uen]["Supervisor Fraction"] = 1
 
     app = QtWidgets.QApplication(sys.argv)
