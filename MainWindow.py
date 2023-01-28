@@ -135,6 +135,7 @@ PeopleListWidget {{
 }}
 
 PeopleTreeWidget {{
+    padding: 4px;
     background-color: {};
 }}
 
@@ -307,7 +308,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._side_layout.addWidget(self._salary_org_widget)
 
         self._side_layout.addWidget(HLine())
-        self._info_rollup_salary_usd = self._add_info_text("Rollup Salary (USD")
+        self._info_rollup_salary_usd = self._add_info_text("Rollup Salary (USD)")
         self._rollup_salary_org_widget = SunburstOrgKeyWidget(RollupSalarySunburstOrgWidget(), ColourKey1DWidget(rollup_salary_colours))
         self._side_layout.addWidget(self._rollup_salary_org_widget)
 
