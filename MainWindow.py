@@ -130,6 +130,7 @@ HLine {{
 }}
 
 PeopleListWidget {{
+    padding: 4px;
     background-color: {};
 }}
 
