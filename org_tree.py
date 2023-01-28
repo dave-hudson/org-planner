@@ -193,7 +193,10 @@ def scan_org_tree(people, supervisor_uen, depth):
         salary_usd = salary * fx_rates[location]
         p["Rollup Salaries"] += salary_usd
 
-def scan_json(json_data):
+    #if "Grades" in p["Person"].keys():
+    #    band_lower_salary = 
+
+def scan_json_people(json_data):
     people = {}
     top_level = 0
     failed = False
@@ -228,7 +231,9 @@ def main():
     with open(json_file_path, encoding = 'utf-8') as user_file:
         json_data = json.load(user_file)
 
-    fail, all_people, uen = scan_json(json_data)
+    all_locations = json_data["Locations"]
+
+    fail, all_people, supervisor_uen = scan_json_people(json_data)
     if fail:
         exit()
 
@@ -245,13 +250,14 @@ def main():
         type_colours[i] = type_colours_list[ci]
         ci += 1
 
-    scan_org_tree(all_people, uen, 0)
-    all_people[uen]["Supervisor Fraction"] = 1
+    scan_org_tree(all_people, supervisor_uen, 0)
+    all_people[supervisor_uen]["Supervisor Fraction"] = 1
 
     app = QtWidgets.QApplication(sys.argv)
     window = MainWindow()
     window.resize(1536, 900)
-    window.set_people(all_people, uen)
+    window.set_locations(all_locations)
+    window.set_people(all_people, supervisor_uen)
     window.show()
     app.exec()
 

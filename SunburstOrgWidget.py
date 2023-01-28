@@ -16,6 +16,7 @@ class SunburstOrgWidget(QtWidgets.QWidget):
     """
     def __init__(self) -> None:
         super().__init__()
+        self._locations = {}
         self._people = {}
         self._uen = 0
 
@@ -81,6 +82,9 @@ class SunburstOrgWidget(QtWidgets.QWidget):
         qp.begin(self)
         self._draw_widget(qp)
         qp.end()
+
+    def set_locations(self, locations):
+        self._locations = locations
 
     def set_people(self, people):
         self._people = people

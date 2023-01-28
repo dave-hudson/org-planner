@@ -24,6 +24,9 @@ class SunburstOrgKeyWidget(QtWidgets.QWidget):
         hbox.addLayout(hbox_vbox)
         self.setLayout(hbox)
 
+    def set_locations(self, locations):
+        self._org_widget.set_locations(locations)
+
     def set_people(self, people):
         self._org_widget.set_people(people)
         if self._key_widget:

@@ -189,6 +189,7 @@ class MainWindow(QtWidgets.QMainWindow):
         super().__init__()
 
         self.setWindowTitle("Org Planner")
+        self._locations = {}
         self._people = {}
         self._uen = 0
 
@@ -429,7 +430,24 @@ class MainWindow(QtWidgets.QMainWindow):
             supervisor_item.addChild(twi)
             self._set_people_tree(p, twi)
 
-    def set_people(self, people, uen):
+    def set_locations(self, locations):
+        self._locations = locations
+
+        self._num_direct_reports_org_widget.set_locations(locations)
+        self._team_org_widget.set_locations(locations)
+        self._type_org_widget.set_locations(locations)
+        self._location_org_widget.set_locations(locations)
+        self._grade_org_widget.set_locations(locations)
+        self._gender_org_widget.set_locations(locations)
+        self._service_duration_org_widget.set_locations(locations)
+        self._nine_box_org_widget.set_locations(locations)
+        self._rating_org_widget.set_locations(locations)
+        self._salary_org_widget.set_locations(locations)
+        self._rollup_salary_org_widget.set_locations(locations)
+
+        self.update()
+
+    def set_people(self, people, supervisor_uen):
         self._people = people
 
         for i in people:
@@ -438,8 +456,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self._people_list_widget.sortItems(QtGui.Qt.AscendingOrder)
 
         top_level = QtWidgets.QTreeWidgetItem()
-        top_level.setText(0, people[uen]["Person"]["Name"])
-        self._set_people_tree(uen, top_level)
+        top_level.setText(0, people[supervisor_uen]["Person"]["Name"])
+        self._set_people_tree(supervisor_uen, top_level)
         self._people_tree_widget.insertTopLevelItem(0, top_level)
         self._people_tree_widget.expandAll()
 
