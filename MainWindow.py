@@ -18,6 +18,7 @@ from RatingSunburstOrgWidget import RatingSunburstOrgWidget, rating_colours
 from RollupSalarySunburstOrgWidget import RollupSalarySunburstOrgWidget, rollup_salary_colours
 from SalarySunburstOrgWidget import SalarySunburstOrgWidget, salary_colours
 from SalaryOffsetSunburstOrgWidget import SalaryOffsetSunburstOrgWidget, salary_offset_colours, salary_offset_labels
+from SalaryBandOffsetSunburstOrgWidget import SalaryBandOffsetSunburstOrgWidget, salary_band_offset_colours
 from ServiceDurationSunburstOrgWidget import ServiceDurationSunburstOrgWidget
 from TeamSunburstOrgWidget import TeamSunburstOrgWidget, team_colours
 from TypeSunburstOrgWidget import TypeSunburstOrgWidget, type_colours
@@ -310,13 +311,22 @@ class MainWindow(QtWidgets.QMainWindow):
         self._side_layout.addWidget(self._salary_org_widget)
 
         self._side_layout.addWidget(HLine())
-        self._info_salary_offset = self._add_info_text("Salary Mid-band Offset")
-        self._info_salary_offset_usd = self._add_info_text("Salary Mid-band Offset (USD)")
-        self._info_salary_offset_percentage = self._add_info_text("Salary Mid-band Offset Percentage")
+        self._info_salary_offset = self._add_info_text("Salary Offset From Mid-band")
+        self._info_salary_offset_usd = self._add_info_text("Salary Offset From Mid-band (USD)")
+        self._info_salary_offset_percentage = self._add_info_text("Salary Offset From Mid-band (Percentage)")
         salary_offset_legend = ColourKey1DWidget(salary_offset_colours, "Salary Offset Counts")
         salary_offset_legend.set_labels(salary_offset_labels)
         self._salary_offset_org_widget = SunburstOrgKeyWidget(SalaryOffsetSunburstOrgWidget(), salary_offset_legend)
         self._side_layout.addWidget(self._salary_offset_org_widget)
+
+        self._side_layout.addWidget(HLine())
+        self._info_salary_band_lower_limit = self._add_info_text("Salary Band Lower Limit")
+        self._info_salary_band_salary = self._add_info_text("Salary")
+        self._info_salary_band_upper_limit = self._add_info_text("Salary Band Upper Limit")
+        self._info_salary_band_offset = self._add_info_text("Salary Comparison With Band")
+        salary_band_offset_legend = ColourKey1DWidget(salary_band_offset_colours)
+        self._salary_band_offset_org_widget = SunburstOrgKeyWidget(SalaryBandOffsetSunburstOrgWidget(), salary_band_offset_legend)
+        self._side_layout.addWidget(self._salary_band_offset_org_widget)
 
         self._side_layout.addWidget(HLine())
         self._info_rollup_salary_usd = self._add_info_text("Rollup Salary (USD)")
@@ -454,6 +464,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._rating_org_widget.set_locations(locations)
         self._salary_org_widget.set_locations(locations)
         self._salary_offset_org_widget.set_locations(locations)
+        self._salary_band_offset_org_widget.set_locations(locations)
         self._rollup_salary_org_widget.set_locations(locations)
 
         self.update()
@@ -483,6 +494,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._rating_org_widget.set_people(people)
         self._salary_org_widget.set_people(people)
         self._salary_offset_org_widget.set_people(people)
+        self._salary_band_offset_org_widget.set_people(people)
         self._rollup_salary_org_widget.set_people(people)
 
         list_selected = self._people_list_widget.item(0)
@@ -603,6 +615,25 @@ class MainWindow(QtWidgets.QMainWindow):
         self._info_salary_offset_percentage.setText(salary_offset_percentage)
         self._salary_offset_org_widget.set_uen(uen, is_manager)
 
+        salary_band_lower_limit = "N/A"
+        salary_band_upper_limit = "N/A"
+        salary_band_offset = "N/A"
+        if self._hide_sensitive_data:
+            salary_band_lower_limit = "Hidden"
+            salary_band_upper_limit = "Hidden"
+            salary_band_offset = "Hidden"
+        else:
+            if "Salary Band Offset" in self._people[uen].keys():
+                salary_band_lower_limit = self._people[uen]["Salary Band Lower Limit"]
+                salary_band_upper_limit = self._people[uen]["Salary Band Upper Limit"]
+                salary_band_offset = str(self._people[uen]["Salary Band Offset"])
+
+        self._info_salary_band_lower_limit.setText(str(salary_band_lower_limit))
+        self._info_salary_band_salary.setText(salary)
+        self._info_salary_band_upper_limit.setText(str(salary_band_upper_limit))
+        self._info_salary_band_offset.setText(salary_band_offset)
+        self._salary_band_offset_org_widget.set_uen(uen, is_manager)
+
         rollup_salary_usd = "N/A"
         rollup_salary_usd_val = int(self._people[uen]["Rollup Salaries"])
         if self._hide_sensitive_data:
@@ -628,6 +659,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._nine_box_org_widget.set_redacted(is_redacted)
         self._salary_org_widget.set_redacted(is_redacted)
         self._salary_offset_org_widget.set_redacted(is_redacted)
+        self._salary_band_offset_org_widget.set_redacted(is_redacted)
         self._rollup_salary_org_widget.set_redacted(is_redacted)
 
         self._render_uen()

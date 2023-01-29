@@ -206,13 +206,14 @@ def scan_org_tree(people, locations, supervisor_uen, depth):
 
         if salary_usd >= 10000:
             log_salary_usd = int((math.log10(salary_usd) - 4) / 0.25)
-            print(supervisor_uen, log_salary_usd, salary_usd)
             p["Salary Counts"][log_salary_usd] += 1
 
     if ("Grades" in p["Person"].keys()) and ("Salaries" in p["Person"].keys()):
-        band_lower_salary = locations[location][grade]["Low"]
-        band_upper_salary = locations[location][grade]["High"]
-        band_mid_salary = (band_upper_salary + band_lower_salary) // 2
+        band_lower_limit = locations[location][grade]["Low"]
+        p["Salary Band Lower Limit"] = band_lower_limit
+        band_upper_limit = locations[location][grade]["High"]
+        p["Salary Band Upper Limit"] = band_upper_limit
+        band_mid_salary = (band_upper_limit + band_lower_limit) // 2
         salary_offset = salary - band_mid_salary
         p["Salary Offset"] = salary_offset
         salary_offset_usd = salary_offset * fx_rates[location]
@@ -230,11 +231,11 @@ def scan_org_tree(people, locations, supervisor_uen, depth):
         p["Salary Offset Key"] = str(salary_offset_key)
         p["Salary Offset Counts"][(50000 + salary_offset_key) // 10000] += 1
 
-        band_offset = 0
-        if salary < band_lower_salary:
-            band_offset = -1
-        elif salary > band_upper_salary:
-            band_offset = 1
+        band_offset = "Within"
+        if salary < band_lower_limit:
+            band_offset = "Below"
+        elif salary > band_upper_limit:
+            band_offset = "Above"
 
         p["Salary Band Offset"] = band_offset
 
