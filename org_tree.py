@@ -1,8 +1,9 @@
 import json
+import math
 import sys
 import time
 from PySide6 import QtWidgets
-from MainWindow import MainWindow, fx_rates, team_colours, type_colours, num_direct_reports_colours, location_colours, grade_colours, gender_colours, rating_colours, nine_box_colours, salary_offset_colours
+from MainWindow import MainWindow, fx_rates, team_colours, type_colours, num_direct_reports_colours, location_colours, grade_colours, gender_colours, salary_colours, rating_colours, nine_box_colours, salary_offset_colours
 
 team_colours_list = [
     [0xff, 0xc0, 0xc0],
@@ -78,6 +79,7 @@ def scan_org_tree(people, locations, supervisor_uen, depth):
         p["9 Box Counts"][i] = [0] * 3
     p["Rating Counts"] = [0] * len(rating_colours)
     p["Total Reports"] = 0
+    p["Salary Counts"] = [0] * len(salary_colours)
     p["Salary Offset Counts"] = [0] * len(salary_offset_colours)
     p["Rollup Salaries"] = 0
     p["Missing Salaries"] = 0
@@ -107,6 +109,9 @@ def scan_org_tree(people, locations, supervisor_uen, depth):
         for j in range(len(p["9 Box Counts"])):
             for k in range(len(p["9 Box Counts"][j])):
                 p["9 Box Counts"][j][k] += dr["9 Box Counts"][j][k]
+
+        for j in range(len(p["Salary Counts"])):
+            p["Salary Counts"][j] += dr["Salary Counts"][j]
 
         for j in range(len(p["Salary Offset Counts"])):
             p["Salary Offset Counts"][j] += dr["Salary Offset Counts"][j]
@@ -198,6 +203,11 @@ def scan_org_tree(people, locations, supervisor_uen, depth):
         salary = p["Person"]["Salaries"][-1]["Salary"]
         salary_usd = salary * fx_rates[location]
         p["Rollup Salaries"] += salary_usd
+
+        if salary_usd >= 10000:
+            log_salary_usd = int((math.log10(salary_usd) - 4) / 0.25)
+            print(supervisor_uen, log_salary_usd, salary_usd)
+            p["Salary Counts"][log_salary_usd] += 1
 
     if ("Grades" in p["Person"].keys()) and ("Salaries" in p["Person"].keys()):
         band_lower_salary = locations[location][grade]["Low"]

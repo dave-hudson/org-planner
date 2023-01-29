@@ -306,7 +306,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._side_layout.addWidget(HLine())
         self._info_salary = self._add_info_text("Salary")
         self._info_salary_usd = self._add_info_text("Salary (USD)")
-        self._salary_org_widget = SunburstOrgKeyWidget(SalarySunburstOrgWidget(), ColourKey1DWidget(salary_colours))
+        self._salary_org_widget = SunburstOrgKeyWidget(SalarySunburstOrgWidget(), ColourKey1DWidget(salary_colours, "Salary Counts"))
         self._side_layout.addWidget(self._salary_org_widget)
 
         self._side_layout.addWidget(HLine())
