@@ -15,6 +15,20 @@ salary_offset_colours = {
     "50000": [0xdb, 0x1f, 0x00]
 }
 
+salary_offset_labels = [
+    "Below -$40,000",
+    "-$40,000 to -$30,001",
+    "-$30,000 to -$20,001",
+    "-$20,000 to -$10,001",
+    "-$10,000 to -$1",
+    "$0 to $9,999",
+    "$10,000 to $19,999",
+    "$20,000 to $29,999",
+    "$30,000 to $39,999",
+    "$40,000 to $49,999",
+    "$50,000 and above",
+]
+
 class SalaryOffsetSunburstOrgWidget(SunburstOrgWidget):
     """
     A widget class used to draw salary band offset sunburst org charts.

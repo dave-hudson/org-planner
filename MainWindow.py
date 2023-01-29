@@ -17,7 +17,7 @@ from NineBoxSunburstOrgWidget import NineBoxSunburstOrgWidget, nine_box_colours
 from RatingSunburstOrgWidget import RatingSunburstOrgWidget, rating_colours
 from RollupSalarySunburstOrgWidget import RollupSalarySunburstOrgWidget, rollup_salary_colours
 from SalarySunburstOrgWidget import SalarySunburstOrgWidget, salary_colours
-from SalaryOffsetSunburstOrgWidget import SalaryOffsetSunburstOrgWidget, salary_offset_colours
+from SalaryOffsetSunburstOrgWidget import SalaryOffsetSunburstOrgWidget, salary_offset_colours, salary_offset_labels
 from ServiceDurationSunburstOrgWidget import ServiceDurationSunburstOrgWidget
 from TeamSunburstOrgWidget import TeamSunburstOrgWidget, team_colours
 from TypeSunburstOrgWidget import TypeSunburstOrgWidget, type_colours
@@ -313,7 +313,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self._info_salary_offset = self._add_info_text("Salary Mid-band Offset")
         self._info_salary_offset_usd = self._add_info_text("Salary Mid-band Offset (USD)")
         self._info_salary_offset_percentage = self._add_info_text("Salary Mid-band Offset Percentage")
-        self._salary_offset_org_widget = SunburstOrgKeyWidget(SalaryOffsetSunburstOrgWidget(), ColourKey1DWidget(salary_offset_colours, "Salary Offset Counts"))
+        salary_offset_legend = ColourKey1DWidget(salary_offset_colours, "Salary Offset Counts")
+        salary_offset_legend.set_labels(salary_offset_labels)
+        self._salary_offset_org_widget = SunburstOrgKeyWidget(SalaryOffsetSunburstOrgWidget(), salary_offset_legend)
         self._side_layout.addWidget(self._salary_offset_org_widget)
 
         self._side_layout.addWidget(HLine())

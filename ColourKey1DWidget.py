@@ -13,6 +13,7 @@ class ColourKey1DWidget(QtWidgets.QFrame):
         self._layout.setSpacing(0)
         self._layout.setColumnMinimumWidth(1, 80)
         self._people = {}
+        self._label_widgets = []
         self._colour_box_widgets = []
         self._count_key = count_key
 
@@ -20,6 +21,7 @@ class ColourKey1DWidget(QtWidgets.QFrame):
         for cd in colour_dict:
             label_widget = ColourBoxLabelWidget(cd)
             self._layout.addWidget(label_widget, row, 0)
+            self._label_widgets.append(label_widget)
 
             colour_widget = ColourBoxWidget("")
             colour_widget.set_background_colour(colour_dict[cd])
@@ -30,6 +32,10 @@ class ColourKey1DWidget(QtWidgets.QFrame):
 
         self.setSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         self.setLayout(self._layout)
+
+    def set_labels(self, labels):
+        for i in range(len(self._label_widgets)):
+            self._label_widgets[i].setText(labels[i])
 
     def set_people(self, people):
         self._people = people
