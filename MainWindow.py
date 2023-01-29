@@ -19,7 +19,7 @@ from RollupSalarySunburstOrgWidget import RollupSalarySunburstOrgWidget, rollup_
 from SalarySunburstOrgWidget import SalarySunburstOrgWidget, salary_colours
 from SalaryOffsetSunburstOrgWidget import SalaryOffsetSunburstOrgWidget, salary_offset_colours, salary_offset_labels
 from SalaryBandOffsetSunburstOrgWidget import SalaryBandOffsetSunburstOrgWidget, salary_band_offset_colours
-from ServiceDurationSunburstOrgWidget import ServiceDurationSunburstOrgWidget
+from ServiceDurationSunburstOrgWidget import ServiceDurationSunburstOrgWidget, service_duration_colours
 from TeamSunburstOrgWidget import TeamSunburstOrgWidget, team_colours
 from TypeSunburstOrgWidget import TypeSunburstOrgWidget, type_colours
 
@@ -290,7 +290,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self._side_layout.addWidget(HLine())
         self._info_start_date = self._add_info_text("Start Date")
         self._info_service_duration = self._add_info_text("Service Duration (weeks)")
-        self._service_duration_org_widget = SunburstOrgKeyWidget(ServiceDurationSunburstOrgWidget(), None)
+        service_duration_legend = ColourKey1DWidget(service_duration_colours)
+        self._service_duration_org_widget = SunburstOrgKeyWidget(ServiceDurationSunburstOrgWidget(), service_duration_legend)
         self._side_layout.addWidget(self._service_duration_org_widget)
 
         self._side_layout.addWidget(HLine())
