@@ -312,9 +312,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self._side_layout.addWidget(self._salary_org_widget)
 
         self._side_layout.addWidget(HLine())
-        self._info_salary_offset = self._add_info_text("Salary Offset From Mid-band")
-        self._info_salary_offset_usd = self._add_info_text("Salary Offset From Mid-band (USD)")
-        self._info_salary_offset_percentage = self._add_info_text("Salary Offset From Mid-band (Percentage)")
+        self._info_salary_offset = self._add_info_text("Mid-band Salary Offset")
+        self._info_salary_offset_usd = self._add_info_text("Mid-band Salary Offset (USD)")
+        self._info_salary_offset_percentage = self._add_info_text("Mid-band Salary Offset (%)")
         salary_offset_legend = ColourKey1DWidget(salary_offset_colours, "Salary Offset Counts")
         salary_offset_legend.set_labels(salary_offset_labels)
         self._salary_offset_org_widget = SunburstOrgKeyWidget(SalaryOffsetSunburstOrgWidget(), salary_offset_legend)
