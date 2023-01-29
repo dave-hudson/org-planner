@@ -311,7 +311,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._side_layout.addWidget(HLine())
         self._info_salary_offset = self._add_info_text("Salary Mid-band Offset")
-        self._salary_offset_org_widget = SunburstOrgKeyWidget(SalaryOffsetSunburstOrgWidget(), ColourKey1DWidget(salary_offset_colours))
+        self._info_salary_offset_usd = self._add_info_text("Salary Mid-band Offset (USD)")
+        self._info_salary_offset_percentage = self._add_info_text("Salary Mid-band Offset Percentage")
+        self._salary_offset_org_widget = SunburstOrgKeyWidget(SalaryOffsetSunburstOrgWidget(), ColourKey1DWidget(salary_offset_colours, "Salary Offset Counts"))
         self._side_layout.addWidget(self._salary_offset_org_widget)
 
         self._side_layout.addWidget(HLine())
@@ -582,13 +584,21 @@ class MainWindow(QtWidgets.QMainWindow):
         self._salary_org_widget.set_uen(uen, is_manager)
 
         salary_offset = "N/A"
+        salary_offset_usd = "N/A"
+        salary_offset_percentage = "N/A"
         if self._hide_sensitive_data:
             salary_offset = "Hidden"
+            salary_offset_usd = "Hidden"
+            salary_offset_percentage = "Hidden"
         else:
-            if "Salary Offset Percentage" in self._people[uen].keys():
-                salary_offset = "{:.1f}%".format(self._people[uen]["Salary Offset Percentage"])
+            if "Salary Offset" in self._people[uen].keys():
+                salary_offset = str(self._people[uen]["Salary Offset"])
+                salary_offset_usd = str(int(self._people[uen]["Salary Offset USD"]))
+                salary_offset_percentage = "{:.1f}%".format(self._people[uen]["Salary Offset Percentage"])
 
         self._info_salary_offset.setText(salary_offset)
+        self._info_salary_offset_usd.setText(salary_offset_usd)
+        self._info_salary_offset_percentage.setText(salary_offset_percentage)
         self._salary_offset_org_widget.set_uen(uen, is_manager)
 
         rollup_salary_usd = "N/A"
