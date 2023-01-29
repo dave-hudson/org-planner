@@ -3,7 +3,7 @@ from SunburstOrgWidget import SunburstOrgWidget
 gender_colours = {
     "M": [0x40, 0xc0, 0xff],
     "F": [0xff, 0x80, 0x80],
-    "NB": [0xc0, 0xc0, 0x40]
+    "NB": [0xf0, 0xf0, 0x30]
 }
 
 class GenderSunburstOrgWidget(SunburstOrgWidget):
