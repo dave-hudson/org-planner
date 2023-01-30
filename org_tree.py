@@ -210,14 +210,21 @@ def scan_org_tree(people, locations, supervisor_uen, depth):
             p["Salary Counts"][log_salary_usd] += 1
 
     if ("Grades" in p["Person"].keys()) and ("Salaries" in p["Person"].keys()):
+        fx_rate = fx_rates[location]
+
         band_lower_limit = locations[location][grade]["Low"]
         p["Salary Band Lower Limit"] = band_lower_limit
+        p["Salary Band Lower Limit USD"] = int(band_lower_limit * fx_rate)
         band_upper_limit = locations[location][grade]["High"]
         p["Salary Band Upper Limit"] = band_upper_limit
+        p["Salary Band Upper Limit USD"] = int(band_upper_limit * fx_rate)
         band_mid_salary = (band_upper_limit + band_lower_limit) // 2
+        p["Salary Band Mid Point"] = band_mid_salary
+        p["Salary Band Mid Point USD"] = int(band_mid_salary * fx_rate)
+
         salary_offset = salary - band_mid_salary
         p["Salary Offset"] = salary_offset
-        salary_offset_usd = salary_offset * fx_rates[location]
+        salary_offset_usd = salary_offset * fx_rate
         p["Salary Offset USD"] = salary_offset_usd
         salary_offset_percentage = (salary_offset / band_mid_salary) * 100
         p["Salary Offset Percentage"] = salary_offset_percentage
@@ -232,13 +239,21 @@ def scan_org_tree(people, locations, supervisor_uen, depth):
         p["Salary Offset Key"] = str(salary_offset_key)
         p["Salary Offset Counts"][(50000 + salary_offset_key) // 10000] += 1
 
-        band_offset = "Within"
+        band_offset = 0
+        band_offset_usd = 0
+        band_offset_usd_key = 0
         if salary < band_lower_limit:
-            band_offset = "Below"
+            band_offset = salary - band_lower_limit
+            band_offset_usd = int(band_offset * fx_rate)
+            band_offset_usd_key = (band_offset_usd - 9999) // 10000
         elif salary > band_upper_limit:
-            band_offset = "Above"
+            band_offset = salary - band_upper_limit
+            band_offset_usd = int(band_offset * fx_rate)
+            band_offset_usd_key = (band_offset_usd + 9999) // 10000
 
         p["Salary Band Offset"] = band_offset
+        p["Salary Band Offset USD"] = band_offset_usd
+        p["Salary Band Offset USD Key"] = band_offset_usd_key
 
 def scan_json_people(json_data):
     people = {}

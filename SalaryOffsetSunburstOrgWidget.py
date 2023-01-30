@@ -16,7 +16,7 @@ salary_offset_colours = {
 }
 
 salary_offset_labels = [
-    "Below -$40,000",
+    "-$40,001 and below",
     "-$40,000 to -$30,001",
     "-$30,000 to -$20,001",
     "-$20,000 to -$10,001",
