@@ -4,7 +4,12 @@ import sys
 import time
 from PySide6 import QtWidgets
 from SunburstOrgWidget import fx_rates
-from MainWindow import MainWindow, team_colours, type_colours, num_direct_reports_colours, location_colours, grade_colours, gender_colours, salary_colours, rating_colours, nine_box_colours, salary_offset_colours
+from MainWindow import (
+    MainWindow, team_colours, type_colours, num_direct_reports_colours,
+    location_colours, grade_colours, gender_colours, salary_colours,
+    rating_colours, nine_box_colours, salary_offset_colours,
+    salary_band_offset_colours
+)
 
 team_colours_list = [
     [0xff, 0xc0, 0xc0],
@@ -82,6 +87,7 @@ def scan_org_tree(people, locations, supervisor_uen, depth):
     p["Total Reports"] = 0
     p["Salary Counts"] = [0] * len(salary_colours)
     p["Salary Offset Counts"] = [0] * len(salary_offset_colours)
+    p["Salary Band Offset Counts"] = [0] * len(salary_band_offset_colours)
     p["Rollup Salaries"] = 0
     p["Missing Salaries"] = 0
 
@@ -116,6 +122,9 @@ def scan_org_tree(people, locations, supervisor_uen, depth):
 
         for j in range(len(p["Salary Offset Counts"])):
             p["Salary Offset Counts"][j] += dr["Salary Offset Counts"][j]
+
+        for j in range(len(p["Salary Band Offset Counts"])):
+            p["Salary Band Offset Counts"][j] += dr["Salary Band Offset Counts"][j]
 
         for j in range(len(p["Rating Counts"])):
             p["Rating Counts"][j] += dr["Rating Counts"][j]
@@ -230,30 +239,35 @@ def scan_org_tree(people, locations, supervisor_uen, depth):
         p["Salary Offset Percentage"] = salary_offset_percentage
 
         salary_offset_usd_key = salary_offset_usd
-        if salary_offset_usd_key > 50000:
-            salary_offset_usd_key = 50000
-        elif salary_offset_usd_key < -50000:
-            salary_offset_usd_key = -50000
+        salary_offset_key = int(salary_offset_usd_key + 5000) // 10000
+        if salary_offset_key > 5:
+            salary_offset_key = 5
+        elif salary_offset_key < -5:
+            salary_offset_key = -5
 
-        salary_offset_key = (int(salary_offset_usd_key + 5000) // 10000) * 10000
         p["Salary Offset Key"] = str(salary_offset_key)
-        p["Salary Offset Counts"][(50000 + salary_offset_key) // 10000] += 1
+        p["Salary Offset Counts"][5 + salary_offset_key] += 1
 
         band_offset = 0
         band_offset_usd = 0
-        band_offset_usd_key = 0
+        band_offset_key = 0
         if salary < band_lower_limit:
             band_offset = salary - band_lower_limit
             band_offset_usd = int(band_offset * fx_rate)
-            band_offset_usd_key = (band_offset_usd - 9999) // 10000
+            band_offset_key = (band_offset_usd - 9999) // 10000
+            if band_offset_key < -5:
+                band_offset_key = -5
         elif salary > band_upper_limit:
             band_offset = salary - band_upper_limit
             band_offset_usd = int(band_offset * fx_rate)
-            band_offset_usd_key = (band_offset_usd + 9999) // 10000
+            band_offset_key = (band_offset_usd + 9999) // 10000
+            if band_offset_key > 5:
+                band_offset_key = 5
 
         p["Salary Band Offset"] = band_offset
         p["Salary Band Offset USD"] = band_offset_usd
-        p["Salary Band Offset USD Key"] = band_offset_usd_key
+        p["Salary Band Offset Key"] = str(band_offset_key)
+        p["Salary Band Offset Counts"][5 + band_offset_key] += 1
 
 def scan_json_people(json_data):
     people = {}

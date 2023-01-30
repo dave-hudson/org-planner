@@ -21,7 +21,7 @@ class SalaryBandOffsetInfoWidget(InfoWidget):
         self._info_salary_band_offset = self._add_info_text("Band Offset")
         self._info_salary_band_usd = self._add_info_text("Salary Band (USD)")
         self._info_salary_band_offset_usd = self._add_info_text("Band Offset (USD)")
-        legend = ColourKey1DWidget(salary_band_offset_colours)
+        legend = ColourKey1DWidget(salary_band_offset_colours, "Salary Band Offset Counts")
         legend.set_labels(salary_band_offset_labels)
         self._org_widget = SunburstOrgKeyWidget(SalaryBandOffsetSunburstOrgWidget(), legend)
         self._layout.addWidget(self._org_widget)

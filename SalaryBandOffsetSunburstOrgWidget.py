@@ -39,8 +39,8 @@ class SalaryBandOffsetSunburstOrgWidget(SunburstOrgWidget):
         colours = [0x40, 0x40, 0x40]
 
         p = self._people[uen]
-        if "Salary Band Offset USD Key" in p.keys():
-            salary_band_offset_usd_key = p["Salary Band Offset USD Key"]
-            colours = salary_band_offset_colours[str(salary_band_offset_usd_key)]
+        if "Salary Band Offset Key" in p.keys():
+            salary_band_offset_key = p["Salary Band Offset Key"]
+            colours = salary_band_offset_colours[salary_band_offset_key]
 
         return colours
