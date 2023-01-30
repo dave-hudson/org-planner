@@ -25,6 +25,7 @@ class GeneralInfoWidget(InfoWidget):
 
         self._info_uen = self._add_info_text("UEN")
         self._info_supervisor_uen = self._add_info_text("Supervisor UEN")
+        self._info_percentage_time = self._add_info_text("FTE (%)")
 
     def set_locations(self, locations):
         pass
@@ -47,6 +48,12 @@ class GeneralInfoWidget(InfoWidget):
             supervisor_uen = str("{:d} ({:s})").format(supervisor, self._people[supervisor]["Person"]["Name"])
 
         self._info_supervisor_uen.setText(supervisor_uen)
+
+        percentage_time = 100
+        if "Percentage Time" in p.keys():
+            percentage_time = p["Percentage Time"]
+
+        self._info_percentage_time.setText(str(percentage_time))
 
     def set_redacted(self, is_redacted):
         pass
