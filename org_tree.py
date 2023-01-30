@@ -235,7 +235,7 @@ def scan_org_tree(people, locations, supervisor_uen, depth):
         elif salary_offset_usd_key < -50000:
             salary_offset_usd_key = -50000
 
-        salary_offset_key = (int(salary_offset_usd_key) // 10000) * 10000
+        salary_offset_key = (int(salary_offset_usd_key + 5000) // 10000) * 10000
         p["Salary Offset Key"] = str(salary_offset_key)
         p["Salary Offset Counts"][(50000 + salary_offset_key) // 10000] += 1
 
