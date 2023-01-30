@@ -9,18 +9,18 @@ from MainSplitter import MainSplitter
 from HLine import HLine
 from SunburstOrgWidget import fx_rates
 from SunburstOrgKeyWidget import SunburstOrgKeyWidget
-from GenderSunburstOrgWidget import GenderSunburstOrgWidget, gender_colours
-from GradeSunburstOrgWidget import GradeSunburstOrgWidget, grade_colours
-from LocationSunburstOrgWidget import LocationSunburstOrgWidget, location_colours
-from NumDirectReportsSunburstOrgWidget import NumDirectReportsSunburstOrgWidget, num_direct_reports_colours
+from GenderInfoWidget import GenderInfoWidget, gender_colours
+from GradeInfoWidget import GradeInfoWidget, grade_colours
+from LocationInfoWidget import LocationInfoWidget, location_colours
+from NumDirectReportsInfoWidget import NumDirectReportsInfoWidget, num_direct_reports_colours
 from NineBoxSunburstOrgWidget import NineBoxSunburstOrgWidget, nine_box_colours
 from RatingSunburstOrgWidget import RatingSunburstOrgWidget, rating_colours
 from RollupSalarySunburstOrgWidget import RollupSalarySunburstOrgWidget, rollup_salary_colours
 from SalarySunburstOrgWidget import SalarySunburstOrgWidget, salary_colours
 from SalaryOffsetSunburstOrgWidget import SalaryOffsetSunburstOrgWidget, salary_offset_colours, salary_offset_labels
 from SalaryBandOffsetSunburstOrgWidget import SalaryBandOffsetSunburstOrgWidget, salary_band_offset_colours
-from ServiceDurationSunburstOrgWidget import ServiceDurationSunburstOrgWidget, service_duration_colours
-from TeamSunburstOrgWidget import TeamSunburstOrgWidget, team_colours
+from ServiceDurationInfoWidget import ServiceDurationInfoWidget, service_duration_colours
+from TeamInfoWidget import TeamInfoWidget, team_colours
 from TypeSunburstOrgWidget import TypeSunburstOrgWidget, type_colours
 
 # This is the QSS used to ensure the app renders correctly.  It's parameterized
@@ -257,15 +257,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self._info_supervisor_uen = self._add_info_text("Supervisor UEN")
 
         self._side_layout.addWidget(HLine())
-        self._info_num_direct_reports = self._add_info_text("Direct Reports")
-        self._info_total_reports = self._add_info_text("Total Reports")
-        self._num_direct_reports_org_widget = SunburstOrgKeyWidget(NumDirectReportsSunburstOrgWidget(), ColourKey1DWidget(num_direct_reports_colours, "Num Direct Reports Counts"))
-        self._side_layout.addWidget(self._num_direct_reports_org_widget)
+        self._num_direct_reports_info = NumDirectReportsInfoWidget()
+        self._side_layout.addWidget(self._num_direct_reports_info)
 
         self._side_layout.addWidget(HLine())
-        self._info_team = self._add_info_text("Team")
-        self._team_org_widget = SunburstOrgKeyWidget(TeamSunburstOrgWidget(), ColourKey1DWidget(team_colours, "Team Counts"))
-        self._side_layout.addWidget(self._team_org_widget)
+        self._team_info = TeamInfoWidget()
+        self._side_layout.addWidget(self._team_info)
 
         self._side_layout.addWidget(HLine())
         self._info_type = self._add_info_text("Type")
@@ -273,26 +270,20 @@ class MainWindow(QtWidgets.QMainWindow):
         self._side_layout.addWidget(self._type_org_widget)
 
         self._side_layout.addWidget(HLine())
-        self._info_location = self._add_info_text("Location")
-        self._location_org_widget = SunburstOrgKeyWidget(LocationSunburstOrgWidget(), ColourKey1DWidget(location_colours, "Location Counts"))
-        self._side_layout.addWidget(self._location_org_widget)
+        self._location_info = LocationInfoWidget()
+        self._side_layout.addWidget(self._location_info)
 
         self._side_layout.addWidget(HLine())
-        self._info_grade = self._add_info_text("Grade")
-        self._grade_org_widget = SunburstOrgKeyWidget(GradeSunburstOrgWidget(), ColourKey1DWidget(grade_colours, "Grade Counts"))
-        self._side_layout.addWidget(self._grade_org_widget)
+        self._grade_info = GradeInfoWidget()
+        self._side_layout.addWidget(self._grade_info)
 
         self._side_layout.addWidget(HLine())
-        self._info_gender = self._add_info_text("Gender")
-        self._gender_org_widget = SunburstOrgKeyWidget(GenderSunburstOrgWidget(), ColourKey1DWidget(gender_colours, "Gender Counts"))
-        self._side_layout.addWidget(self._gender_org_widget)
+        self._gender_info = GenderInfoWidget()
+        self._side_layout.addWidget(self._gender_info)
 
         self._side_layout.addWidget(HLine())
-        self._info_start_date = self._add_info_text("Start Date")
-        self._info_service_duration = self._add_info_text("Service Duration (weeks)")
-        service_duration_legend = ColourKey1DWidget(service_duration_colours)
-        self._service_duration_org_widget = SunburstOrgKeyWidget(ServiceDurationSunburstOrgWidget(), service_duration_legend)
-        self._side_layout.addWidget(self._service_duration_org_widget)
+        self._service_duration_info = ServiceDurationInfoWidget()
+        self._side_layout.addWidget(self._service_duration_info)
 
         self._side_layout.addWidget(HLine())
         self._info_nine_box_potential = self._add_info_text("9-box Grid Potential")
@@ -454,13 +445,13 @@ class MainWindow(QtWidgets.QMainWindow):
     def set_locations(self, locations):
         self._locations = locations
 
-        self._num_direct_reports_org_widget.set_locations(locations)
-        self._team_org_widget.set_locations(locations)
+        self._num_direct_reports_info.set_locations(locations)
+        self._team_info.set_locations(locations)
         self._type_org_widget.set_locations(locations)
-        self._location_org_widget.set_locations(locations)
-        self._grade_org_widget.set_locations(locations)
-        self._gender_org_widget.set_locations(locations)
-        self._service_duration_org_widget.set_locations(locations)
+        self._location_info.set_locations(locations)
+        self._grade_info.set_locations(locations)
+        self._gender_info.set_locations(locations)
+        self._service_duration_info.set_locations(locations)
         self._nine_box_org_widget.set_locations(locations)
         self._rating_org_widget.set_locations(locations)
         self._salary_org_widget.set_locations(locations)
@@ -484,13 +475,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self._people_tree_widget.insertTopLevelItem(0, top_level)
         self._people_tree_widget.expandAll()
 
-        self._num_direct_reports_org_widget.set_people(people)
-        self._team_org_widget.set_people(people)
+        self._num_direct_reports_info.set_people(people)
+        self._team_info.set_people(people)
         self._type_org_widget.set_people(people)
-        self._location_org_widget.set_people(people)
-        self._grade_org_widget.set_people(people)
-        self._gender_org_widget.set_people(people)
-        self._service_duration_org_widget.set_people(people)
+        self._location_info.set_people(people)
+        self._grade_info.set_people(people)
+        self._gender_info.set_people(people)
+        self._service_duration_info.set_people(people)
         self._nine_box_org_widget.set_people(people)
         self._rating_org_widget.set_people(people)
         self._salary_org_widget.set_people(people)
@@ -505,6 +496,12 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def set_uen(self, uen):
         self._uen = uen
+        self._num_direct_reports_info.set_uen(uen)
+        self._team_info.set_uen(uen)
+        self._location_info.set_uen(uen)
+        self._grade_info.set_uen(uen)
+        self._gender_info.set_uen(uen)
+        self._service_duration_info.set_uen(uen)
         self._render_uen()
 
     def _render_uen(self):
@@ -526,37 +523,16 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._info_supervisor_uen.setText(supervisor_uen)
 
-        self._info_num_direct_reports.setText(str(self._people[uen]["Num Direct Reports"]))
-        self._info_total_reports.setText(str(self._people[uen]["Total Reports"]))
-        self._num_direct_reports_org_widget.set_uen(uen, is_manager)
-
-        self._info_team.setText(p["Team"])
-        self._team_org_widget.set_uen(uen, is_manager)
+        self._num_direct_reports_info.render_uen()
+        self._team_info.render_uen()
 
         self._info_type.setText(p["Type"])
         self._type_org_widget.set_uen(uen, is_manager)
 
-        self._info_location.setText(p["Locations"][-1]["Location"])
-        self._location_org_widget.set_uen(uen, is_manager)
-
-        grade = "None"
-        if "Grades" in p.keys():
-            grade = p["Grades"][-1]["Grade"]
-
-        self._info_grade.setText(grade)
-        self._grade_org_widget.set_uen(uen, is_manager)
-
-        gender = "None"
-        if "Gender" in p.keys():
-            gender = p["Gender"]
-
-        self._info_gender.setText(gender)
-        self._gender_org_widget.set_uen(uen, is_manager)
-
-        self._info_start_date.setText(p["Start Date"])
-        service_duration = self._people[uen]["Service Duration"] / (86400 * 7)
-        self._info_service_duration.setText(str("{:.1f}").format(service_duration))
-        self._service_duration_org_widget.set_uen(uen, is_manager)
+        self._location_info.render_uen()
+        self._grade_info.render_uen()
+        self._gender_info.render_uen()
+        self._service_duration_info.render_uen()
 
         nine_box_potential = "None"
         nine_box_performance = "None"
