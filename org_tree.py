@@ -83,6 +83,7 @@ def scan_org_tree(people, locations, supervisor_uen, depth):
     p["9 Box Counts"] = [[] for i in range(3)]
     for i in range(3):
         p["9 Box Counts"][i] = [0] * 3
+
     p["Rating Counts"] = [0] * len(rating_colours)
     p["Total Reports"] = 0
     p["Salary Counts"] = [0] * len(salary_colours)
@@ -220,11 +221,14 @@ def scan_org_tree(people, locations, supervisor_uen, depth):
 
     if ("Grades" in p["Person"].keys()) and ("Salaries" in p["Person"].keys()):
         fx_rate = fx_rates[location]
+        fte = 1
+        if "Percentage Time" in p["Person"].keys():
+            fte = p["Person"]["Percentage Time"] / 100
 
-        band_lower_limit = locations[location][grade]["Low"]
+        band_lower_limit = int(locations[location][grade]["Low"] * fte)
         p["Salary Band Lower Limit"] = band_lower_limit
         p["Salary Band Lower Limit USD"] = int(band_lower_limit * fx_rate)
-        band_upper_limit = locations[location][grade]["High"]
+        band_upper_limit = int(locations[location][grade]["High"] * fte)
         p["Salary Band Upper Limit"] = band_upper_limit
         p["Salary Band Upper Limit USD"] = int(band_upper_limit * fx_rate)
         band_mid_salary = (band_upper_limit + band_lower_limit) // 2
