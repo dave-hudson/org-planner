@@ -1,5 +1,5 @@
 import math
-from SunburstOrgWidget import SunburstOrgWidget, fx_rates
+from SunburstOrgWidget import SunburstOrgWidget
 
 rollup_salary_colours = {
     "$10,000": [0x20, 0xff, 0x20],

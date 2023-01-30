@@ -1,4 +1,4 @@
-from SunburstOrgWidget import SunburstOrgWidget, fx_rates
+from SunburstOrgWidget import SunburstOrgWidget
 
 salary_band_offset_colours = {
     "Below": [0x30, 0x30, 0xf0],

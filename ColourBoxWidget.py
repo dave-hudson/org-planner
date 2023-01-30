@@ -19,4 +19,3 @@ class ColourBoxWidget(QtWidgets.QLabel):
 
         qss = "background-color: rgb({:d}, {:d}, {:d}); color: {:s}".format(colour[0], colour[1], colour[2], ct)
         self.setStyleSheet(qss)
-

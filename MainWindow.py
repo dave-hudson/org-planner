@@ -7,21 +7,21 @@ from PeopleSelectorWidget import PeopleSelectorWidget
 from PersonWidget import PersonWidget
 from MainSplitter import MainSplitter
 from HLine import HLine
-from SunburstOrgWidget import fx_rates
 from SunburstOrgKeyWidget import SunburstOrgKeyWidget
 from GenderInfoWidget import GenderInfoWidget, gender_colours
+from GeneralInfoWidget import GeneralInfoWidget
 from GradeInfoWidget import GradeInfoWidget, grade_colours
 from LocationInfoWidget import LocationInfoWidget, location_colours
 from NumDirectReportsInfoWidget import NumDirectReportsInfoWidget, num_direct_reports_colours
-from NineBoxSunburstOrgWidget import NineBoxSunburstOrgWidget, nine_box_colours
-from RatingSunburstOrgWidget import RatingSunburstOrgWidget, rating_colours
-from RollupSalarySunburstOrgWidget import RollupSalarySunburstOrgWidget, rollup_salary_colours
-from SalarySunburstOrgWidget import SalarySunburstOrgWidget, salary_colours
-from SalaryOffsetSunburstOrgWidget import SalaryOffsetSunburstOrgWidget, salary_offset_colours, salary_offset_labels
-from SalaryBandOffsetSunburstOrgWidget import SalaryBandOffsetSunburstOrgWidget, salary_band_offset_colours
+from NineBoxInfoWidget import NineBoxInfoWidget, nine_box_colours
+from RatingInfoWidget import RatingInfoWidget, rating_colours
+from RollupSalaryInfoWidget import RollupSalaryInfoWidget, rollup_salary_colours
+from SalaryInfoWidget import SalaryInfoWidget, salary_colours
+from SalaryOffsetInfoWidget import SalaryOffsetInfoWidget, salary_offset_colours
+from SalaryBandOffsetInfoWidget import SalaryBandOffsetInfoWidget, salary_band_offset_colours
 from ServiceDurationInfoWidget import ServiceDurationInfoWidget, service_duration_colours
 from TeamInfoWidget import TeamInfoWidget, team_colours
-from TypeSunburstOrgWidget import TypeSunburstOrgWidget, type_colours
+from TypeInfoWidget import TypeInfoWidget, type_colours
 
 # This is the QSS used to ensure the app renders correctly.  It's parameterized
 # using string.format() form so dark and light mode parameters can be provided,
@@ -244,86 +244,73 @@ class MainWindow(QtWidgets.QMainWindow):
         self._side_layout = QtWidgets.QVBoxLayout()
         self._side_layout.setSpacing(12)
 
-        heading_font = QtGui.QFont()
-        heading_font.setBold(True)
-        heading_font.setPointSize(heading_font.pointSize() * 2)
-
-        self._info_name = QtWidgets.QLabel("")
-        self._info_name.setFont(heading_font)
-        self._side_layout.addWidget(self._info_name)
-        self._side_layout.addWidget(QtWidgets.QLabel(""))
-
-        self._info_uen = self._add_info_text("UEN")
-        self._info_supervisor_uen = self._add_info_text("Supervisor UEN")
+        self._general_info = GeneralInfoWidget()
+        self._side_layout.addWidget(self._general_info)
 
         self._side_layout.addWidget(HLine())
+
         self._num_direct_reports_info = NumDirectReportsInfoWidget()
         self._side_layout.addWidget(self._num_direct_reports_info)
 
         self._side_layout.addWidget(HLine())
+
         self._team_info = TeamInfoWidget()
         self._side_layout.addWidget(self._team_info)
 
         self._side_layout.addWidget(HLine())
-        self._info_type = self._add_info_text("Type")
-        self._type_org_widget = SunburstOrgKeyWidget(TypeSunburstOrgWidget(), ColourKey1DWidget(type_colours, "Type Counts"))
-        self._side_layout.addWidget(self._type_org_widget)
+
+        self._type_info = TypeInfoWidget()
+        self._side_layout.addWidget(self._type_info)
 
         self._side_layout.addWidget(HLine())
+
         self._location_info = LocationInfoWidget()
         self._side_layout.addWidget(self._location_info)
 
         self._side_layout.addWidget(HLine())
+
         self._grade_info = GradeInfoWidget()
         self._side_layout.addWidget(self._grade_info)
 
         self._side_layout.addWidget(HLine())
+
         self._gender_info = GenderInfoWidget()
         self._side_layout.addWidget(self._gender_info)
 
         self._side_layout.addWidget(HLine())
+
         self._service_duration_info = ServiceDurationInfoWidget()
         self._side_layout.addWidget(self._service_duration_info)
 
         self._side_layout.addWidget(HLine())
-        self._info_nine_box_potential = self._add_info_text("9-box Grid Potential")
-        self._info_nine_box_performance = self._add_info_text("9-box Grid Performance")
-        self._nine_box_org_widget = SunburstOrgKeyWidget(NineBoxSunburstOrgWidget(), ColourKey2DWidget(nine_box_colours, "9 Box Counts"))
-        self._side_layout.addWidget(self._nine_box_org_widget)
+
+        self._nine_box_info = NineBoxInfoWidget()
+        self._side_layout.addWidget(self._nine_box_info)
 
         self._side_layout.addWidget(HLine())
-        self._info_rating = self._add_info_text("Rating")
-        self._rating_org_widget = SunburstOrgKeyWidget(RatingSunburstOrgWidget(), ColourKey1DWidget(rating_colours, "Rating Counts"))
-        self._side_layout.addWidget(self._rating_org_widget)
+
+        self._rating_info = RatingInfoWidget()
+        self._side_layout.addWidget(self._rating_info)
 
         self._side_layout.addWidget(HLine())
-        self._info_salary = self._add_info_text("Salary")
-        self._info_salary_usd = self._add_info_text("Salary (USD)")
-        self._salary_org_widget = SunburstOrgKeyWidget(SalarySunburstOrgWidget(), ColourKey1DWidget(salary_colours, "Salary Counts"))
-        self._side_layout.addWidget(self._salary_org_widget)
+
+        self._salary_info = SalaryInfoWidget()
+        self._side_layout.addWidget(self._salary_info)
 
         self._side_layout.addWidget(HLine())
-        self._info_salary_offset = self._add_info_text("Mid-band Salary Offset")
-        self._info_salary_offset_usd = self._add_info_text("Mid-band Salary Offset (USD)")
-        self._info_salary_offset_percentage = self._add_info_text("Mid-band Salary Offset (%)")
-        salary_offset_legend = ColourKey1DWidget(salary_offset_colours, "Salary Offset Counts")
-        salary_offset_legend.set_labels(salary_offset_labels)
-        self._salary_offset_org_widget = SunburstOrgKeyWidget(SalaryOffsetSunburstOrgWidget(), salary_offset_legend)
-        self._side_layout.addWidget(self._salary_offset_org_widget)
+
+        self._salary_offset_info = SalaryOffsetInfoWidget()
+        self._side_layout.addWidget(self._salary_offset_info)
 
         self._side_layout.addWidget(HLine())
-        self._info_salary_band_lower_limit = self._add_info_text("Salary Band Lower Limit")
-        self._info_salary_band_salary = self._add_info_text("Salary")
-        self._info_salary_band_upper_limit = self._add_info_text("Salary Band Upper Limit")
-        self._info_salary_band_offset = self._add_info_text("Salary Comparison With Band")
-        salary_band_offset_legend = ColourKey1DWidget(salary_band_offset_colours)
-        self._salary_band_offset_org_widget = SunburstOrgKeyWidget(SalaryBandOffsetSunburstOrgWidget(), salary_band_offset_legend)
-        self._side_layout.addWidget(self._salary_band_offset_org_widget)
+
+        self._salary_band_offset_info = SalaryBandOffsetInfoWidget()
+        self._side_layout.addWidget(self._salary_band_offset_info)
 
         self._side_layout.addWidget(HLine())
-        self._info_rollup_salary_usd = self._add_info_text("Rollup Salary (USD)")
-        self._rollup_salary_org_widget = SunburstOrgKeyWidget(RollupSalarySunburstOrgWidget(), ColourKey1DWidget(rollup_salary_colours))
-        self._side_layout.addWidget(self._rollup_salary_org_widget)
+
+        self._rollup_salary_info = RollupSalaryInfoWidget()
+        self._side_layout.addWidget(self._rollup_salary_info)
 
         # Insert a spacer so the layout engine doesn't try to spread out the
         # info panel elements if they take less space than the visible
@@ -445,19 +432,20 @@ class MainWindow(QtWidgets.QMainWindow):
     def set_locations(self, locations):
         self._locations = locations
 
+        self._general_info.set_locations(locations)
         self._num_direct_reports_info.set_locations(locations)
         self._team_info.set_locations(locations)
-        self._type_org_widget.set_locations(locations)
+        self._type_info.set_locations(locations)
         self._location_info.set_locations(locations)
         self._grade_info.set_locations(locations)
         self._gender_info.set_locations(locations)
         self._service_duration_info.set_locations(locations)
-        self._nine_box_org_widget.set_locations(locations)
-        self._rating_org_widget.set_locations(locations)
-        self._salary_org_widget.set_locations(locations)
-        self._salary_offset_org_widget.set_locations(locations)
-        self._salary_band_offset_org_widget.set_locations(locations)
-        self._rollup_salary_org_widget.set_locations(locations)
+        self._nine_box_info.set_locations(locations)
+        self._rating_info.set_locations(locations)
+        self._salary_info.set_locations(locations)
+        self._salary_offset_info.set_locations(locations)
+        self._salary_band_offset_info.set_locations(locations)
+        self._rollup_salary_info.set_locations(locations)
 
         self.update()
 
@@ -475,19 +463,20 @@ class MainWindow(QtWidgets.QMainWindow):
         self._people_tree_widget.insertTopLevelItem(0, top_level)
         self._people_tree_widget.expandAll()
 
+        self._general_info.set_people(people)
         self._num_direct_reports_info.set_people(people)
         self._team_info.set_people(people)
-        self._type_org_widget.set_people(people)
+        self._type_info.set_people(people)
         self._location_info.set_people(people)
         self._grade_info.set_people(people)
         self._gender_info.set_people(people)
         self._service_duration_info.set_people(people)
-        self._nine_box_org_widget.set_people(people)
-        self._rating_org_widget.set_people(people)
-        self._salary_org_widget.set_people(people)
-        self._salary_offset_org_widget.set_people(people)
-        self._salary_band_offset_org_widget.set_people(people)
-        self._rollup_salary_org_widget.set_people(people)
+        self._nine_box_info.set_people(people)
+        self._rating_info.set_people(people)
+        self._salary_info.set_people(people)
+        self._salary_offset_info.set_people(people)
+        self._salary_band_offset_info.set_people(people)
+        self._rollup_salary_info.set_people(people)
 
         list_selected = self._people_list_widget.item(0)
         self._people_list_widget.setCurrentItem(list_selected)
@@ -496,12 +485,22 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def set_uen(self, uen):
         self._uen = uen
+
+        self._general_info.set_uen(uen)
         self._num_direct_reports_info.set_uen(uen)
         self._team_info.set_uen(uen)
+        self._type_info.set_uen(uen)
         self._location_info.set_uen(uen)
         self._grade_info.set_uen(uen)
         self._gender_info.set_uen(uen)
         self._service_duration_info.set_uen(uen)
+        self._nine_box_info.set_uen(uen)
+        self._rating_info.set_uen(uen)
+        self._salary_info.set_uen(uen)
+        self._salary_offset_info.set_uen(uen)
+        self._salary_band_offset_info.set_uen(uen)
+        self._rollup_salary_info.set_uen(uen)
+
         self._render_uen()
 
     def _render_uen(self):
@@ -509,134 +508,29 @@ class MainWindow(QtWidgets.QMainWindow):
         if uen == 0:
             return
 
-        is_manager = False
-        if len(self._people[uen]["Direct Reports"]) != 0:
-            is_manager = True
-
-        p = self._people[uen]["Person"]
-        self._info_name.setText(p["Name"])
-        self._info_uen.setText(str(p["UEN"]))
-        supervisor_uen = "N/A"
-        if "Supervisor UEN" in p.keys():
-            supervisor = p["Supervisor UEN"]
-            supervisor_uen = str("{:d} ({:s})").format(supervisor, self._people[supervisor]["Person"]["Name"])
-
-        self._info_supervisor_uen.setText(supervisor_uen)
-
+        self._general_info.render_uen()
         self._num_direct_reports_info.render_uen()
         self._team_info.render_uen()
-
-        self._info_type.setText(p["Type"])
-        self._type_org_widget.set_uen(uen, is_manager)
-
+        self._type_info.render_uen()
         self._location_info.render_uen()
         self._grade_info.render_uen()
         self._gender_info.render_uen()
         self._service_duration_info.render_uen()
-
-        nine_box_potential = "None"
-        nine_box_performance = "None"
-        if self._hide_sensitive_data:
-            nine_box_potential = "Hidden"
-            nine_box_performance = "Hidden"
-        else:
-            if "9 Box" in p.keys():
-                nine_box_potential = p["9 Box"][-1]["Potential"]
-                nine_box_performance = p["9 Box"][-1]["Performance"]
-
-        self._info_nine_box_potential.setText(nine_box_potential)
-        self._info_nine_box_performance.setText(nine_box_performance)
-        self._nine_box_org_widget.set_uen(uen, is_manager)
-
-        rating = "None"
-        if self._hide_sensitive_data:
-            rating = "Hidden"
-        else:
-            if "Ratings" in p.keys():
-                rating = str(p["Ratings"][-1]["Rating"])
-
-        self._info_rating.setText(rating)
-        self._rating_org_widget.set_uen(uen, is_manager)
-
-        salary = "N/A"
-        salary_usd = "N/A"
-        if self._hide_sensitive_data:
-            salary = "Hidden"
-            salary_usd = "Hidden"
-        else:
-            if "Salaries" in p.keys():
-                salary_val = p["Salaries"][-1]["Salary"]
-                salary = str(salary_val)
-                salary_usd_val = salary_val * fx_rates[p["Locations"][-1]["Location"]]
-                salary_usd = str(int(salary_usd_val))
-
-        self._info_salary.setText(salary)
-        self._info_salary_usd.setText(salary_usd)
-        self._salary_org_widget.set_uen(uen, is_manager)
-
-        salary_offset = "N/A"
-        salary_offset_usd = "N/A"
-        salary_offset_percentage = "N/A"
-        if self._hide_sensitive_data:
-            salary_offset = "Hidden"
-            salary_offset_usd = "Hidden"
-            salary_offset_percentage = "Hidden"
-        else:
-            if "Salary Offset" in self._people[uen].keys():
-                salary_offset = str(self._people[uen]["Salary Offset"])
-                salary_offset_usd = str(int(self._people[uen]["Salary Offset USD"]))
-                salary_offset_percentage = "{:.1f}%".format(self._people[uen]["Salary Offset Percentage"])
-
-        self._info_salary_offset.setText(salary_offset)
-        self._info_salary_offset_usd.setText(salary_offset_usd)
-        self._info_salary_offset_percentage.setText(salary_offset_percentage)
-        self._salary_offset_org_widget.set_uen(uen, is_manager)
-
-        salary_band_lower_limit = "N/A"
-        salary_band_upper_limit = "N/A"
-        salary_band_offset = "N/A"
-        if self._hide_sensitive_data:
-            salary_band_lower_limit = "Hidden"
-            salary_band_upper_limit = "Hidden"
-            salary_band_offset = "Hidden"
-        else:
-            if "Salary Band Offset" in self._people[uen].keys():
-                salary_band_lower_limit = self._people[uen]["Salary Band Lower Limit"]
-                salary_band_upper_limit = self._people[uen]["Salary Band Upper Limit"]
-                salary_band_offset = str(self._people[uen]["Salary Band Offset"])
-
-        self._info_salary_band_lower_limit.setText(str(salary_band_lower_limit))
-        self._info_salary_band_salary.setText(salary)
-        self._info_salary_band_upper_limit.setText(str(salary_band_upper_limit))
-        self._info_salary_band_offset.setText(salary_band_offset)
-        self._salary_band_offset_org_widget.set_uen(uen, is_manager)
-
-        rollup_salary_usd = "N/A"
-        rollup_salary_usd_val = int(self._people[uen]["Rollup Salaries"])
-        if self._hide_sensitive_data:
-            rollup_salary_usd = "Hidden"
-        else:
-            if is_manager:
-                rollup_missing_salaries = self._people[uen]["Missing Salaries"]
-                ppl = "People"
-                if rollup_missing_salaries == 1:
-                    ppl = "Person"
-
-                rollup_salary_usd = str("{} (Missing {:d} {})").format(rollup_salary_usd_val, rollup_missing_salaries, ppl)
-
-        self._info_rollup_salary_usd.setText(rollup_salary_usd)
-        self._rollup_salary_org_widget.set_uen(uen, is_manager)
+        self._nine_box_info.render_uen()
+        self._rating_info.render_uen()
+        self._salary_info.render_uen()
+        self._salary_offset_info.render_uen()
+        self._salary_band_offset_info.render_uen()
+        self._rollup_salary_info.render_uen()
 
         self.update()
 
     def _set_redacted(self, is_redacted):
-        vis = not is_redacted
-
-        self._rating_org_widget.set_redacted(is_redacted)
-        self._nine_box_org_widget.set_redacted(is_redacted)
-        self._salary_org_widget.set_redacted(is_redacted)
-        self._salary_offset_org_widget.set_redacted(is_redacted)
-        self._salary_band_offset_org_widget.set_redacted(is_redacted)
-        self._rollup_salary_org_widget.set_redacted(is_redacted)
+        self._rating_info.set_redacted(is_redacted)
+        self._nine_box_info.set_redacted(is_redacted)
+        self._salary_info.set_redacted(is_redacted)
+        self._salary_offset_info.set_redacted(is_redacted)
+        self._salary_band_offset_info.set_redacted(is_redacted)
+        self._rollup_salary_info.set_redacted(is_redacted)
 
         self._render_uen()

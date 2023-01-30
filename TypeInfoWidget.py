@@ -2,9 +2,9 @@ from PySide6 import QtWidgets
 from ColourKey1DWidget import ColourKey1DWidget
 from SunburstOrgKeyWidget import SunburstOrgKeyWidget
 from InfoWidget import InfoWidget
-from TeamSunburstOrgWidget import TeamSunburstOrgWidget, team_colours
+from TypeSunburstOrgWidget import TypeSunburstOrgWidget, type_colours
 
-class TeamInfoWidget(InfoWidget):
+class TypeInfoWidget(InfoWidget):
     def __init__(self) -> None:
         super().__init__()
 
@@ -16,9 +16,9 @@ class TeamInfoWidget(InfoWidget):
         self._layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self._layout)
 
-        self._info_team = self._add_info_text("Team")
-        legend = ColourKey1DWidget(team_colours, "Team Counts")
-        self._org_widget = SunburstOrgKeyWidget(TeamSunburstOrgWidget(), legend)
+        self._info_type = self._add_info_text("Type")
+        legend = ColourKey1DWidget(type_colours, "Type Counts")
+        self._org_widget = SunburstOrgKeyWidget(TypeSunburstOrgWidget(), legend)
         self._layout.addWidget(self._org_widget)
 
     def set_locations(self, locations):
@@ -43,7 +43,7 @@ class TeamInfoWidget(InfoWidget):
         is_manager = self._is_manager
 
         p = self._people[uen]["Person"]
-        self._info_team.setText(p["Team"])
+        self._info_type.setText(p["Type"])
         self._org_widget.set_uen(uen, is_manager)
 
     def set_redacted(self, is_redacted):

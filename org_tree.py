@@ -3,7 +3,8 @@ import math
 import sys
 import time
 from PySide6 import QtWidgets
-from MainWindow import MainWindow, fx_rates, team_colours, type_colours, num_direct_reports_colours, location_colours, grade_colours, gender_colours, salary_colours, rating_colours, nine_box_colours, salary_offset_colours
+from SunburstOrgWidget import fx_rates
+from MainWindow import MainWindow, team_colours, type_colours, num_direct_reports_colours, location_colours, grade_colours, gender_colours, salary_colours, rating_colours, nine_box_colours, salary_offset_colours
 
 team_colours_list = [
     [0xff, 0xc0, 0xc0],

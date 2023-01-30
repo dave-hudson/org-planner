@@ -34,7 +34,7 @@ class GenderInfoWidget(InfoWidget):
         is_manager = False
         if len(self._people[uen]["Direct Reports"]) != 0:
             is_manager = True
-        
+
         self._is_manager = is_manager
         self._org_widget.set_uen(uen, is_manager)
 

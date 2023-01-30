@@ -1,5 +1,5 @@
 import math
-from SunburstOrgWidget import SunburstOrgWidget, fx_rates
+from SunburstOrgWidget import SunburstOrgWidget
 
 salary_offset_colours = {
     "-50000": [0x18, 0x3c, 0xb6],
