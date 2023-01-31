@@ -194,6 +194,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self._locations = {}
         self._people = {}
         self._uen = 0
+        self._history_list = []
+        self._history_index = -1
 
         self._dark_mode = True
         self._dark_mode_action = QtGui.QAction("&Dark Mode", self)
@@ -218,6 +220,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self._tree_view_action.setChecked(False)
         self._tree_view_action.triggered.connect(self._tree_view_triggered)
 
+        self._back_action = QtGui.QAction("Back", self)
+        self._back_action.setShortcut(QtGui.QKeySequence("CTRL+["))
+        self._back_action.triggered.connect(self._back_triggered)
+        self._forward_action = QtGui.QAction("Forward", self)
+        self._forward_action.setShortcut(QtGui.QKeySequence("CTRL+]"))
+        self._forward_action.triggered.connect(self._forward_triggered)
+
         # Create a menu bar and menu drop-downs.
         self._menu_bar = QtWidgets.QMenuBar(self)
         self.setMenuBar(self._menu_bar)
@@ -231,6 +240,14 @@ class MainWindow(QtWidgets.QMainWindow):
         view_menu.addSeparator()
         view_menu.setWindowFlags(view_menu.windowFlags() | QtCore.Qt.FramelessWindowHint | QtCore.Qt.NoDropShadowWindowHint)
         view_menu.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+
+        history_menu = self._menu_bar.addMenu("&History")
+        history_menu.addAction(self._back_action)
+        history_menu.addAction(self._forward_action)
+        history_menu.setWindowFlags(view_menu.windowFlags() | QtCore.Qt.FramelessWindowHint | QtCore.Qt.NoDropShadowWindowHint)
+        history_menu.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+        self._back_action.setEnabled(False)
+        self._forward_action.setEnabled(False)
 
         self._people_list_widget = PeopleListWidget(self)
         self._people_list_widget.currentItemChanged.connect(self._people_list_index_changed)
@@ -423,34 +440,76 @@ class MainWindow(QtWidgets.QMainWindow):
         self._people_tree_widget.setCurrentItem(item[0])
         self._people_tree_widget.setFocus()
 
-    def _person_clicked(self, person_uen):
-        name = self._people[person_uen]["Person"]["Name"]
+    def _update_person(self, uen):
+        name = self._people[uen]["Person"]["Name"]
         item = self._people_tree_widget.findItems(name, QtCore.Qt.MatchExactly | QtCore.Qt.MatchRecursive)
         self._people_tree_widget.setCurrentItem(item[0])
         self._people_tree_widget.setFocus()
         item = self._people_list_widget.findItems(name, QtCore.Qt.MatchExactly | QtCore.Qt.MatchRecursive)
         self._people_list_widget.setCurrentItem(item[0])
         self._people_list_widget.setFocus()
-        self.set_uen(person_uen)
+
+    def _forward_triggered(self, s):
+        """
+        Called when the "Forward" menu item is triggered.
+        """
+        if self._history_index == (len(self._history_list) - 1):
+            return
+
+        self._back_action.setEnabled(True)
+        self._history_index += 1
+        if self._history_index == (len(self._history_list) - 1):
+            self._forward_action.setEnabled(False)
+
+        uen = self._history_list[self._history_index]
+        self.set_uen(uen)
+        self._update_person(uen)
+
+    def _back_triggered(self, s):
+        """
+        Called when the "Back" menu item is triggered.
+        """
+        if self._history_index == 0:
+            return
+
+        self._forward_action.setEnabled(True)
+        self._history_index -= 1
+        if self._history_index == 0:
+            self._back_action.setEnabled(False)
+
+        uen = self._history_list[self._history_index]
+        self.set_uen(uen)
+        self._update_person(uen)
+
+    def _select_uen(self, uen):
+        if uen == self._uen:
+            return
+
+        if self._history_index < (len(self._history_list) - 1):
+            self._history_list = self._history_list[:self._history_index + 1]
+
+        self._history_list.append(uen)
+        self._history_index += 1
+        if self._history_index > 0:
+            self._back_action.setEnabled(True)
+
+        self.set_uen(uen)
+
+    def _person_clicked(self, uen):
+        self._select_uen(uen)
+        self._update_person(uen)
 
     def _people_list_index_changed(self, list_item):
         for i in self._people:
             if self._people[i]["Person"]["Name"] == list_item.text():
-                self.set_uen(i)
+                self._select_uen(i)
                 break
 
     def _people_tree_item_changed(self, tree_item):
         for i in self._people:
             if self._people[i]["Person"]["Name"] == tree_item.text(0):
-                self.set_uen(i)
+                self._select_uen(i)
                 break
-
-    def _set_people_tree(self, supervisor_uen, supervisor_item):
-        for p in self._people[supervisor_uen]["Direct Reports"]:
-            twi = QtWidgets.QTreeWidgetItem()
-            twi.setText(0, self._people[p]["Person"]["Name"])
-            supervisor_item.addChild(twi)
-            self._set_people_tree(p, twi)
 
     def set_locations(self, locations):
         self._locations = locations
@@ -471,6 +530,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self._rollup_salary_info.set_locations(locations)
 
         self.update()
+
+    def _set_people_tree(self, supervisor_uen, supervisor_item):
+        for p in self._people[supervisor_uen]["Direct Reports"]:
+            twi = QtWidgets.QTreeWidgetItem()
+            twi.setText(0, self._people[p]["Person"]["Name"])
+            supervisor_item.addChild(twi)
+            self._set_people_tree(p, twi)
 
     def set_people(self, people, supervisor_uen):
         self._people = people
