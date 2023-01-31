@@ -251,66 +251,79 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._num_direct_reports_info = NumDirectReportsInfoWidget()
         self._side_layout.addWidget(self._num_direct_reports_info)
+        self._num_direct_reports_info.person_clicked.connect(self._person_clicked)
 
         self._side_layout.addWidget(HLine())
 
         self._team_info = TeamInfoWidget()
         self._side_layout.addWidget(self._team_info)
+        self._team_info.person_clicked.connect(self._person_clicked)
 
         self._side_layout.addWidget(HLine())
 
         self._type_info = TypeInfoWidget()
         self._side_layout.addWidget(self._type_info)
+        self._type_info.person_clicked.connect(self._person_clicked)
 
         self._side_layout.addWidget(HLine())
 
         self._location_info = LocationInfoWidget()
         self._side_layout.addWidget(self._location_info)
+        self._location_info.person_clicked.connect(self._person_clicked)
 
         self._side_layout.addWidget(HLine())
 
         self._grade_info = GradeInfoWidget()
         self._side_layout.addWidget(self._grade_info)
+        self._grade_info.person_clicked.connect(self._person_clicked)
 
         self._side_layout.addWidget(HLine())
 
         self._gender_info = GenderInfoWidget()
         self._side_layout.addWidget(self._gender_info)
+        self._gender_info.person_clicked.connect(self._person_clicked)
 
         self._side_layout.addWidget(HLine())
 
         self._service_duration_info = ServiceDurationInfoWidget()
         self._side_layout.addWidget(self._service_duration_info)
+        self._service_duration_info.person_clicked.connect(self._person_clicked)
 
         self._side_layout.addWidget(HLine())
 
         self._nine_box_info = NineBoxInfoWidget()
         self._side_layout.addWidget(self._nine_box_info)
+        self._nine_box_info.person_clicked.connect(self._person_clicked)
 
         self._side_layout.addWidget(HLine())
 
         self._rating_info = RatingInfoWidget()
         self._side_layout.addWidget(self._rating_info)
+        self._rating_info.person_clicked.connect(self._person_clicked)
 
         self._side_layout.addWidget(HLine())
 
         self._salary_info = SalaryInfoWidget()
         self._side_layout.addWidget(self._salary_info)
+        self._salary_info.person_clicked.connect(self._person_clicked)
 
         self._side_layout.addWidget(HLine())
 
         self._salary_offset_info = SalaryOffsetInfoWidget()
         self._side_layout.addWidget(self._salary_offset_info)
+        self._salary_offset_info.person_clicked.connect(self._person_clicked)
 
         self._side_layout.addWidget(HLine())
 
         self._salary_band_offset_info = SalaryBandOffsetInfoWidget()
         self._side_layout.addWidget(self._salary_band_offset_info)
+        self._salary_band_offset_info.person_clicked.connect(self._person_clicked)
 
         self._side_layout.addWidget(HLine())
 
         self._rollup_salary_info = RollupSalaryInfoWidget()
         self._side_layout.addWidget(self._rollup_salary_info)
+        self._rollup_salary_info.person_clicked.connect(self._person_clicked)
 
         # Insert a spacer so the layout engine doesn't try to spread out the
         # info panel elements if they take less space than the visible
@@ -409,6 +422,16 @@ class MainWindow(QtWidgets.QMainWindow):
         item = self._people_tree_widget.findItems(list_selected.text(), QtCore.Qt.MatchExactly | QtCore.Qt.MatchRecursive)
         self._people_tree_widget.setCurrentItem(item[0])
         self._people_tree_widget.setFocus()
+
+    def _person_clicked(self, person_uen):
+        name = self._people[person_uen]["Person"]["Name"]
+        item = self._people_tree_widget.findItems(name, QtCore.Qt.MatchExactly | QtCore.Qt.MatchRecursive)
+        self._people_tree_widget.setCurrentItem(item[0])
+        self._people_tree_widget.setFocus()
+        item = self._people_list_widget.findItems(name, QtCore.Qt.MatchExactly | QtCore.Qt.MatchRecursive)
+        self._people_list_widget.setCurrentItem(item[0])
+        self._people_list_widget.setFocus()
+        self.set_uen(person_uen)
 
     def _people_list_index_changed(self, list_item):
         for i in self._people:

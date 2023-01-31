@@ -20,6 +20,7 @@ class GenderInfoWidget(InfoWidget):
         legend = ColourKey1DWidget(gender_colours, "Gender Counts")
         self._org_widget = SunburstOrgKeyWidget(GenderSunburstOrgWidget(), legend)
         self._layout.addWidget(self._org_widget)
+        self._org_widget.person_clicked.connect(self._person_clicked)
 
     def set_locations(self, locations):
         self._org_widget.set_locations(locations)

@@ -21,6 +21,7 @@ class RatingInfoWidget(InfoWidget):
         legend = ColourKey1DWidget(rating_colours, "Rating Counts")
         self._org_widget = SunburstOrgKeyWidget(RatingSunburstOrgWidget(), legend)
         self._layout.addWidget(self._org_widget)
+        self._org_widget.person_clicked.connect(self._person_clicked)
 
     def set_locations(self, locations):
         self._org_widget.set_locations(locations)

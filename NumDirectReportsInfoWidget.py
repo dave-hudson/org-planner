@@ -21,6 +21,7 @@ class NumDirectReportsInfoWidget(InfoWidget):
         legend = ColourKey1DWidget(num_direct_reports_colours, "Num Direct Reports Counts")
         self._org_widget = SunburstOrgKeyWidget(NumDirectReportsSunburstOrgWidget(), legend)
         self._layout.addWidget(self._org_widget)
+        self._org_widget.person_clicked.connect(self._person_clicked)
 
     def set_locations(self, locations):
         self._org_widget.set_locations(locations)

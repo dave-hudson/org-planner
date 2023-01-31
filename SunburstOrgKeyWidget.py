@@ -1,6 +1,8 @@
-from PySide6 import QtWidgets
+from PySide6 import QtWidgets, QtCore
 
 class SunburstOrgKeyWidget(QtWidgets.QWidget):
+    person_clicked = QtCore.Signal(int)
+
     def __init__(self, org_widget, key_widget) -> None:
         super().__init__()
 
@@ -8,6 +10,8 @@ class SunburstOrgKeyWidget(QtWidgets.QWidget):
         self._key_widget = key_widget
         self._is_manager = False
         self._is_redacted = False
+
+        org_widget.person_clicked.connect(self._person_clicked)
 
         hbox = QtWidgets.QHBoxLayout()
         hbox.setContentsMargins(0, 0, 0, 0)
@@ -23,6 +27,9 @@ class SunburstOrgKeyWidget(QtWidgets.QWidget):
 
         hbox.addLayout(hbox_vbox)
         self.setLayout(hbox)
+
+    def _person_clicked(self, person_uen):
+        self.person_clicked.emit(person_uen)
 
     def set_locations(self, locations):
         self._org_widget.set_locations(locations)

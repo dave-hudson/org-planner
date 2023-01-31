@@ -26,6 +26,7 @@ class SalaryOffsetInfoWidget(InfoWidget):
         legend.set_labels(salary_offset_labels)
         self._org_widget = SunburstOrgKeyWidget(SalaryOffsetSunburstOrgWidget(), legend)
         self._layout.addWidget(self._org_widget)
+        self._org_widget.person_clicked.connect(self._person_clicked)
 
     def set_locations(self, locations):
         self._org_widget.set_locations(locations)

@@ -20,6 +20,7 @@ class GradeInfoWidget(InfoWidget):
         legend = ColourKey1DWidget(grade_colours, "Grade Counts")
         self._org_widget = SunburstOrgKeyWidget(GradeSunburstOrgWidget(), legend)
         self._layout.addWidget(self._org_widget)
+        self._org_widget.person_clicked.connect(self._person_clicked)
 
     def set_locations(self, locations):
         self._org_widget.set_locations(locations)

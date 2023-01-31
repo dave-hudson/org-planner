@@ -1,5 +1,6 @@
 from abc import abstractmethod
-from PySide6 import QtGui, QtWidgets
+import math
+from PySide6 import QtGui, QtWidgets, QtCore
 
 fx_rates = {
     "UK": 1.33,
@@ -14,11 +15,73 @@ class SunburstOrgWidget(QtWidgets.QWidget):
     """
     A widget base class used to draw sunburst org charts.
     """
+    person_clicked = QtCore.Signal(int)
+
     def __init__(self) -> None:
         super().__init__()
         self._locations = {}
         self._people = {}
         self._uen = 0
+
+    def _recurse_find_person(self, target_depth, target_angle, supervisor_uen, depth, start_angle, start_arc):
+        if target_depth == depth:
+            return supervisor_uen
+
+        supervisor_person = self._people[supervisor_uen]
+
+        angle = start_angle
+        for i in supervisor_person["Direct Reports"]:
+            p = self._people[i]
+            sf = p["Supervisor Fraction"]
+            arc = sf * start_arc
+            if (target_angle >= angle) and (target_angle < (angle + arc)):
+                return self._recurse_find_person(target_depth, target_angle, i, depth + 1, angle, arc)
+
+            angle += arc
+
+        return 0
+
+    def mousePressEvent(self, event: QtGui.QMouseEvent) -> None:
+        pos = event.position()
+        x = pos.x() - self._spacing
+        if x < 0:
+            return
+
+        y = pos.y() - self._spacing
+        if y < 0:
+            return
+
+        # Work out a position relative to the centre of the sunburst
+        w = x - self._max_radius
+        h = self._max_radius - y
+
+        mag = math.sqrt((h * h) + (w * w))
+        if mag > self._max_radius:
+            return
+
+        # We have to jump through a few hoops to get the angle associated with
+        # the mouse position.
+        if h == 0:
+            if w >= 0:
+                angle = 90
+            else:
+                angle = -90
+        else:
+            angle = math.atan(w / h) * 180 / math.pi
+
+        if w >= 0:
+            if h < 0:
+                angle = 180 + angle
+        else:
+            if h >= 0:
+                angle = 360 + angle
+            else:
+                angle = 180 + angle
+
+        depth = int(mag / self._ring_width)
+
+        person = self._recurse_find_person(depth, angle, self._uen, 0, 0, 360)
+        self.person_clicked.emit(person)
 
     def _scan_depth(self, supervisor):
         org_depth = self._people[supervisor]["Org Depth"]
