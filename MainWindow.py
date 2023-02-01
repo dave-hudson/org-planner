@@ -386,14 +386,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._set_redacted(self._hide_sensitive_data)
 
-    def _add_info_text(self, text):
-        info_layout = QtWidgets.QGridLayout()
-        self._side_layout.addLayout(info_layout)
-        info_layout.addWidget(QtWidgets.QLabel(text), 0, 0, 1, 1)
-        info_widget = QtWidgets.QLabel("")
-        info_layout.addWidget(info_widget, 0, 1, 1, 4)
-        return info_widget
-
     def _set_app_palette(self):
         if (self._dark_mode):
             self.setStyleSheet(qss.format(*dark_qss_config))
