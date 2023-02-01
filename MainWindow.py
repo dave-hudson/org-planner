@@ -370,15 +370,15 @@ class MainWindow(QtWidgets.QMainWindow):
         widget = PersonWidget(self)
         widget.setLayout(self._side_layout)
 
-        scroll_area = QtWidgets.QScrollArea(self)
-        scroll_area.setWidget(widget)
-        scroll_area.setWidgetResizable(True)
-        scroll_area.setAlignment(QtCore.Qt.AlignHCenter
-                                 | QtCore.Qt.AlignVCenter)
+        self._scroll_area = QtWidgets.QScrollArea(self)
+        self._scroll_area.setWidget(widget)
+        self._scroll_area.setWidgetResizable(True)
+        self._scroll_area.setAlignment(QtCore.Qt.AlignHCenter
+                                       | QtCore.Qt.AlignVCenter)
 
         splitter_widget = MainSplitter(self)
         splitter_widget.addWidget(people_selector_widget)
-        splitter_widget.addWidget(scroll_area)
+        splitter_widget.addWidget(self._scroll_area)
         splitter_widget.setStretchFactor(0, 1)
         splitter_widget.setStretchFactor(1, 3)
 
@@ -452,6 +452,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self._people_list_widget.setCurrentItem(item[0])
         self._people_list_widget.setFocus()
 
+    def _set_scroll_position(self, scroll_pos):
+        # When we move forwards and back, we'd like to have the scroll
+        # position be the same as it was originally.  This method is
+        # a timer callback that does this.
+        self._scroll_area.verticalScrollBar().setValue(scroll_pos)
+
     def _forward_triggered(self, s):
         # Called when the "Forward" menu item is triggered.
 
@@ -464,9 +470,10 @@ class MainWindow(QtWidgets.QMainWindow):
         if self._history_index == (len(self._history_list) - 1):
             self._forward_action.setEnabled(False)
 
-        uen = self._history_list[self._history_index]
+        uen, scroll_pos = self._history_list[self._history_index]
         self.set_uen(uen)
         self._update_person(uen)
+        QtCore.QTimer.singleShot(50, lambda: self._set_scroll_position(scroll_pos))
 
     def _back_triggered(self, s):
         # Called when the "Back" menu item is triggered.
@@ -480,9 +487,10 @@ class MainWindow(QtWidgets.QMainWindow):
         if self._history_index == 0:
             self._back_action.setEnabled(False)
 
-        uen = self._history_list[self._history_index]
+        uen, scroll_pos = self._history_list[self._history_index]
         self.set_uen(uen)
         self._update_person(uen)
+        QtCore.QTimer.singleShot(50, lambda: self._set_scroll_position(scroll_pos))
 
     def _select_uen(self, uen):
         # When we select a new person we want to ensure we add them to the
@@ -500,12 +508,21 @@ class MainWindow(QtWidgets.QMainWindow):
         if self._history_index < (len(self._history_list) - 1):
             self._history_list = self._history_list[:self._history_index + 1]
 
-        self._history_list.append(uen)
-        self._history_index += 1
-        if self._history_index > 0:
+        # If we've already recorded some history, we want to update the
+        # top-most entry to reflect the current scroll bar position.  This
+        # lets us go back to the same place when we go forwards and back.
+        if self._history_index >= 0:
+            scroll_pos = self._scroll_area.verticalScrollBar().value()
+            uen_top, _ = self._history_list[-1]
+            self._history_list[-1] = (uen_top, scroll_pos)
             self._back_action.setEnabled(True)
 
+        t = (uen, 0)
+        self._history_list.append(t)
+        self._history_index += 1
+
         self.set_uen(uen)
+        self._scroll_area.verticalScrollBar().setValue(0)
 
     def _person_clicked(self, uen):
         # Handler for propagating "person clicked" events from contained
