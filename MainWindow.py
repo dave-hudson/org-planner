@@ -147,6 +147,7 @@ MainSplitter::handle {{
 }}
 """
 
+# Parameters applied to the QSS above to give a dark mode version of the UI.
 dark_qss_config = [
     "#202020",
     "white",
@@ -165,6 +166,7 @@ dark_qss_config = [
     "#c0c0c0"
 ]
 
+# Parameters applied to the QSS above to give a light mode version of the UI.
 light_qss_config = [
     "#f8f8f8",
     "black",
@@ -197,6 +199,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self._history_list = []
         self._history_index = -1
 
+        # The dark mode action allows toggling between light mode and dark
+        # mode in the UI.
         self._dark_mode = True
         self._dark_mode_action = QtGui.QAction("&Dark Mode", self)
         self._dark_mode_action.setCheckable(True)
@@ -204,12 +208,17 @@ class MainWindow(QtWidgets.QMainWindow):
         self._dark_mode_action.triggered.connect(self._dark_mode_triggered)
         self._set_app_palette()
 
+        # By default we hide certain sensitive data when the application
+        # starts.  There is an action associated with this.
         self._hide_sensitive_data = True
         self._hide_sensitive_data_action = QtGui.QAction("&Hide Sensitive Data", self)
         self._hide_sensitive_data_action.setCheckable(True)
         self._hide_sensitive_data_action.setChecked(True)
         self._hide_sensitive_data_action.triggered.connect(self._hide_sensitive_data_triggered)
 
+        # The application supports either a list view or a tree view of the
+        # people in the organization.  We have 2 actions associated with this
+        # and at any one time, only one of them can be checked.
         self._view_type = 0
         self._list_view_action = QtGui.QAction("&List View", self)
         self._list_view_action.setCheckable(True)
@@ -220,16 +229,23 @@ class MainWindow(QtWidgets.QMainWindow):
         self._tree_view_action.setChecked(False)
         self._tree_view_action.triggered.connect(self._tree_view_triggered)
 
+        # We want to allow a user to navigate back to a previous view, or
+        # to go forwards again if they've already gone back.  We have 2
+        # actions to achieive this, with keyboard shortcuts.  By default,
+        # neither is enabled.
         self._back_action = QtGui.QAction("Back", self)
         self._back_action.setShortcut(QtGui.QKeySequence("CTRL+["))
         self._back_action.triggered.connect(self._back_triggered)
+        self._back_action.setEnabled(False)
         self._forward_action = QtGui.QAction("Forward", self)
         self._forward_action.setShortcut(QtGui.QKeySequence("CTRL+]"))
         self._forward_action.triggered.connect(self._forward_triggered)
+        self._forward_action.setEnabled(False)
 
         # Create a menu bar and menu drop-downs.
         self._menu_bar = QtWidgets.QMenuBar(self)
         self.setMenuBar(self._menu_bar)
+
         view_menu = self._menu_bar.addMenu("&View")
         view_menu.addAction(self._dark_mode_action)
         view_menu.addSeparator()
@@ -238,16 +254,18 @@ class MainWindow(QtWidgets.QMainWindow):
         view_menu.addAction(self._list_view_action)
         view_menu.addAction(self._tree_view_action)
         view_menu.addSeparator()
-        view_menu.setWindowFlags(view_menu.windowFlags() | QtCore.Qt.FramelessWindowHint | QtCore.Qt.NoDropShadowWindowHint)
+        view_menu.setWindowFlags(view_menu.windowFlags()
+                                 | QtCore.Qt.FramelessWindowHint
+                                 | QtCore.Qt.NoDropShadowWindowHint)
         view_menu.setAttribute(QtCore.Qt.WA_TranslucentBackground)
 
         history_menu = self._menu_bar.addMenu("&History")
         history_menu.addAction(self._back_action)
         history_menu.addAction(self._forward_action)
-        history_menu.setWindowFlags(view_menu.windowFlags() | QtCore.Qt.FramelessWindowHint | QtCore.Qt.NoDropShadowWindowHint)
+        history_menu.setWindowFlags(view_menu.windowFlags()
+                                    | QtCore.Qt.FramelessWindowHint
+                                    | QtCore.Qt.NoDropShadowWindowHint)
         history_menu.setAttribute(QtCore.Qt.WA_TranslucentBackground)
-        self._back_action.setEnabled(False)
-        self._forward_action.setEnabled(False)
 
         self._people_list_widget = PeopleListWidget(self)
         self._people_list_widget.currentItemChanged.connect(self._people_list_index_changed)
@@ -345,7 +363,8 @@ class MainWindow(QtWidgets.QMainWindow):
         # Insert a spacer so the layout engine doesn't try to spread out the
         # info panel elements if they take less space than the visible
         # window.
-        spacer = QtWidgets.QSpacerItem(0, 0, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.MinimumExpanding)
+        spacer = QtWidgets.QSpacerItem(0, 0, QtWidgets.QSizePolicy.Fixed,
+                                       QtWidgets.QSizePolicy.MinimumExpanding)
         self._side_layout.addItem(spacer)
 
         widget = PersonWidget(self)
@@ -354,7 +373,8 @@ class MainWindow(QtWidgets.QMainWindow):
         scroll_area = QtWidgets.QScrollArea(self)
         scroll_area.setWidget(widget)
         scroll_area.setWidgetResizable(True)
-        scroll_area.setAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+        scroll_area.setAlignment(QtCore.Qt.AlignHCenter
+                                 | QtCore.Qt.AlignVCenter)
 
         splitter_widget = MainSplitter(self)
         splitter_widget.addWidget(people_selector_widget)
@@ -439,6 +459,7 @@ class MainWindow(QtWidgets.QMainWindow):
         item = self._people_tree_widget.findItems(list_selected.text(), QtCore.Qt.MatchExactly | QtCore.Qt.MatchRecursive)
         self._people_tree_widget.setCurrentItem(item[0])
         self._people_tree_widget.setFocus()
+
 
     def _update_person(self, uen):
         name = self._people[uen]["Person"]["Name"]
