@@ -387,37 +387,29 @@ class MainWindow(QtWidgets.QMainWindow):
         self._set_redacted(self._hide_sensitive_data)
 
     def _set_app_palette(self):
+        # Set the QSS appropriately for the current light/dark mode setting.
         if (self._dark_mode):
             self.setStyleSheet(qss.format(*dark_qss_config))
         else:
             self.setStyleSheet(qss.format(*light_qss_config))
 
     def _dark_mode_triggered(self, s):
-        """
-        Called when the "Dark Mode" menu item is triggered.
-        """
-
+        #  Called when the "Dark Mode" menu item is triggered.
         self._dark_mode = not self._dark_mode
         self._dark_mode_action.setChecked(self._dark_mode)
         self._set_app_palette()
 
     def _hide_sensitive_data_triggered(self, s):
-        """
-        Called when the "Hide Sensitive Data" menu item is triggered.
-        """
-
+        # Called when the "Hide Sensitive Data" menu item is triggered.
         self._hide_sensitive_data = not self._hide_sensitive_data
         self._hide_sensitive_data_action.setChecked(self._hide_sensitive_data)
         self._set_redacted(self._hide_sensitive_data)
 
     def _list_view_triggered(self, s):
-        """
-        Called when the "List View" menu item is triggered.
-
-        We flip the application view type, flip the checkbox on the
-        list/tree view, hide the tree view and unhide the list view.
-        """
-
+        # Called when the "List View" menu item is triggered.
+        #
+        # We flip the application view type, flip the checkbox on the
+        # list/tree view, hide the tree view and unhide the list view.
         self._view_type = 0
         self._list_view_action.setChecked(True)
         self._tree_view_action.setChecked(False)
@@ -432,13 +424,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self._people_list_widget.setFocus()
 
     def _tree_view_triggered(self, s):
-        """
-        Called when the "Tree View" menu item is triggered.
-
-        We flip the application view type, flip the checkbox on the
-        list/tree view, hide the list view and unhide the tree view.
-        """
-
+        # Called when the "Tree View" menu item is triggered.
+        #
+        # We flip the application view type, flip the checkbox on the
+        # list/tree view, hide the list view and unhide the tree view.
         self._view_type = 1
         self._list_view_action.setChecked(False)
         self._tree_view_action.setChecked(True)
@@ -452,8 +441,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self._people_tree_widget.setCurrentItem(item[0])
         self._people_tree_widget.setFocus()
 
-
     def _update_person(self, uen):
+        # When we change the view of the currently active person we want
+        # to ensure the tree and list views are updated to highlight them.
         name = self._people[uen]["Person"]["Name"]
         item = self._people_tree_widget.findItems(name, QtCore.Qt.MatchExactly | QtCore.Qt.MatchRecursive)
         self._people_tree_widget.setCurrentItem(item[0])
@@ -463,9 +453,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self._people_list_widget.setFocus()
 
     def _forward_triggered(self, s):
-        """
-        Called when the "Forward" menu item is triggered.
-        """
+        # Called when the "Forward" menu item is triggered.
+
+        # If we're at the end of the history list then we can't go forwards.
         if self._history_index == (len(self._history_list) - 1):
             return
 
@@ -479,9 +469,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self._update_person(uen)
 
     def _back_triggered(self, s):
-        """
-        Called when the "Back" menu item is triggered.
-        """
+        # Called when the "Back" menu item is triggered.
+
+        # If we're at the start of the history list then we can't go back.
         if self._history_index == 0:
             return
 
@@ -495,9 +485,18 @@ class MainWindow(QtWidgets.QMainWindow):
         self._update_person(uen)
 
     def _select_uen(self, uen):
+        # When we select a new person we want to ensure we add them to the
+        # viewing history.
+
+        # If we've been asked to select the same person we're currently
+        # viewing then do nothing.
         if uen == self._uen:
             return
 
+        # If we've previously gone back and we're no longer at the end of the
+        # history list then the new person that has been selected will
+        # replace all people who are forward of the current position in the
+        # history list.
         if self._history_index < (len(self._history_list) - 1):
             self._history_list = self._history_list[:self._history_index + 1]
 
@@ -509,16 +508,20 @@ class MainWindow(QtWidgets.QMainWindow):
         self.set_uen(uen)
 
     def _person_clicked(self, uen):
+        # Handler for propagating "person clicked" events from contained
+        # widgets.
         self._select_uen(uen)
         self._update_person(uen)
 
     def _people_list_index_changed(self, list_item):
+        # Handler for when a new person is selected in the list view.
         for i in self._people:
             if self._people[i]["Person"]["Name"] == list_item.text():
                 self._select_uen(i)
                 break
 
     def _people_tree_item_changed(self, tree_item):
+        # Handler for when a new person is selected in the tree view.
         for i in self._people:
             if self._people[i]["Person"]["Name"] == tree_item.text(0):
                 self._select_uen(i)
