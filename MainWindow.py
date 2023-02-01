@@ -281,6 +281,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._general_info = GeneralInfoWidget()
         self._side_layout.addWidget(self._general_info)
+        self._general_info.person_clicked.connect(self._person_clicked)
 
         self._side_layout.addWidget(HLine())
 
@@ -585,7 +586,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._people_tree_widget.insertTopLevelItem(0, top_level)
         self._people_tree_widget.expandAll()
 
-        self._general_info.set_people(people)
+        self._general_info.set_people(people, supervisor_uen)
         self._num_direct_reports_info.set_people(people)
         self._team_info.set_people(people)
         self._type_info.set_people(people)

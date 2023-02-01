@@ -2,6 +2,7 @@ from PySide6 import QtGui, QtWidgets
 from ColourKey1DWidget import ColourKey1DWidget
 from SunburstOrgKeyWidget import SunburstOrgKeyWidget
 from InfoWidget import InfoWidget
+from GeneralSunburstOrgWidget import GeneralSunburstOrgWidget
 
 class GeneralInfoWidget(InfoWidget):
     def __init__(self) -> None:
@@ -26,15 +27,25 @@ class GeneralInfoWidget(InfoWidget):
         self._info_uen = self._add_info_text("UEN")
         self._info_supervisor_uen = self._add_info_text("Supervisor UEN")
         self._info_percentage_time = self._add_info_text("FTE (%)")
+        self._org_only_widget = GeneralSunburstOrgWidget()
+        self._org_widget = SunburstOrgKeyWidget(self._org_only_widget, None)
+        self._layout.addWidget(self._org_widget)
+        self._org_widget.person_clicked.connect(self._person_clicked)
 
     def set_locations(self, locations):
-        pass
+        self._org_widget.set_locations(locations)
 
-    def set_people(self, people):
+    def set_people(self, people, supervisor_uen):
         self._people = people
+        self._supervisor_uen = supervisor_uen
+
+        self._org_widget.set_people(people)
 
     def set_uen(self, uen):
         self._uen = uen
+
+        self._org_widget.set_uen(self._supervisor_uen, True)
+        self._org_only_widget.set_ident_uen(uen)
 
     def update_contents(self):
         uen = self._uen
