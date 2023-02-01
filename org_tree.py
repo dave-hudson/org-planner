@@ -1,3 +1,4 @@
+import csv
 import json
 import math
 import sys
@@ -40,6 +41,12 @@ team_colours_list = [
     [0xc0, 0xc0, 0xc0],
     [0x80, 0x80, 0x80],
     [0x40, 0x40, 0x40],
+    [0xff, 0x80, 0x80],
+    [0x80, 0xff, 0x80],
+    [0x80, 0x80, 0xff],
+    [0xff, 0xff, 0x80],
+    [0x80, 0xff, 0xff],
+    [0xff, 0x80, 0xff],
     [0x00, 0x00, 0x00]
 ]
 
@@ -143,8 +150,9 @@ def scan_org_tree(people, locations, supervisor_uen, depth):
     type = p["Person"]["Type"]
     p["Type Counts"][list(type_colours).index(type)] += 1
 
-    location = p["Person"]["Locations"][-1]["Location"]
-    p["Location Counts"][list(location_colours).index(location)] += 1
+    if "Locations" in p["Person"].keys():
+        location = p["Person"]["Locations"][-1]["Location"]
+        p["Location Counts"][list(location_colours).index(location)] += 1
 
     grade = ""
     if "Grades" in p["Person"].keys():
@@ -200,7 +208,7 @@ def scan_org_tree(people, locations, supervisor_uen, depth):
 
     start_date = p["Person"]["Start Date"]
     t = time.strptime(start_date, "%Y-%m-%d")
-    ot = time.strptime("2016-01-01", "%Y-%m-%d")
+    ot = time.strptime("2014-10-31", "%Y-%m-%d")
     cur_time = time.time()
     org_elapsed_time = cur_time - time.mktime(ot)
     worked_time = cur_time - time.mktime(t)
@@ -273,12 +281,11 @@ def scan_org_tree(people, locations, supervisor_uen, depth):
         p["Salary Band Offset Key"] = str(band_offset_key)
         p["Salary Band Offset Counts"][5 + band_offset_key] += 1
 
-def scan_json_people(json_data):
+def scan_json_people(all_people_list):
     people = {}
     top_level = 0
     failed = False
 
-    all_people_list = json_data["People"]
     for i in all_people_list:
         uen = i["UEN"]
         people[uen] = {}
@@ -300,17 +307,55 @@ def scan_json_people(json_data):
     return (failed, people, top_level)
 
 def main():
-    if len(sys.argv) != 2:
-        print("Usage: org-planner <file>")
+    if len(sys.argv) < 2:
+        print("Usage: org-planner <JSON file> <optional-CSV file>")
         return
 
     json_file_path = sys.argv[1]
-    with open(json_file_path, encoding = 'utf-8') as user_file:
-        json_data = json.load(user_file)
+    with open(json_file_path, encoding = 'utf-8') as json_file:
+        json_data = json.load(json_file)
 
     all_locations = json_data["Locations"]
+    all_people_list = json_data["People"]
 
-    fail, all_people, supervisor_uen = scan_json_people(json_data)
+    if len(sys.argv) == 3:
+        csv_file_path = sys.argv[2]
+        with open(csv_file_path, encoding = 'utf-8') as csv_file:
+            csv_reader = csv.DictReader(csv_file)
+            for row in csv_reader:
+                found = False
+                for i in all_people_list:
+                    uen = i["UEN"]
+                    if row["Employee Id"].strip() == str(uen):
+                        found = True
+
+                        if "Supervisor UEN" not in i.keys():
+                            print("fix", uen, "to report to", row["Reports To"])
+                            i["Supervisor UEN"] = int(row["Reports To"])
+                        break
+
+                if not found:
+                    new_json = {}
+                    emp_id = row["Employee Id"].strip()
+                    if emp_id[:1] == "7":
+                        new_json["UEN"] = int(emp_id)
+                        new_json["Name"] = row["Full Name"].strip()
+                        rep_to = row["Reports To"].strip()
+                        if rep_to[:1] == "7":
+                            new_json["Supervisor UEN"] = int(rep_to)
+                        else:
+                            print("UEN", int(emp_id), "no super", rep_to)
+
+                        if row["Division"] != "":
+                            new_json["Team"] = row["Division"]
+                        else:
+                            new_json["Team"] = "R3"
+
+                        new_json["Type"] = "Unknown"
+                        new_json["Start Date"] = row["Start Date"]
+                        all_people_list.append(new_json)
+
+    fail, all_people, supervisor_uen = scan_json_people(all_people_list)
     if fail:
         exit()
 

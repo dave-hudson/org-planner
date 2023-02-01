@@ -12,7 +12,7 @@
             "program": "org_tree.py",
             "console": "integratedTerminal",
             "justMyCode": true,
-            "args": ["../org-planner-data/people.json"]
+            "args": ["../org-planner-data/people.json", "../org-planner-data/R3.csv"]
         }
     ]
 }
