@@ -36,7 +36,7 @@ class GeneralInfoWidget(InfoWidget):
     def set_uen(self, uen):
         self._uen = uen
 
-    def render_uen(self):
+    def update_contents(self):
         uen = self._uen
         p = self._people[uen]["Person"]
 

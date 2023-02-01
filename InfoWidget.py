@@ -10,6 +10,8 @@ class InfoWidget(QtWidgets.QWidget):
         self._layout = None
 
     def _add_info_text(self, text):
+        # Add a text description and a placeholder for a value within the
+        # widget.  Returns the widget for the value.
         info_layout = QtWidgets.QGridLayout()
         info_layout.addWidget(QtWidgets.QLabel(text), 0, 0, 1, 1)
         info_widget = QtWidgets.QLabel("")
@@ -18,24 +20,42 @@ class InfoWidget(QtWidgets.QWidget):
         return info_widget
 
     def _person_clicked(self, person_uen):
+        # Handler for propagating "person clicked" events.  We re-emit
+        # a new signal to the next level up.
         self.person_clicked.emit(person_uen)
 
     @abstractmethod
     def set_locations(self, locations):
+        """
+        Sets the location data used to render this widget.
+        """
         pass
 
     @abstractmethod
     def set_people(self, people):
+        """
+        Sets the people data used to render this widget.
+        """
         pass
 
     @abstractmethod
     def set_uen(self, uen):
+        """
+        Sets the UEN that this widget should display.
+        """
         pass
 
     @abstractmethod
-    def render_uen(self):
+    def update_contents(self):
+        """
+        Update the contents of the widget.
+        """
         pass
 
     @abstractmethod
     def set_redacted(self, is_redacted):
+        """
+        Sets the "redacted" status of the widget.  If the widget is redacted,
+        then all it's contents are marked as hidden.
+        """
         pass

@@ -606,27 +606,27 @@ class MainWindow(QtWidgets.QMainWindow):
         self._salary_band_offset_info.set_uen(uen)
         self._rollup_salary_info.set_uen(uen)
 
-        self._render_uen()
+        self._update_contents()
 
-    def _render_uen(self):
+    def _update_contents(self):
         uen = self._uen
         if uen == 0:
             return
 
-        self._general_info.render_uen()
-        self._num_direct_reports_info.render_uen()
-        self._team_info.render_uen()
-        self._type_info.render_uen()
-        self._location_info.render_uen()
-        self._grade_info.render_uen()
-        self._gender_info.render_uen()
-        self._service_duration_info.render_uen()
-        self._nine_box_info.render_uen()
-        self._rating_info.render_uen()
-        self._salary_info.render_uen()
-        self._salary_offset_info.render_uen()
-        self._salary_band_offset_info.render_uen()
-        self._rollup_salary_info.render_uen()
+        self._general_info.update_contents()
+        self._num_direct_reports_info.update_contents()
+        self._team_info.update_contents()
+        self._type_info.update_contents()
+        self._location_info.update_contents()
+        self._grade_info.update_contents()
+        self._gender_info.update_contents()
+        self._service_duration_info.update_contents()
+        self._nine_box_info.update_contents()
+        self._rating_info.update_contents()
+        self._salary_info.update_contents()
+        self._salary_offset_info.update_contents()
+        self._salary_band_offset_info.update_contents()
+        self._rollup_salary_info.update_contents()
 
         self.update()
 
@@ -638,4 +638,4 @@ class MainWindow(QtWidgets.QMainWindow):
         self._salary_band_offset_info.set_redacted(is_redacted)
         self._rollup_salary_info.set_redacted(is_redacted)
 
-        self._render_uen()
+        self._update_contents()
