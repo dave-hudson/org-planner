@@ -330,7 +330,6 @@ def main():
                         found = True
 
                         if "Supervisor UEN" not in i.keys():
-                            print("fix", uen, "to report to", row["Reports To"])
                             i["Supervisor UEN"] = int(row["Reports To"])
                         break
 
@@ -339,7 +338,7 @@ def main():
                     emp_id = row["Employee Id"].strip()
                     if emp_id[:1] == "7":
                         new_json["UEN"] = int(emp_id)
-                        new_json["Name"] = row["Full Name"].strip()
+                        new_json["Name"] = " ".join(row["Full Name"].split())
                         rep_to = row["Reports To"].strip()
                         if rep_to[:1] == "7":
                             new_json["Supervisor UEN"] = int(rep_to)
