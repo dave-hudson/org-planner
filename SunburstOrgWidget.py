@@ -62,10 +62,16 @@ class SunburstOrgWidget(QtWidgets.QWidget):
         w = x - self._max_radius
         h = self._max_radius - y
 
+        # Work out the depth of the org to which this click corresponds.
         mag = math.sqrt((h * h) + (w * w))
         if mag > self._max_radius:
             return
 
+        depth = int(mag / self._ring_width)
+
+        # Work out the angle of the click, relative to the centre of the
+        # sunburst.
+        #
         # We have to jump through a few hoops to get the angle associated with
         # the mouse position.
         if h == 0:
@@ -85,12 +91,13 @@ class SunburstOrgWidget(QtWidgets.QWidget):
             else:
                 angle = 180 + angle
 
-        depth = int(mag / self._ring_width)
-
+        # Once we know where we're looking, go and find the person who was
+        # clicked.  If we don't find one then do nothing.
         person = self._recurse_find_person(depth, angle, self._uen, 0, 0, 360)
         if person == 0:
             return
 
+        # Generate a signal indidating that a specific person was clicked.
         self.person_clicked.emit(person)
 
     def _scan_depth(self, supervisor):
