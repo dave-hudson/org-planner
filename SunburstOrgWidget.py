@@ -23,10 +23,17 @@ class SunburstOrgWidget(QtWidgets.QWidget):
         self._people = {}
         self._uen = 0
 
-    def _recurse_find_person(self, target_depth, target_angle, supervisor_uen, depth, start_angle, start_arc):
+    def _recurse_find_person(self, target_depth, target_angle, supervisor_uen,
+                             depth, start_angle, start_arc):
+        # Work out which person corresponds to a specific depth in the org
+        # and an angle from the centre of the sunburst.
+
+        # If we've hit our target depth then we've found our person.
         if target_depth == depth:
             return supervisor_uen
 
+        # We need to traverse deeper, so work out which one of the current
+        # supervisor's direct reports covers the target angle we have.
         supervisor_person = self._people[supervisor_uen]
 
         angle = start_angle
@@ -81,6 +88,9 @@ class SunburstOrgWidget(QtWidgets.QWidget):
         depth = int(mag / self._ring_width)
 
         person = self._recurse_find_person(depth, angle, self._uen, 0, 0, 360)
+        if person == 0:
+            return
+
         self.person_clicked.emit(person)
 
     def _scan_depth(self, supervisor):
