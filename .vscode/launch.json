@@ -9,7 +9,7 @@
             "name": "Python: Org Planner",
             "type": "python",
             "request": "launch",
-            "program": "org_tree.py",
+            "program": "org-planner.py",
             "console": "integratedTerminal",
             "justMyCode": true,
             "args": ["../org-planner-data/people.json", "../org-planner-data/R3.csv"]
