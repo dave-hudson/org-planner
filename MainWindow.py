@@ -229,6 +229,20 @@ class MainWindow(QtWidgets.QMainWindow):
         self._tree_view_action.setChecked(False)
         self._tree_view_action.triggered.connect(self._tree_view_triggered)
 
+        # We want to be able to zoom in and out, so we have 3 actions
+        # associated with that.
+        self._zoom_factor = 1.0
+        self._actual_size_action = QtGui.QAction("Actual Size", self)
+        self._actual_size_action.setShortcut(QtGui.QKeySequence("CTRL+0"))
+        self._actual_size_action.triggered.connect(self._actual_size_triggered)
+        self._actual_size_action.setEnabled(False)
+        self._zoom_in_action = QtGui.QAction("Zoom In", self)
+        self._zoom_in_action.setShortcut(QtGui.QKeySequence("CTRL++"))
+        self._zoom_in_action.triggered.connect(self._zoom_in_triggered)
+        self._zoom_out_action = QtGui.QAction("Zoom Out", self)
+        self._zoom_out_action.setShortcut(QtGui.QKeySequence("CTRL+-"))
+        self._zoom_out_action.triggered.connect(self._zoom_out_triggered)
+
         # We want to allow a user to navigate back to a previous view, or
         # to go forwards again if they've already gone back.  We have 2
         # actions to achieive this, with keyboard shortcuts.  By default,
@@ -254,6 +268,9 @@ class MainWindow(QtWidgets.QMainWindow):
         view_menu.addAction(self._list_view_action)
         view_menu.addAction(self._tree_view_action)
         view_menu.addSeparator()
+        view_menu.addAction(self._actual_size_action)
+        view_menu.addAction(self._zoom_in_action)
+        view_menu.addAction(self._zoom_out_action)
         view_menu.setWindowFlags(view_menu.windowFlags()
                                  | QtCore.Qt.FramelessWindowHint
                                  | QtCore.Qt.NoDropShadowWindowHint)
@@ -441,6 +458,33 @@ class MainWindow(QtWidgets.QMainWindow):
         item = self._people_tree_widget.findItems(list_selected.text(), QtCore.Qt.MatchExactly | QtCore.Qt.MatchRecursive)
         self._people_tree_widget.setCurrentItem(item[0])
         self._people_tree_widget.setFocus()
+
+    def _actual_size_triggered(self, s):
+        self._zoom_factor = 1.0
+        self._actual_size_action.setEnabled(False)
+        self._zoom_in_action.setEnabled(True)
+        self._zoom_out_action.setEnabled(True)
+        self._update_zoom()
+
+    def _zoom_in_triggered(self, s):
+        self._zoom_factor *= 1.189207
+        if self._zoom_factor > 1.99:
+            self._zoom_factor = 2
+            self._zoom_in_action.setEnabled(False)
+
+        self._actual_size_action.setEnabled(True)
+        self._zoom_out_action.setEnabled(True)
+        self._update_zoom()
+
+    def _zoom_out_triggered(self, s):
+        self._zoom_factor /= 1.189207
+        if self._zoom_factor < 0.51:
+            self._zoom_factor = 0.5
+            self._zoom_out_action.setEnabled(False)
+
+        self._actual_size_action.setEnabled(True)
+        self._zoom_in_action.setEnabled(True)
+        self._update_zoom()
 
     def _update_person(self, uen):
         # When we change the view of the currently active person we want
@@ -645,6 +689,28 @@ class MainWindow(QtWidgets.QMainWindow):
         self._salary_offset_info.update_contents()
         self._salary_band_offset_info.update_contents()
         self._rollup_salary_info.update_contents()
+
+        self.update()
+
+    def _update_zoom(self):
+        uen = self._uen
+        if uen == 0:
+            return
+
+        self._general_info.set_zoom(self._zoom_factor)
+        self._num_direct_reports_info.set_zoom(self._zoom_factor)
+        self._team_info.set_zoom(self._zoom_factor)
+        self._type_info.set_zoom(self._zoom_factor)
+        self._location_info.set_zoom(self._zoom_factor)
+        self._grade_info.set_zoom(self._zoom_factor)
+        self._gender_info.set_zoom(self._zoom_factor)
+        self._service_duration_info.set_zoom(self._zoom_factor)
+        self._nine_box_info.set_zoom(self._zoom_factor)
+        self._rating_info.set_zoom(self._zoom_factor)
+        self._salary_info.set_zoom(self._zoom_factor)
+        self._salary_offset_info.set_zoom(self._zoom_factor)
+        self._salary_band_offset_info.set_zoom(self._zoom_factor)
+        self._rollup_salary_info.set_zoom(self._zoom_factor)
 
         self.update()
 

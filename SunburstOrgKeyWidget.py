@@ -46,6 +46,9 @@ class SunburstOrgKeyWidget(QtWidgets.QWidget):
         if self._key_widget:
             self._key_widget.set_uen(uen)
 
+    def set_zoom(self, zoom_factor):
+        self._org_widget.set_zoom(zoom_factor)
+
     def set_redacted(self, is_redacted):
         self._is_redacted = is_redacted
         self.setVisible(self._is_manager and not is_redacted)

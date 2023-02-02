@@ -39,6 +39,9 @@ class TypeInfoWidget(InfoWidget):
         self._is_manager = is_manager
         self._org_widget.set_uen(uen, is_manager)
 
+    def set_zoom(self, zoom_factor):
+        self._org_widget.set_zoom(zoom_factor)
+
     def update_contents(self):
         uen = self._uen
         is_manager = self._is_manager

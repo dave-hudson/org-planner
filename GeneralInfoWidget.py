@@ -47,6 +47,9 @@ class GeneralInfoWidget(InfoWidget):
         self._org_widget.set_uen(self._supervisor_uen, True)
         self._org_only_widget.set_ident_uen(uen)
 
+    def set_zoom(self, zoom_factor):
+        self._org_widget.set_zoom(zoom_factor)
+
     def update_contents(self):
         uen = self._uen
         p = self._people[uen]["Person"]

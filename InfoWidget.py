@@ -15,7 +15,8 @@ class InfoWidget(QtWidgets.QWidget):
         info_layout = QtWidgets.QGridLayout()
         info_layout.addWidget(QtWidgets.QLabel(text), 0, 0, 1, 1)
         info_widget = QtWidgets.QLabel("")
-        info_layout.addWidget(info_widget, 0, 1, 1, 4)
+        info_layout.addWidget(info_widget, 0, 1, 1, 10)
+        info_layout.setColumnMinimumWidth(0, 240)
         self._layout.addLayout(info_layout)
         return info_widget
 
@@ -42,6 +43,13 @@ class InfoWidget(QtWidgets.QWidget):
     def set_uen(self, uen):
         """
         Sets the UEN that this widget should display.
+        """
+        pass
+
+    @abstractmethod
+    def set_zoom(self, zoom_factor):
+        """
+        Sets the zoom factor to use with the widget.
         """
         pass
 

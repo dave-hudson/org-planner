@@ -22,6 +22,7 @@ class SunburstOrgWidget(QtWidgets.QWidget):
         self._locations = {}
         self._people = {}
         self._uen = 0
+        self._zoom_factor = 1.0
 
     def _recurse_find_person(self, target_depth, target_angle, supervisor_uen,
                              depth, start_angle, start_arc):
@@ -169,17 +170,24 @@ class SunburstOrgWidget(QtWidgets.QWidget):
     def set_people(self, people):
         self._people = people
 
-    def set_uen(self, uen):
-        self._uen = uen
-
+    def _set_sizing(self):
+        uen = self._uen
         supervisor_org_depth = self._people[uen]["Org Depth"]
 
         # Work out how many layers deep the org goes.
         self._max_depth = self._scan_depth(uen)
-        self._ring_width = 60
+        self._ring_width = int(60 * self._zoom_factor)
         self._max_radius = self._ring_width * (self._max_depth - supervisor_org_depth + 1)
         self._spacing = 10
 
         self.setMinimumSize(2 * (self._spacing + self._max_radius) + 1,
                             2 * (self._spacing + self._max_radius) + 1)
         self.update()
+
+    def set_uen(self, uen):
+        self._uen = uen
+        self._set_sizing()
+
+    def set_zoom(self, zoom_factor):
+        self._zoom_factor = zoom_factor;
+        self._set_sizing()
