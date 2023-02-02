@@ -1,19 +1,11 @@
 from PySide6 import QtGui, QtWidgets
-from ColourKey1DWidget import ColourKey1DWidget
 from SunburstOrgKeyWidget import SunburstOrgKeyWidget
-from InfoWidget import InfoWidget
+from InfoOrgKeyWidget import InfoOrgKeyWidget
 from GeneralSunburstOrgWidget import GeneralSunburstOrgWidget
 
-class GeneralInfoWidget(InfoWidget):
+class GeneralInfoWidget(InfoOrgKeyWidget):
     def __init__(self) -> None:
         super().__init__()
-
-        self._people = {}
-        self._uen = 0
-
-        self._layout = QtWidgets.QVBoxLayout()
-        self._layout.setContentsMargins(0, 0, 0, 0)
-        self.setLayout(self._layout)
 
         heading_font = QtGui.QFont()
         heading_font.setBold(True)
@@ -31,24 +23,6 @@ class GeneralInfoWidget(InfoWidget):
         self._org_widget = SunburstOrgKeyWidget(self._org_only_widget, None)
         self._layout.addWidget(self._org_widget)
         self._org_widget.person_clicked.connect(self._person_clicked)
-
-    def set_locations(self, locations):
-        self._org_widget.set_locations(locations)
-
-    def set_people(self, people, supervisor_uen):
-        self._people = people
-        self._supervisor_uen = supervisor_uen
-
-        self._org_widget.set_people(people)
-
-    def set_uen(self, uen):
-        self._uen = uen
-
-        self._org_widget.set_uen(self._supervisor_uen, True)
-        self._org_only_widget.set_ident_uen(uen)
-
-    def set_zoom(self, zoom_factor):
-        self._org_widget.set_zoom(zoom_factor)
 
     def update_contents(self):
         uen = self._uen
@@ -68,6 +42,18 @@ class GeneralInfoWidget(InfoWidget):
             percentage_time = p["Percentage Time"]
 
         self._info_percentage_time.setText(str(percentage_time))
+
+    def set_people(self, people, supervisor_uen):
+        self._people = people
+        self._supervisor_uen = supervisor_uen
+
+        self._org_widget.set_people(people)
+
+    def set_uen(self, uen):
+        self._uen = uen
+
+        self._org_widget.set_uen(self._supervisor_uen, True)
+        self._org_only_widget.set_ident_uen(uen)
 
     def set_redacted(self, is_redacted):
         pass
