@@ -61,6 +61,22 @@ type_colours_list = [
     [0x00, 0x00, 0x00]
 ]
 
+office_locations = [
+    ("london", "UK"),
+    ("dublin", "Ireland"),
+    ("singapore", "Singapore"),
+    ("mumbai", "India"),
+    ("new york", "USA"),
+    ("san francisco", "USA"),
+    ("ohio", "USA"),
+    ("home - ma", "USA"),
+    ("home - fl", "USA"),
+    ("home - il", "USA"),
+    ("sofia", "Bulgaria"),
+    ("sao paolo", "Brazil"),
+    ("hong kong", "Hong Kong")
+]
+
 def scan_teams_and_types(people):
     teams = []
     types = []
@@ -306,6 +322,69 @@ def scan_json_people(all_people_list):
 
     return (failed, people, top_level)
 
+def create_locations_json(location):
+    inner = {}
+    inner["Location"] = location
+    outer = []
+    outer.append(inner)
+    return outer
+
+def merge_csv(csv_file, people_list):
+    # Given a CSV file, extracted from Namely, look up important data and
+    # fake out JSON entries to match.  Then insert the JSON entries into
+    # our people_list.
+    csv_reader = csv.DictReader(csv_file)
+    for row in csv_reader:
+        found = False
+        for i in people_list:
+            uen = i["UEN"]
+            if row["Employee Id"].strip() == str(uen):
+                found = True
+
+                if "Supervisor UEN" not in i.keys():
+                    i["Supervisor UEN"] = int(row["Reports To"])
+                break
+
+        if not found:
+            new_json = {}
+            emp_id = row["Employee Id"].strip()
+            if emp_id[:1] == "7":
+                new_json["UEN"] = int(emp_id)
+                new_json["Name"] = " ".join(row["Full Name"].split())
+                rep_to = row["Reports To"].strip()
+                if rep_to[:1] == "7":
+                    new_json["Supervisor UEN"] = int(rep_to)
+                else:
+                    print("UEN", int(emp_id), "no super", rep_to)
+
+                if row["Division"] != "":
+                    new_json["Team"] = row["Division"]
+                else:
+                    new_json["Team"] = "R3"
+
+                new_json["Type"] = "Unknown"
+                new_json["Start Date"] = row["Start Date"]
+
+                office = row["Office"].lower()
+                location = "Other"
+                for o in office_locations:
+                    (search_key, country) = o
+                    if office.find(search_key) != -1:
+                        location = country
+                        break
+
+                if location == "Other":
+                    city = row["City"].lower()
+                    for o in office_locations:
+                        (search_key, country) = o
+                        if city.find(search_key) != -1:
+                            location = country
+                            break
+
+                new_json["Locations"] = create_locations_json(location)
+
+                people_list.append(new_json)
+
 def main():
     if len(sys.argv) < 2:
         print("Usage: org-planner <JSON file> <optional-CSV file>")
@@ -321,38 +400,7 @@ def main():
     if len(sys.argv) == 3:
         csv_file_path = sys.argv[2]
         with open(csv_file_path, encoding = 'utf-8') as csv_file:
-            csv_reader = csv.DictReader(csv_file)
-            for row in csv_reader:
-                found = False
-                for i in all_people_list:
-                    uen = i["UEN"]
-                    if row["Employee Id"].strip() == str(uen):
-                        found = True
-
-                        if "Supervisor UEN" not in i.keys():
-                            i["Supervisor UEN"] = int(row["Reports To"])
-                        break
-
-                if not found:
-                    new_json = {}
-                    emp_id = row["Employee Id"].strip()
-                    if emp_id[:1] == "7":
-                        new_json["UEN"] = int(emp_id)
-                        new_json["Name"] = " ".join(row["Full Name"].split())
-                        rep_to = row["Reports To"].strip()
-                        if rep_to[:1] == "7":
-                            new_json["Supervisor UEN"] = int(rep_to)
-                        else:
-                            print("UEN", int(emp_id), "no super", rep_to)
-
-                        if row["Division"] != "":
-                            new_json["Team"] = row["Division"]
-                        else:
-                            new_json["Team"] = "R3"
-
-                        new_json["Type"] = "Unknown"
-                        new_json["Start Date"] = row["Start Date"]
-                        all_people_list.append(new_json)
+            merge_csv(csv_file, all_people_list)
 
     fail, all_people, supervisor_uen = scan_json_people(all_people_list)
     if fail:
