@@ -297,6 +297,21 @@ def scan_org_tree(people, locations, supervisor_uen, depth):
         p["Salary Band Offset Key"] = str(band_offset_key)
         p["Salary Band Offset Counts"][5 + band_offset_key] += 1
 
+def scan_json_locations(all_locations_list):
+    locations = {}
+
+    for i in all_locations_list:
+        grade = {}
+        for j in i["Bands"]:
+            band = {}
+            band["Low"] = j["Low"]
+            band["High"] = j["High"]
+            grade[j["Grade"]] = band
+
+        locations[i["Location"]] = grade
+
+    return locations
+
 def scan_json_people(all_people_list):
     people = {}
     top_level = 0
@@ -394,7 +409,9 @@ def main():
     with open(json_file_path, encoding = 'utf-8') as json_file:
         json_data = json.load(json_file)
 
-    all_locations = json_data["Locations"]
+    all_locations_list = json_data["Locations"]
+    all_locations = scan_json_locations(all_locations_list)
+
     all_people_list = json_data["People"]
 
     if len(sys.argv) == 3:
