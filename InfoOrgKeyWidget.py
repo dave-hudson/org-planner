@@ -2,6 +2,9 @@ from PySide6 import QtWidgets
 from InfoWidget import InfoWidget
 
 class InfoOrgKeyWidget(InfoWidget):
+    """
+    A widget class that shows text information, an org chart, and an optional key legend.
+    """
     def __init__(self) -> None:
         super().__init__()
 

@@ -2,6 +2,9 @@ from abc import abstractmethod
 from PySide6 import QtWidgets, QtCore
 
 class InfoWidget(QtWidgets.QWidget):
+    """
+    A widget class that shows text information.
+    """
     person_clicked = QtCore.Signal(int)
 
     def __init__(self) -> None:
