@@ -237,7 +237,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._actual_size_action.triggered.connect(self._actual_size_triggered)
         self._actual_size_action.setEnabled(False)
         self._zoom_in_action = QtGui.QAction("Zoom In", self)
-        self._zoom_in_action.setShortcut(QtGui.QKeySequence("CTRL++"))
+        self._zoom_in_action.setShortcut(QtGui.QKeySequence("CTRL+="))
         self._zoom_in_action.triggered.connect(self._zoom_in_triggered)
         self._zoom_out_action = QtGui.QAction("Zoom Out", self)
         self._zoom_out_action.setShortcut(QtGui.QKeySequence("CTRL+-"))
