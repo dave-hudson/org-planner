@@ -50,6 +50,14 @@ class SunburstOrgWidget(QtWidgets.QWidget):
         return 0
 
     def mousePressEvent(self, event: QtGui.QMouseEvent) -> None:
+        # If this is anything but a left click then ignore it and let our
+        # parent window deal with it.
+        if event.button() != QtCore.Qt.LeftButton:
+            event.ignore()
+            return
+
+        event.accept()
+
         pos = event.position()
         x = pos.x() - self._spacing
         if x < 0:

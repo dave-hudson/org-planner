@@ -404,6 +404,19 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._set_redacted(self._hide_sensitive_data)
 
+    def mousePressEvent(self, event: QtGui.QMouseEvent) -> None:
+        # If we have a back or forwards button press then do the relevant
+        # back or forwards behaviour.
+        if event.button() == QtCore.Qt.BackButton:
+            event.accept()
+            self._back_triggered(None)
+            return
+
+        if event.button() == QtCore.Qt.ForwardButton:
+            event.accept()
+            self._forward_triggered(None)
+            return
+
     def _set_app_palette(self):
         # Set the QSS appropriately for the current light/dark mode setting.
         if (self._dark_mode):
