@@ -7,6 +7,7 @@ class InfoOrgKeyWidget(InfoWidget):
 
         self._people = {}
         self._uen = 0
+        self._top_level_uen = 0
         self._is_manager = False
         self._org_widget = None
 
@@ -17,9 +18,10 @@ class InfoOrgKeyWidget(InfoWidget):
     def set_locations(self, locations):
         self._org_widget.set_locations(locations)
 
-    def set_people(self, people):
+    def set_people(self, people, top_level_uen):
         self._people = people
-        self._org_widget.set_people(people)
+        self._top_level_uen = top_level_uen
+        self._org_widget.set_people(people, top_level_uen)
 
     def set_uen(self, uen):
         self._uen = uen

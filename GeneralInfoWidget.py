@@ -10,8 +10,6 @@ class GeneralInfoWidget(InfoOrgKeyWidget):
     def __init__(self) -> None:
         super().__init__()
 
-        self._supervisor_uen = 0
-
         heading_font = QtGui.QFont()
         heading_font.setBold(True)
         heading_font.setPointSize(heading_font.pointSize() * 2)
@@ -50,16 +48,10 @@ class GeneralInfoWidget(InfoOrgKeyWidget):
 
         self._info_percentage_time.setText(str(percentage_time))
 
-    def set_people_and_supervisor(self, people, supervisor_uen):
-        self._people = people
-        self._supervisor_uen = supervisor_uen
-
-        self._org_widget.set_people(people)
-
     def set_uen(self, uen):
         self._uen = uen
 
-        self._org_widget.set_uen(self._supervisor_uen, True)
+        self._org_widget.set_uen(self._top_level_uen, True)
         self._org_only_widget.set_ident_uen(uen)
 
     def set_redacted(self, is_redacted):

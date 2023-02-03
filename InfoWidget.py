@@ -32,7 +32,7 @@ class InfoWidget(QtWidgets.QWidget):
         """
 
     @abstractmethod
-    def set_people(self, people):
+    def set_people(self, people, top_level_uen):
         """
         Sets the people data used to render this widget.
         """

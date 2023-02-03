@@ -21,10 +21,11 @@ class SunburstOrgWidget(QtWidgets.QWidget):
         super().__init__()
         self._locations = {}
         self._people = {}
+        self._top_level_uen = 0
         self._uen = 0
-        self._max_depth = 0
         self._ring_width = 0
-        self._max_radius = 0
+        self._max_width = 0
+        self._max_height = 0
         self._spacing = 0
         self._zoom_factor = 1.0
 
@@ -74,14 +75,11 @@ class SunburstOrgWidget(QtWidgets.QWidget):
             return
 
         # Work out a position relative to the centre of the sunburst
-        w = x - self._max_radius
-        h = self._max_radius - y
+        w = x - self._max_width
+        h = self._max_height - y
 
         # Work out the depth of the org to which this click corresponds.
         mag = math.sqrt((h * h) + (w * w))
-        if mag > self._max_radius:
-            return
-
         depth = int(mag / self._ring_width)
 
         # Work out the angle of the click, relative to the centre of the
@@ -149,13 +147,13 @@ class SunburstOrgWidget(QtWidgets.QWidget):
             # segment, but if it's a full circle then draw it as an ellipse
             # so we don't end up drawing a chord.
             if arc < 359.9999:
-                painter.drawPie(self._spacing + self._max_radius - radius,
-                                self._spacing + self._max_radius - radius,
+                painter.drawPie(self._spacing + self._max_width - radius,
+                                self._spacing + self._max_height - radius,
                                 radius * 2, radius * 2,
                                 (90 + angle) * 16, -arc * 16)
             else:
-                painter.drawEllipse(self._spacing + self._max_radius - radius,
-                                    self._spacing + self._max_radius - radius,
+                painter.drawEllipse(self._spacing + self._max_width - radius,
+                                    self._spacing + self._max_height - radius,
                                     radius * 2, radius * 2)
             angle -= arc
 
@@ -168,9 +166,11 @@ class SunburstOrgWidget(QtWidgets.QWidget):
 
         # Then draw the inner-most node.
         self._setup_brush(painter, self._uen)
-        painter.drawEllipse(self._spacing + self._max_radius - self._ring_width,
-                            self._spacing + self._max_radius - self._ring_width,
-                            self._ring_width * 2, self._ring_width * 2)
+        painter.drawEllipse(
+            self._spacing + self._max_width - self._ring_width,
+            self._spacing + self._max_height - self._ring_width,
+            self._ring_width * 2, self._ring_width * 2
+        )
 
     def paintEvent(self, _):
         qp = QtGui.QPainter()
@@ -181,21 +181,25 @@ class SunburstOrgWidget(QtWidgets.QWidget):
     def set_locations(self, locations):
         self._locations = locations
 
-    def set_people(self, people):
+    def set_people(self, people, top_level_uen):
         self._people = people
+        self._top_level_uen = top_level_uen
 
     def _set_sizing(self):
         uen = self._uen
-        supervisor_org_depth = self._people[uen]["Org Depth"]
+        uen_org_depth = self._people[uen]["Org Depth"]
 
         # Work out how many layers deep the org goes.
-        self._max_depth = self._scan_depth(uen)
+        max_org_depth = self._scan_depth(self._top_level_uen)
+        view_depth = self._scan_depth(uen)
         self._ring_width = int(60 * self._zoom_factor)
-        self._max_radius = self._ring_width * (self._max_depth - supervisor_org_depth + 1)
+        self._max_width = self._ring_width * (max_org_depth + 1)
+        self._max_height = self._ring_width * (view_depth - uen_org_depth + 1)
         self._spacing = 10
 
-        self.setMinimumSize(2 * (self._spacing + self._max_radius) + 1,
-                            2 * (self._spacing + self._max_radius) + 1)
+        self.setMinimumSize(
+            2 * (self._spacing + self._max_width) + 1, 2 * (self._spacing + self._max_height) + 1
+        )
         self.update()
 
     def set_uen(self, uen):

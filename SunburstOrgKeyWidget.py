@@ -16,6 +16,7 @@ class SunburstOrgKeyWidget(QtWidgets.QWidget):
         hbox = QtWidgets.QHBoxLayout()
         hbox.setContentsMargins(0, 0, 0, 0)
         hbox.addWidget(org_widget)
+        hbox.setAlignment(org_widget, QtCore.Qt.AlignCenter)
         hbox_spacer = QtWidgets.QSpacerItem(
             0, 0, QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed
         )
@@ -38,8 +39,8 @@ class SunburstOrgKeyWidget(QtWidgets.QWidget):
     def set_locations(self, locations):
         self._org_widget.set_locations(locations)
 
-    def set_people(self, people):
-        self._org_widget.set_people(people)
+    def set_people(self, people, top_level_uen):
+        self._org_widget.set_people(people, top_level_uen)
         if self._key_widget:
             self._key_widget.set_people(people)
 
