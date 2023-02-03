@@ -1,8 +1,9 @@
-from PySide6 import QtWidgets
 from ColourKey1DWidget import ColourKey1DWidget
 from SunburstOrgKeyWidget import SunburstOrgKeyWidget
 from InfoOrgKeyWidget import InfoOrgKeyWidget
-from ServiceDurationSunburstOrgWidget import ServiceDurationSunburstOrgWidget, service_duration_colours
+from ServiceDurationSunburstOrgWidget import (
+    ServiceDurationSunburstOrgWidget, service_duration_colours
+)
 
 class ServiceDurationInfoWidget(InfoOrgKeyWidget):
     def __init__(self) -> None:

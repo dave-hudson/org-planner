@@ -1,4 +1,3 @@
-from PySide6 import QtWidgets
 from ColourKey1DWidget import ColourKey1DWidget
 from SunburstOrgWidget import fx_rates
 from SunburstOrgKeyWidget import SunburstOrgKeyWidget

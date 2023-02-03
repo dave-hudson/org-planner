@@ -16,13 +16,17 @@ class SunburstOrgKeyWidget(QtWidgets.QWidget):
         hbox = QtWidgets.QHBoxLayout()
         hbox.setContentsMargins(0, 0, 0, 0)
         hbox.addWidget(org_widget)
-        hbox_spacer = QtWidgets.QSpacerItem(0, 0, QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed)
+        hbox_spacer = QtWidgets.QSpacerItem(
+            0, 0, QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed
+        )
         hbox.addItem(hbox_spacer)
         hbox_vbox = QtWidgets.QVBoxLayout()
         hbox_vbox.setContentsMargins(0, 0, 0, 0)
-        hbox_vbox_spacer = QtWidgets.QSpacerItem(0, 0, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.MinimumExpanding)
+        hbox_vbox_spacer = QtWidgets.QSpacerItem(
+            0, 0, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.MinimumExpanding
+        )
         hbox_vbox.addItem(hbox_vbox_spacer)
-        if key_widget != None:
+        if key_widget is not None:
             hbox_vbox.addWidget(key_widget)
 
         hbox.addLayout(hbox_vbox)

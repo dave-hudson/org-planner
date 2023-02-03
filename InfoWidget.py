@@ -30,35 +30,30 @@ class InfoWidget(QtWidgets.QWidget):
         """
         Sets the location data used to render this widget.
         """
-        pass
 
     @abstractmethod
     def set_people(self, people):
         """
         Sets the people data used to render this widget.
         """
-        pass
 
     @abstractmethod
     def set_uen(self, uen):
         """
         Sets the UEN that this widget should display.
         """
-        pass
 
     @abstractmethod
     def set_zoom(self, zoom_factor):
         """
         Sets the zoom factor to use with the widget.
         """
-        pass
 
     @abstractmethod
     def update_contents(self):
         """
         Update the contents of the widget.
         """
-        pass
 
     @abstractmethod
     def set_redacted(self, is_redacted):
@@ -66,4 +61,3 @@ class InfoWidget(QtWidgets.QWidget):
         Sets the "redacted" status of the widget.  If the widget is redacted,
         then all it's contents are marked as hidden.
         """
-        pass

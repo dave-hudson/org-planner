@@ -1,8 +1,9 @@
-from PySide6 import QtWidgets
 from ColourKey1DWidget import ColourKey1DWidget
 from SunburstOrgKeyWidget import SunburstOrgKeyWidget
 from InfoOrgKeyWidget import InfoOrgKeyWidget
-from SalaryBandOffsetSunburstOrgWidget import SalaryBandOffsetSunburstOrgWidget, salary_band_offset_colours, salary_band_offset_labels
+from SalaryBandOffsetSunburstOrgWidget import (
+    SalaryBandOffsetSunburstOrgWidget, salary_band_offset_colours, salary_band_offset_labels
+)
 
 class SalaryBandOffsetInfoWidget(InfoOrgKeyWidget):
     def __init__(self) -> None:
@@ -37,11 +38,11 @@ class SalaryBandOffsetInfoWidget(InfoOrgKeyWidget):
             if "Salary Band Offset" in self._people[uen].keys():
                 salary_band_lower_limit = self._people[uen]["Salary Band Lower Limit"]
                 salary_band_upper_limit = self._people[uen]["Salary Band Upper Limit"]
-                salary_band = "{} to {}".format(salary_band_lower_limit, salary_band_upper_limit)
+                salary_band = f"{salary_band_lower_limit} to {salary_band_upper_limit}"
                 salary_band_offset = str(self._people[uen]["Salary Band Offset"])
                 salary_band_lower_limit_usd = self._people[uen]["Salary Band Lower Limit USD"]
                 salary_band_upper_limit_usd = self._people[uen]["Salary Band Upper Limit USD"]
-                salary_band_usd = "{} to {}".format(salary_band_lower_limit_usd, salary_band_upper_limit_usd)
+                salary_band_usd = f"{salary_band_lower_limit_usd} to {salary_band_upper_limit_usd}"
                 salary_band_offset_usd = str(self._people[uen]["Salary Band Offset USD"])
 
         self._info_salary_band.setText(str(salary_band))

@@ -1,7 +1,5 @@
 from PySide6 import QtWidgets
-from SunburstOrgKeyWidget import SunburstOrgKeyWidget
 from InfoWidget import InfoWidget
-from LocationSunburstOrgWidget import LocationSunburstOrgWidget, location_colours
 
 class InfoOrgKeyWidget(InfoWidget):
     def __init__(self) -> None:

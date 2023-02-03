@@ -4,8 +4,13 @@ from InfoOrgKeyWidget import InfoOrgKeyWidget
 from GeneralSunburstOrgWidget import GeneralSunburstOrgWidget
 
 class GeneralInfoWidget(InfoOrgKeyWidget):
+    """
+    A widget class used to display general information about a person.
+    """
     def __init__(self) -> None:
         super().__init__()
+
+        self._supervisor_uen = 0
 
         heading_font = QtGui.QFont()
         heading_font.setBold(True)
@@ -33,7 +38,9 @@ class GeneralInfoWidget(InfoOrgKeyWidget):
         supervisor_uen = "N/A"
         if "Supervisor UEN" in p.keys():
             supervisor = p["Supervisor UEN"]
-            supervisor_uen = str("{:d} ({:s})").format(supervisor, self._people[supervisor]["Person"]["Name"])
+            supervisor_uen = str("{:d} ({:s})").format(
+                supervisor, self._people[supervisor]["Person"]["Name"]
+            )
 
         self._info_supervisor_uen.setText(supervisor_uen)
 
@@ -43,7 +50,7 @@ class GeneralInfoWidget(InfoOrgKeyWidget):
 
         self._info_percentage_time.setText(str(percentage_time))
 
-    def set_people(self, people, supervisor_uen):
+    def set_people_and_supervisor(self, people, supervisor_uen):
         self._people = people
         self._supervisor_uen = supervisor_uen
 

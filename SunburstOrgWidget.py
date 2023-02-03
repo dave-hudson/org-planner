@@ -22,6 +22,10 @@ class SunburstOrgWidget(QtWidgets.QWidget):
         self._locations = {}
         self._people = {}
         self._uen = 0
+        self._max_depth = 0
+        self._ring_width = 0
+        self._max_radius = 0
+        self._spacing = 0
         self._zoom_factor = 1.0
 
     def _recurse_find_person(self, target_depth, target_angle, supervisor_uen,
@@ -43,7 +47,9 @@ class SunburstOrgWidget(QtWidgets.QWidget):
             sf = p["Supervisor Fraction"]
             arc = sf * start_arc
             if (target_angle >= angle) and (target_angle < (angle + arc)):
-                return self._recurse_find_person(target_depth, target_angle, i, depth + 1, angle, arc)
+                return self._recurse_find_person(
+                    target_depth, target_angle, i, depth + 1, angle, arc
+                )
 
             angle += arc
 
@@ -166,7 +172,7 @@ class SunburstOrgWidget(QtWidgets.QWidget):
                             self._spacing + self._max_radius - self._ring_width,
                             self._ring_width * 2, self._ring_width * 2)
 
-    def paintEvent(self, e):
+    def paintEvent(self, _):
         qp = QtGui.QPainter()
         qp.begin(self)
         self._draw_widget(qp)
@@ -197,5 +203,5 @@ class SunburstOrgWidget(QtWidgets.QWidget):
         self._set_sizing()
 
     def set_zoom(self, zoom_factor):
-        self._zoom_factor = zoom_factor;
+        self._zoom_factor = zoom_factor
         self._set_sizing()

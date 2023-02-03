@@ -1,4 +1,3 @@
-from PySide6 import QtWidgets
 from ColourKey2DWidget import ColourKey2DWidget
 from SunburstOrgKeyWidget import SunburstOrgKeyWidget
 from InfoOrgKeyWidget import InfoOrgKeyWidget
@@ -7,6 +6,8 @@ from NineBoxSunburstOrgWidget import NineBoxSunburstOrgWidget, nine_box_colours
 class NineBoxInfoWidget(InfoOrgKeyWidget):
     def __init__(self) -> None:
         super().__init__()
+
+        self._hide_sensitive_data = True
 
         self._info_nine_box_potential = self._add_info_text("9-box Grid Potential")
         self._info_nine_box_performance = self._add_info_text("9-box Grid Performance")

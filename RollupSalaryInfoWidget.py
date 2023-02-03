@@ -1,4 +1,3 @@
-from PySide6 import QtWidgets
 from ColourKey1DWidget import ColourKey1DWidget
 from SunburstOrgKeyWidget import SunburstOrgKeyWidget
 from InfoOrgKeyWidget import InfoOrgKeyWidget
@@ -31,7 +30,9 @@ class RollupSalaryInfoWidget(InfoOrgKeyWidget):
                 if rollup_missing_salaries == 1:
                     ppl = "Person"
 
-                rollup_salary_usd = str("{} (Missing {:d} {})").format(rollup_salary_usd_val, rollup_missing_salaries, ppl)
+                rollup_salary_usd = str("{} (Missing {:d} {})").format(
+                    rollup_salary_usd_val, rollup_missing_salaries, ppl
+                )
 
         self._info_rollup_salary_usd.setText(rollup_salary_usd)
         self._org_widget.set_uen(uen, is_manager)

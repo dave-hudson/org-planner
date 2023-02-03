@@ -6,5 +6,3 @@ class ColourBoxLabelWidget(ColourBoxWidget):
     allow QSS styling effects to set the background and text colour.  This one
     is used specifically for labels.
     """
-    def __init__(self, text) -> None:
-        super().__init__(text)

@@ -1,8 +1,9 @@
-from PySide6 import QtWidgets
 from ColourKey1DWidget import ColourKey1DWidget
 from SunburstOrgKeyWidget import SunburstOrgKeyWidget
 from InfoOrgKeyWidget import InfoOrgKeyWidget
-from NumDirectReportsSunburstOrgWidget import NumDirectReportsSunburstOrgWidget, num_direct_reports_colours
+from NumDirectReportsSunburstOrgWidget import (
+    NumDirectReportsSunburstOrgWidget, num_direct_reports_colours
+)
 
 class NumDirectReportsInfoWidget(InfoOrgKeyWidget):
     def __init__(self) -> None:

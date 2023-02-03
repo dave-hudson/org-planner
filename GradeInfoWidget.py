@@ -1,10 +1,12 @@
-from PySide6 import QtWidgets
 from ColourKey1DWidget import ColourKey1DWidget
 from SunburstOrgKeyWidget import SunburstOrgKeyWidget
 from InfoOrgKeyWidget import InfoOrgKeyWidget
 from GradeSunburstOrgWidget import GradeSunburstOrgWidget, grade_colours
 
 class GradeInfoWidget(InfoOrgKeyWidget):
+    """
+    A widget class used to display information about grade structures.
+    """
     def __init__(self) -> None:
         super().__init__()
 

@@ -5,12 +5,18 @@ import sys
 import time
 from PySide6 import QtWidgets
 from SunburstOrgWidget import fx_rates
-from MainWindow import (
-    MainWindow, team_colours, type_colours, num_direct_reports_colours,
-    location_colours, grade_colours, gender_colours, salary_colours,
-    rating_colours, nine_box_colours, salary_offset_colours,
-    salary_band_offset_colours
-)
+from MainWindow import MainWindow
+from GenderSunburstOrgWidget import gender_colours
+from GradeSunburstOrgWidget import grade_colours
+from LocationSunburstOrgWidget import location_colours
+from NumDirectReportsSunburstOrgWidget import num_direct_reports_colours
+from NineBoxInfoWidget import nine_box_colours
+from RatingSunburstOrgWidget import rating_colours
+from SalaryBandOffsetSunburstOrgWidget import salary_band_offset_colours
+from SalaryOffsetSunburstOrgWidget import salary_offset_colours
+from SalarySunburstOrgWidget import salary_colours
+from TeamSunburstOrgWidget import team_colours
+from TypeSunburstOrgWidget import type_colours
 
 team_colours_list = [
     [0xff, 0xc0, 0xc0],
@@ -86,9 +92,9 @@ def scan_teams_and_types(people):
         if team not in teams:
             teams.append(team)
 
-        type = people[i]["Person"]["Type"]
-        if type not in types:
-            types.append(type)
+        person_type = people[i]["Person"]["Type"]
+        if person_type not in types:
+            types.append(person_type)
 
     return (teams, types)
 
@@ -163,8 +169,8 @@ def scan_org_tree(people, locations, supervisor_uen, depth):
     team = p["Person"]["Team"]
     p["Team Counts"][list(team_colours).index(team)] += 1
 
-    type = p["Person"]["Type"]
-    p["Type Counts"][list(type_colours).index(type)] += 1
+    person_type = p["Person"]["Type"]
+    p["Type Counts"][list(type_colours).index(person_type)] += 1
 
     if "Locations" in p["Person"].keys():
         location = p["Person"]["Locations"][-1]["Location"]
@@ -183,7 +189,9 @@ def scan_org_tree(people, locations, supervisor_uen, depth):
         nine_box_potential = p["Person"]["9 Box"][-1]["Potential"]
         nine_box_potential_index = list(nine_box_colours).index(nine_box_potential)
         nine_box_performance = p["Person"]["9 Box"][-1]["Performance"]
-        nine_box_performance_index = list(nine_box_colours[nine_box_potential]).index(nine_box_performance)
+        nine_box_performance_index = list(
+            nine_box_colours[nine_box_potential]
+        ).index(nine_box_performance)
         p["9 Box Counts"][nine_box_potential_index][nine_box_performance_index] += 1
 
     if "Ratings" in p["Person"].keys():
@@ -243,12 +251,15 @@ def scan_org_tree(people, locations, supervisor_uen, depth):
             log_salary_usd = int((math.log10(salary_usd) - 4) / 0.25)
             p["Salary Counts"][log_salary_usd] += 1
 
-    if ("Grades" in p["Person"].keys()) and ("Salaries" in p["Person"].keys()):
+    if (("Grades" in p["Person"].keys()) and
+            ("Salaries" in p["Person"].keys()) and
+            ("Locations" in p["Person"].keys())):
         fx_rate = fx_rates[location]
         fte = 1
         if "Percentage Time" in p["Person"].keys():
             fte = p["Person"]["Percentage Time"] / 100
 
+        location = p["Person"]["Locations"][-1]["Location"]
         band_lower_limit = int(locations[location][grade]["Low"] * fte)
         p["Salary Band Lower Limit"] = band_lower_limit
         p["Salary Band Lower Limit USD"] = int(band_lower_limit * fx_rate)
@@ -329,7 +340,8 @@ def scan_json_people(all_people_list):
             if top_level == 0:
                 top_level = uen
             else:
-                print(i["Name"], "does not have a supervisor, but", top_level, "is already set as top-level")
+                print(i["Name"], "does not have a supervisor, but",
+                        top_level, "is already set as top-level")
                 failed = True
         else:
             supervisor_uen = i["Supervisor UEN"]

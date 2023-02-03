@@ -1,8 +1,9 @@
-from PySide6 import QtWidgets
 from ColourKey1DWidget import ColourKey1DWidget
 from SunburstOrgKeyWidget import SunburstOrgKeyWidget
 from InfoOrgKeyWidget import InfoOrgKeyWidget
-from SalaryOffsetSunburstOrgWidget import SalaryOffsetSunburstOrgWidget, salary_offset_colours, salary_offset_labels
+from SalaryOffsetSunburstOrgWidget import (
+    SalaryOffsetSunburstOrgWidget, salary_offset_colours, salary_offset_labels
+)
 
 class SalaryOffsetInfoWidget(InfoOrgKeyWidget):
     def __init__(self) -> None:
@@ -42,7 +43,8 @@ class SalaryOffsetInfoWidget(InfoOrgKeyWidget):
                 salary_offset_mid_point_usd = str(self._people[uen]["Salary Band Mid Point USD"])
                 salary_offset = str(self._people[uen]["Salary Offset"])
                 salary_offset_usd = str(int(self._people[uen]["Salary Offset USD"]))
-                salary_offset_percentage = "{:.1f}%".format(self._people[uen]["Salary Offset Percentage"])
+                sop = self._people[uen]["Salary Offset Percentage"]
+                salary_offset_percentage = f"{sop:.1f}%"
 
         self._info_salary_offset_mid_point.setText(salary_offset_mid_point)
         self._info_salary_offset.setText(salary_offset)

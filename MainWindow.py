@@ -1,27 +1,24 @@
 from PySide6 import QtGui, QtWidgets, QtCore
-from ColourKey1DWidget import ColourKey1DWidget
-from ColourKey2DWidget import ColourKey2DWidget
 from PeopleListWidget import PeopleListWidget
 from PeopleTreeWidget import PeopleTreeWidget
 from PeopleSelectorWidget import PeopleSelectorWidget
 from PersonWidget import PersonWidget
 from MainSplitter import MainSplitter
 from HLine import HLine
-from SunburstOrgKeyWidget import SunburstOrgKeyWidget
-from GenderInfoWidget import GenderInfoWidget, gender_colours
+from GenderInfoWidget import GenderInfoWidget
 from GeneralInfoWidget import GeneralInfoWidget
-from GradeInfoWidget import GradeInfoWidget, grade_colours
-from LocationInfoWidget import LocationInfoWidget, location_colours
-from NumDirectReportsInfoWidget import NumDirectReportsInfoWidget, num_direct_reports_colours
-from NineBoxInfoWidget import NineBoxInfoWidget, nine_box_colours
-from RatingInfoWidget import RatingInfoWidget, rating_colours
-from RollupSalaryInfoWidget import RollupSalaryInfoWidget, rollup_salary_colours
-from SalaryInfoWidget import SalaryInfoWidget, salary_colours
-from SalaryOffsetInfoWidget import SalaryOffsetInfoWidget, salary_offset_colours
-from SalaryBandOffsetInfoWidget import SalaryBandOffsetInfoWidget, salary_band_offset_colours
-from ServiceDurationInfoWidget import ServiceDurationInfoWidget, service_duration_colours
-from TeamInfoWidget import TeamInfoWidget, team_colours
-from TypeInfoWidget import TypeInfoWidget, type_colours
+from GradeInfoWidget import GradeInfoWidget
+from LocationInfoWidget import LocationInfoWidget
+from NumDirectReportsInfoWidget import NumDirectReportsInfoWidget
+from NineBoxInfoWidget import NineBoxInfoWidget
+from RatingInfoWidget import RatingInfoWidget
+from RollupSalaryInfoWidget import RollupSalaryInfoWidget
+from SalaryInfoWidget import SalaryInfoWidget
+from SalaryOffsetInfoWidget import SalaryOffsetInfoWidget
+from SalaryBandOffsetInfoWidget import SalaryBandOffsetInfoWidget
+from ServiceDurationInfoWidget import ServiceDurationInfoWidget
+from TeamInfoWidget import TeamInfoWidget
+from TypeInfoWidget import TypeInfoWidget
 
 # This is the QSS used to ensure the app renders correctly.  It's parameterized
 # using string.format() form so dark and light mode parameters can be provided,
@@ -271,17 +268,21 @@ class MainWindow(QtWidgets.QMainWindow):
         view_menu.addAction(self._actual_size_action)
         view_menu.addAction(self._zoom_in_action)
         view_menu.addAction(self._zoom_out_action)
-        view_menu.setWindowFlags(view_menu.windowFlags()
-                                 | QtCore.Qt.FramelessWindowHint
-                                 | QtCore.Qt.NoDropShadowWindowHint)
+        view_menu.setWindowFlags(
+            view_menu.windowFlags()
+            | QtCore.Qt.FramelessWindowHint
+            | QtCore.Qt.NoDropShadowWindowHint
+        )
         view_menu.setAttribute(QtCore.Qt.WA_TranslucentBackground)
 
         history_menu = self._menu_bar.addMenu("&History")
         history_menu.addAction(self._back_action)
         history_menu.addAction(self._forward_action)
-        history_menu.setWindowFlags(view_menu.windowFlags()
-                                    | QtCore.Qt.FramelessWindowHint
-                                    | QtCore.Qt.NoDropShadowWindowHint)
+        history_menu.setWindowFlags(
+            view_menu.windowFlags()
+            | QtCore.Qt.FramelessWindowHint
+            | QtCore.Qt.NoDropShadowWindowHint
+        )
         history_menu.setAttribute(QtCore.Qt.WA_TranslucentBackground)
 
         self._people_list_widget = PeopleListWidget(self)
@@ -291,7 +292,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self._people_tree_widget.currentItemChanged.connect(self._people_tree_item_changed)
         self._people_tree_widget.setHeaderHidden(True)
         self._people_tree_widget.setHidden(True)
-        people_selector_widget = PeopleSelectorWidget(self, self._people_list_widget, self._people_tree_widget)
+        people_selector_widget = PeopleSelectorWidget(
+            self, self._people_list_widget, self._people_tree_widget
+        )
 
         self._side_layout = QtWidgets.QVBoxLayout()
         self._side_layout.setSpacing(12)
@@ -419,24 +422,24 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _set_app_palette(self):
         # Set the QSS appropriately for the current light/dark mode setting.
-        if (self._dark_mode):
+        if self._dark_mode:
             self.setStyleSheet(qss.format(*dark_qss_config))
         else:
             self.setStyleSheet(qss.format(*light_qss_config))
 
-    def _dark_mode_triggered(self, s):
+    def _dark_mode_triggered(self, _):
         #  Called when the "Dark Mode" menu item is triggered.
         self._dark_mode = not self._dark_mode
         self._dark_mode_action.setChecked(self._dark_mode)
         self._set_app_palette()
 
-    def _hide_sensitive_data_triggered(self, s):
+    def _hide_sensitive_data_triggered(self, _):
         # Called when the "Hide Sensitive Data" menu item is triggered.
         self._hide_sensitive_data = not self._hide_sensitive_data
         self._hide_sensitive_data_action.setChecked(self._hide_sensitive_data)
         self._set_redacted(self._hide_sensitive_data)
 
-    def _list_view_triggered(self, s):
+    def _list_view_triggered(self, _):
         # Called when the "List View" menu item is triggered.
         #
         # We flip the application view type, flip the checkbox on the
@@ -450,11 +453,13 @@ class MainWindow(QtWidgets.QMainWindow):
         # For UI continuity we take the current selected item from the tree
         # view and select the same entry in the list view.
         tree_selected = self._people_tree_widget.currentItem()
-        item = self._people_list_widget.findItems(tree_selected.text(0), QtCore.Qt.MatchExactly | QtCore.Qt.MatchRecursive)
+        item = self._people_list_widget.findItems(
+            tree_selected.text(0), QtCore.Qt.MatchExactly | QtCore.Qt.MatchRecursive
+        )
         self._people_list_widget.setCurrentItem(item[0])
         self._people_list_widget.setFocus()
 
-    def _tree_view_triggered(self, s):
+    def _tree_view_triggered(self, _):
         # Called when the "Tree View" menu item is triggered.
         #
         # We flip the application view type, flip the checkbox on the
@@ -468,18 +473,20 @@ class MainWindow(QtWidgets.QMainWindow):
         # For UI continuity we take the current selected item from the list
         # view and select the same entry in the tree view.
         list_selected = self._people_list_widget.currentItem()
-        item = self._people_tree_widget.findItems(list_selected.text(), QtCore.Qt.MatchExactly | QtCore.Qt.MatchRecursive)
+        item = self._people_tree_widget.findItems(
+            list_selected.text(), QtCore.Qt.MatchExactly | QtCore.Qt.MatchRecursive
+        )
         self._people_tree_widget.setCurrentItem(item[0])
         self._people_tree_widget.setFocus()
 
-    def _actual_size_triggered(self, s):
+    def _actual_size_triggered(self, _):
         self._zoom_factor = 1.0
         self._actual_size_action.setEnabled(False)
         self._zoom_in_action.setEnabled(True)
         self._zoom_out_action.setEnabled(True)
         self._update_zoom()
 
-    def _zoom_in_triggered(self, s):
+    def _zoom_in_triggered(self, _):
         self._zoom_factor *= 1.189207
         if self._zoom_factor > 1.99:
             self._zoom_factor = 2
@@ -489,7 +496,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._zoom_out_action.setEnabled(True)
         self._update_zoom()
 
-    def _zoom_out_triggered(self, s):
+    def _zoom_out_triggered(self, _):
         self._zoom_factor /= 1.189207
         if self._zoom_factor < 0.51:
             self._zoom_factor = 0.5
@@ -503,10 +510,12 @@ class MainWindow(QtWidgets.QMainWindow):
         # When we change the view of the currently active person we want
         # to ensure the tree and list views are updated to highlight them.
         name = self._people[uen]["Person"]["Name"]
-        item = self._people_tree_widget.findItems(name, QtCore.Qt.MatchExactly | QtCore.Qt.MatchRecursive)
+        item = self._people_tree_widget.findItems(name, QtCore.Qt.MatchExactly
+                                                        | QtCore.Qt.MatchRecursive)
         self._people_tree_widget.setCurrentItem(item[0])
         self._people_tree_widget.setFocus()
-        item = self._people_list_widget.findItems(name, QtCore.Qt.MatchExactly | QtCore.Qt.MatchRecursive)
+        item = self._people_list_widget.findItems(name, QtCore.Qt.MatchExactly
+                                                        | QtCore.Qt.MatchRecursive)
         self._people_list_widget.setCurrentItem(item[0])
         self._people_list_widget.setFocus()
 
@@ -516,7 +525,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # a timer callback that does this.
         self._scroll_area.verticalScrollBar().setValue(scroll_pos)
 
-    def _forward_triggered(self, s):
+    def _forward_triggered(self, _):
         # Called when the "Forward" menu item is triggered.
 
         # If we're at the end of the history list then we can't go forwards.
@@ -533,7 +542,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._update_person(uen)
         QtCore.QTimer.singleShot(50, lambda: self._set_scroll_position(scroll_pos))
 
-    def _back_triggered(self, s):
+    def _back_triggered(self, _):
         # Called when the "Back" menu item is triggered.
 
         # If we're at the start of the history list then we can't go back.
@@ -643,7 +652,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._people_tree_widget.insertTopLevelItem(0, top_level)
         self._people_tree_widget.expandAll()
 
-        self._general_info.set_people(people, supervisor_uen)
+        self._general_info.set_people_and_supervisor(people, supervisor_uen)
         self._num_direct_reports_info.set_people(people)
         self._team_info.set_people(people)
         self._type_info.set_people(people)

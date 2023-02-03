@@ -1,4 +1,3 @@
-from PySide6 import QtWidgets, QtCore
 from ColourKey1DWidget import ColourKey1DWidget
 from SunburstOrgKeyWidget import SunburstOrgKeyWidget
 from InfoOrgKeyWidget import InfoOrgKeyWidget
