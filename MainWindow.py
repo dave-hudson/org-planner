@@ -672,9 +672,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._salary_offset_info.set_people(people, supervisor_uen)
         self._salary_band_offset_info.set_people(people, supervisor_uen)
         self._rollup_salary_info.set_people(people, supervisor_uen)
-
-        list_selected = self._people_list_widget.item(0)
-        self._people_list_widget.setCurrentItem(list_selected)
+        self._update_person(supervisor_uen)
 
         self.update()
 
