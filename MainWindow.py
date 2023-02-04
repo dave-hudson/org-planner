@@ -39,7 +39,7 @@ QMenuBar {{
 
 QMenuBar::item {{
     border-radius: 4px;
-    padding: 4px;
+    padding: 4px 8px 4px 8px;
 }}
 
 QMenuBar::item:selected {{
@@ -56,7 +56,12 @@ QMenu {{
 
 QMenu::item {{
     margin: 3px 5px;
-    padding: 4px 4px 4px 10px;
+    padding: 4px 4px 4px 4px;
+}}
+
+QMenu::indicator {{
+    width: 20px;
+    height: 16px;
 }}
 
 QMenu::item:selected {{
@@ -394,8 +399,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._scroll_area = QtWidgets.QScrollArea(self)
         self._scroll_area.setWidget(widget)
         self._scroll_area.setWidgetResizable(True)
-        self._scroll_area.setAlignment(QtCore.Qt.AlignHCenter
-                                       | QtCore.Qt.AlignVCenter)
+        self._scroll_area.setAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
 
         splitter_widget = MainSplitter(self)
         splitter_widget.addWidget(people_selector_widget)
@@ -510,12 +514,14 @@ class MainWindow(QtWidgets.QMainWindow):
         # When we change the view of the currently active person we want
         # to ensure the tree and list views are updated to highlight them.
         name = self._people[uen]["Person"]["Name"]
-        item = self._people_tree_widget.findItems(name, QtCore.Qt.MatchExactly
-                                                        | QtCore.Qt.MatchRecursive)
+        item = self._people_tree_widget.findItems(
+            name, QtCore.Qt.MatchExactly | QtCore.Qt.MatchRecursive
+        )
         self._people_tree_widget.setCurrentItem(item[0])
         self._people_tree_widget.setFocus()
-        item = self._people_list_widget.findItems(name, QtCore.Qt.MatchExactly
-                                                        | QtCore.Qt.MatchRecursive)
+        item = self._people_list_widget.findItems(
+            name, QtCore.Qt.MatchExactly | QtCore.Qt.MatchRecursive
+        )
         self._people_list_widget.setCurrentItem(item[0])
         self._people_list_widget.setFocus()
 
