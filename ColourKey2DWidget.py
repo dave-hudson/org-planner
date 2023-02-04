@@ -54,4 +54,6 @@ class ColourKey2DWidget(QtWidgets.QFrame):
 
         for i in range(len(self._colour_box_widgets)):
             for j in range(len(self._colour_box_widgets[i])):
-                self._colour_box_widgets[i][j].setText(str(self._people[uen][self._count_key][i][j]))
+                self._colour_box_widgets[i][j].setText(
+                    str(self._people[uen][self._count_key][i][j])
+                )

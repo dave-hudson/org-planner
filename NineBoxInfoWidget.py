@@ -4,6 +4,9 @@ from InfoOrgKeyWidget import InfoOrgKeyWidget
 from NineBoxSunburstOrgWidget import NineBoxSunburstOrgWidget, nine_box_colours
 
 class NineBoxInfoWidget(InfoOrgKeyWidget):
+    """
+    A widget class used to display nine-box grid information.
+    """
     def __init__(self) -> None:
         super().__init__()
 

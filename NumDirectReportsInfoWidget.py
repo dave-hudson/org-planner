@@ -6,6 +6,9 @@ from NumDirectReportsSunburstOrgWidget import (
 )
 
 class NumDirectReportsInfoWidget(InfoOrgKeyWidget):
+    """
+    A widget class used to display information about numbers of direct reports.
+    """
     def __init__(self) -> None:
         super().__init__()
 

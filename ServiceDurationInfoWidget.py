@@ -6,6 +6,9 @@ from ServiceDurationSunburstOrgWidget import (
 )
 
 class ServiceDurationInfoWidget(InfoOrgKeyWidget):
+    """
+    A widget class used to display information about length of service.
+    """
     def __init__(self) -> None:
         super().__init__()
 

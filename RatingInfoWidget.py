@@ -4,6 +4,9 @@ from InfoOrgKeyWidget import InfoOrgKeyWidget
 from RatingSunburstOrgWidget import RatingSunburstOrgWidget, rating_colours
 
 class RatingInfoWidget(InfoOrgKeyWidget):
+    """
+    A widget class used to display performance rating information.
+    """
     def __init__(self) -> None:
         super().__init__()
 

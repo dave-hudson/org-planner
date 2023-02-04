@@ -4,6 +4,9 @@ from InfoOrgKeyWidget import InfoOrgKeyWidget
 from GenderSunburstOrgWidget import GenderSunburstOrgWidget, gender_colours
 
 class GenderInfoWidget(InfoOrgKeyWidget):
+    """
+    A widget class used to display gender information about a person.
+    """
     def __init__(self) -> None:
         super().__init__()
 

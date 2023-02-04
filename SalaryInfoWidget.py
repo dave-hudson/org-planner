@@ -5,6 +5,9 @@ from InfoOrgKeyWidget import InfoOrgKeyWidget
 from SalarySunburstOrgWidget import SalarySunburstOrgWidget, salary_colours
 
 class SalaryInfoWidget(InfoOrgKeyWidget):
+    """
+    A widget class used to display salary information.
+    """
     def __init__(self) -> None:
         super().__init__()
 

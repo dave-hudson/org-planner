@@ -1,10 +1,12 @@
-from PySide6 import QtWidgets
 from ColourKey1DWidget import ColourKey1DWidget
 from SunburstOrgKeyWidget import SunburstOrgKeyWidget
 from InfoOrgKeyWidget import InfoOrgKeyWidget
 from LocationSunburstOrgWidget import LocationSunburstOrgWidget, location_colours
 
 class LocationInfoWidget(InfoOrgKeyWidget):
+    """
+    A widget class used to display location information.
+    """
     def __init__(self) -> None:
         super().__init__()
 

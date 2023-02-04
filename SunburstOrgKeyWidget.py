@@ -1,6 +1,9 @@
 from PySide6 import QtWidgets, QtCore
 
 class SunburstOrgKeyWidget(QtWidgets.QWidget):
+    """
+    A widget class used to handle org charts with key legends.
+    """
     person_clicked = QtCore.Signal(int)
 
     def __init__(self, org_widget, key_widget) -> None:

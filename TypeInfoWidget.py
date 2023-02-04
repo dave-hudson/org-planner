@@ -4,6 +4,9 @@ from InfoOrgKeyWidget import InfoOrgKeyWidget
 from TypeSunburstOrgWidget import TypeSunburstOrgWidget, type_colours
 
 class TypeInfoWidget(InfoOrgKeyWidget):
+    """
+    A widget class used to display information about employee type.
+    """
     def __init__(self) -> None:
         super().__init__()
 

@@ -6,6 +6,9 @@ from SalaryBandOffsetSunburstOrgWidget import (
 )
 
 class SalaryBandOffsetInfoWidget(InfoOrgKeyWidget):
+    """
+    A widget class used to display information about salary offsets from salary bands.
+    """
     def __init__(self) -> None:
         super().__init__()
 

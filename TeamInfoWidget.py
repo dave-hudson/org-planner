@@ -4,6 +4,9 @@ from InfoOrgKeyWidget import InfoOrgKeyWidget
 from TeamSunburstOrgWidget import TeamSunburstOrgWidget, team_colours
 
 class TeamInfoWidget(InfoOrgKeyWidget):
+    """
+    A widget class used to display information about team memberships.
+    """
     def __init__(self) -> None:
         super().__init__()
 

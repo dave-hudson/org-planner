@@ -4,6 +4,9 @@ from InfoOrgKeyWidget import InfoOrgKeyWidget
 from RollupSalarySunburstOrgWidget import RollupSalarySunburstOrgWidget, rollup_salary_colours
 
 class RollupSalaryInfoWidget(InfoOrgKeyWidget):
+    """
+    A widget class used to display roll-up salary information.
+    """
     def __init__(self) -> None:
         super().__init__()
 
