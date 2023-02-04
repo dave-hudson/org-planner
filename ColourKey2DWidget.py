@@ -49,7 +49,7 @@ class ColourKey2DWidget(QtWidgets.QFrame):
         self._people = people
 
     def set_uen(self, uen):
-        if self._count_key == None:
+        if self._count_key is None:
             return
 
         for i in range(len(self._colour_box_widgets)):

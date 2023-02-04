@@ -1,4 +1,4 @@
-from PySide6 import QtCore, QtGui, QtWidgets
+from PySide6 import QtWidgets
 
 class ColourBoxWidget(QtWidgets.QLabel):
     """
@@ -17,5 +17,5 @@ class ColourBoxWidget(QtWidgets.QLabel):
         else:
             ct = "white"
 
-        qss = "background-color: rgb({:d}, {:d}, {:d}); color: {:s}".format(colour[0], colour[1], colour[2], ct)
+        qss = "background-color: rgb({colour[0]}, {colour[1]}, {colour[2]}); color: {ct}"
         self.setStyleSheet(qss)
