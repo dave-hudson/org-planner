@@ -16,5 +16,5 @@ class ColourBoxWidget(QtWidgets.QLabel):
         if colour[0] + colour[1] > 0xc0:
             ct = "black"
 
-        qss = "background-color: rgb({colour[0]}, {colour[1]}, {colour[2]}); color: {ct}"
+        qss = f"background-color: rgb({colour[0]}, {colour[1]}, {colour[2]}); color: {ct}"
         self.setStyleSheet(qss)
