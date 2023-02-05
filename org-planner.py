@@ -226,9 +226,9 @@ def scan_org_tree(people, locations, supervisor_uen, depth):
         for j in range(i + 1, len(drs)):
             if people[drs[i - 1]]["Person"]["Team"] == people[drs[j]]["Person"]["Team"]:
                 for k in range(j, i, -1):
-                    t = drs[j - 1]
-                    drs[j - 1] = drs[j]
-                    drs[j] = t
+                    t = drs[k - 1]
+                    drs[k - 1] = drs[k]
+                    drs[k] = t
 
     start_date = p["Person"]["Start Date"]
     t = time.strptime(start_date, "%Y-%m-%d")
