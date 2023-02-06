@@ -18,7 +18,7 @@ class RatingInfoWidget(InfoOrgKeyWidget):
         self._layout.addWidget(self._org_widget)
         self._org_widget.person_clicked.connect(self._person_clicked)
 
-    def updater_contents(self):
+    def update_contents(self):
         uen = self._uen
         is_manager = self._is_manager
         p = self._people[uen]["Person"]
