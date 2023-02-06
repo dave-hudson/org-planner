@@ -18,7 +18,7 @@ from SalaryOffsetInfoWidget import SalaryOffsetInfoWidget
 from SalaryBandOffsetInfoWidget import SalaryBandOffsetInfoWidget
 from ServiceDurationInfoWidget import ServiceDurationInfoWidget
 from TeamInfoWidget import TeamInfoWidget
-from TypeInfoWidget import TypeInfoWidget
+from EmploymentInfoWidget import EmploymentInfoWidget
 
 # This is the QSS used to ensure the app renders correctly.  It's parameterized
 # using string.format() form so dark and light mode parameters can be provided,
@@ -322,9 +322,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._side_layout.addWidget(HLine())
 
-        self._type_info = TypeInfoWidget()
-        self._side_layout.addWidget(self._type_info)
-        self._type_info.person_clicked.connect(self._person_clicked)
+        self._employment_info = EmploymentInfoWidget()
+        self._side_layout.addWidget(self._employment_info)
+        self._employment_info.person_clicked.connect(self._person_clicked)
 
         self._side_layout.addWidget(HLine())
 
@@ -623,7 +623,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._general_info.set_locations(locations)
         self._num_direct_reports_info.set_locations(locations)
         self._team_info.set_locations(locations)
-        self._type_info.set_locations(locations)
+        self._employment_info.set_locations(locations)
         self._location_info.set_locations(locations)
         self._grade_info.set_locations(locations)
         self._gender_info.set_locations(locations)
@@ -661,7 +661,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._general_info.set_people(people, supervisor_uen)
         self._num_direct_reports_info.set_people(people, supervisor_uen)
         self._team_info.set_people(people, supervisor_uen)
-        self._type_info.set_people(people, supervisor_uen)
+        self._employment_info.set_people(people, supervisor_uen)
         self._location_info.set_people(people, supervisor_uen)
         self._grade_info.set_people(people, supervisor_uen)
         self._gender_info.set_people(people, supervisor_uen)
@@ -682,7 +682,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._general_info.set_uen(uen)
         self._num_direct_reports_info.set_uen(uen)
         self._team_info.set_uen(uen)
-        self._type_info.set_uen(uen)
+        self._employment_info.set_uen(uen)
         self._location_info.set_uen(uen)
         self._grade_info.set_uen(uen)
         self._gender_info.set_uen(uen)
@@ -704,7 +704,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._general_info.update_contents()
         self._num_direct_reports_info.update_contents()
         self._team_info.update_contents()
-        self._type_info.update_contents()
+        self._employment_info.update_contents()
         self._location_info.update_contents()
         self._grade_info.update_contents()
         self._gender_info.update_contents()
@@ -726,7 +726,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._general_info.set_zoom(self._zoom_factor)
         self._num_direct_reports_info.set_zoom(self._zoom_factor)
         self._team_info.set_zoom(self._zoom_factor)
-        self._type_info.set_zoom(self._zoom_factor)
+        self._employment_info.set_zoom(self._zoom_factor)
         self._location_info.set_zoom(self._zoom_factor)
         self._grade_info.set_zoom(self._zoom_factor)
         self._gender_info.set_zoom(self._zoom_factor)

@@ -1,8 +1,8 @@
 from SunburstOrgWidget import SunburstOrgWidget
 
-type_colours = {}
+employment_colours = {}
 
-class TypeSunburstOrgWidget(SunburstOrgWidget):
+class EmploymentSunburstOrgWidget(SunburstOrgWidget):
     """
     A widget class used to draw type sunburst org charts.
     """
@@ -11,8 +11,8 @@ class TypeSunburstOrgWidget(SunburstOrgWidget):
 
         p = self._people[uen]
         if "Employment" in p["Person"]["Employments"][-1].keys():
-            person_type = p["Person"]["Employments"][-1]["Employment"]
-            if person_type in type_colours:
-                colours = type_colours[person_type]
+            employment_type = p["Person"]["Employments"][-1]["Employment"]
+            if employment_type in employment_colours:
+                colours = employment_colours[employment_type]
 
         return colours

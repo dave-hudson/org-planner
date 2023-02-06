@@ -21,7 +21,6 @@ class GeneralInfoWidget(InfoOrgKeyWidget):
 
         self._info_uen = self._add_info_text("UEN")
         self._info_supervisor_uen = self._add_info_text("Supervisor UEN")
-        self._info_percentage_time = self._add_info_text("FTE (%)")
         self._org_only_widget = GeneralSunburstOrgWidget()
         self._org_widget = SunburstOrgKeyWidget(self._org_only_widget, None)
         self._layout.addWidget(self._org_widget)
@@ -41,13 +40,6 @@ class GeneralInfoWidget(InfoOrgKeyWidget):
             )
 
         self._info_supervisor_uen.setText(supervisor_uen)
-
-        percentage_time = 100
-        e = p["Employments"][-1]
-        if "Percentage Time" in e.keys():
-            percentage_time = e["Percentage Time"]
-
-        self._info_percentage_time.setText(str(percentage_time))
 
     def set_uen(self, uen):
         self._uen = uen

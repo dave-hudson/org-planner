@@ -16,7 +16,7 @@ from SalaryBandOffsetSunburstOrgWidget import salary_band_offset_colours
 from SalaryOffsetSunburstOrgWidget import salary_offset_colours
 from SalarySunburstOrgWidget import salary_colours
 from TeamSunburstOrgWidget import team_colours
-from TypeSunburstOrgWidget import type_colours
+from EmploymentSunburstOrgWidget import employment_colours
 
 team_colours_list = [
     [0xff, 0xc0, 0xc0],
@@ -56,7 +56,7 @@ team_colours_list = [
     [0x00, 0x00, 0x00]
 ]
 
-type_colours_list = [
+employment_colours_list = [
     [0x60, 0xc0, 0x60],
     [0xc0, 0x60, 0x60],
     [0x60, 0x60, 0xc0],
@@ -83,20 +83,20 @@ office_locations = [
     ("hong kong", "Hong Kong")
 ]
 
-def scan_teams_and_types(people):
+def scan_teams_and_employments(people):
     teams = []
-    types = []
+    employments = []
 
     for i in people:
         team = people[i]["Person"]["Teams"][-1]["Team"]
         if team not in teams:
             teams.append(team)
 
-        person_type = people[i]["Person"]["Employments"][-1]["Employment"]
-        if person_type not in types:
-            types.append(person_type)
+        employment_type = people[i]["Person"]["Employments"][-1]["Employment"]
+        if employment_type not in employments:
+            employments.append(employment_type)
 
-    return (teams, types)
+    return (teams, employments)
 
 def scan_org_tree(people, locations, supervisor_uen, depth):
     # Scan each direct report recursively, computing how deep each person is in
@@ -106,7 +106,7 @@ def scan_org_tree(people, locations, supervisor_uen, depth):
     p["Num Direct Reports Counts"] = [0] * len(num_direct_reports_colours)
     p["Location Counts"] = [0] * len(location_colours)
     p["Team Counts"] = [0] * len(team_colours)
-    p["Type Counts"] = [0] * len(type_colours)
+    p["Employment Counts"] = [0] * len(employment_colours)
     p["Grade Counts"] = [0] * len(grade_colours)
     p["Gender Counts"] = [0] * len(gender_colours)
     p["9 Box Counts"] = [[] for i in range(3)]
@@ -131,8 +131,8 @@ def scan_org_tree(people, locations, supervisor_uen, depth):
         for j in range(len(p["Team Counts"])):
             p["Team Counts"][j] += dr["Team Counts"][j]
 
-        for j in range(len(p["Type Counts"])):
-            p["Type Counts"][j] += dr["Type Counts"][j]
+        for j in range(len(p["Employment Counts"])):
+            p["Employment Counts"][j] += dr["Employment Counts"][j]
 
         for j in range(len(p["Location Counts"])):
             p["Location Counts"][j] += dr["Location Counts"][j]
@@ -169,10 +169,10 @@ def scan_org_tree(people, locations, supervisor_uen, depth):
     team = p["Person"]["Teams"][-1]["Team"]
     p["Team Counts"][list(team_colours).index(team)] += 1
 
-    person_type = "Unknown"
+    employment_type = "Unknown"
     if "Employment" in p["Person"]["Employments"][-1]:
-        person_type = p["Person"]["Employments"][-1]["Employment"]
-        p["Type Counts"][list(type_colours).index(person_type)] += 1
+        employment_type = p["Person"]["Employments"][-1]["Employment"]
+        p["Employment Counts"][list(employment_colours).index(employment_type)] += 1
 
     if "Locations" in p["Person"].keys():
         location = p["Person"]["Locations"][-1]["Location"]
@@ -462,7 +462,7 @@ def main():
     if fail:
         exit()
 
-    all_teams, all_types = scan_teams_and_types(all_people)
+    all_teams, all_employments = scan_teams_and_employments(all_people)
     all_teams.sort()
 
     ci = 0
@@ -471,8 +471,8 @@ def main():
         ci += 1
 
     ci = 0
-    for i in all_types:
-        type_colours[i] = type_colours_list[ci]
+    for i in all_employments:
+        employment_colours[i] = employment_colours_list[ci]
         ci += 1
 
     scan_org_tree(all_people, all_locations, supervisor_uen, 0)
