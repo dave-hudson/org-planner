@@ -26,7 +26,7 @@ class SunburstOrgWidget(QtWidgets.QWidget):
         self._ring_width = 0
         self._max_width = 0
         self._max_height = 0
-        self._spacing = 0
+        self._spacing = 20
         self._zoom_factor = 1.0
 
     def _recurse_find_person(self, target_depth, target_angle, supervisor_uen,
@@ -195,7 +195,6 @@ class SunburstOrgWidget(QtWidgets.QWidget):
         self._ring_width = int(60 * self._zoom_factor)
         self._max_width = self._ring_width * (max_org_depth + 1)
         self._max_height = self._ring_width * (view_depth - uen_org_depth + 1)
-        self._spacing = 10
 
         self.setMinimumSize(
             2 * (self._spacing + self._max_width) + 1, 2 * (self._spacing + self._max_height) + 1
