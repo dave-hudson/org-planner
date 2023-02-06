@@ -34,8 +34,8 @@ class GeneralInfoWidget(InfoOrgKeyWidget):
         self._info_name.setText(p["Name"])
         self._info_uen.setText(str(p["UEN"]))
         supervisor_uen = "N/A"
-        if "Supervisor UEN" in p.keys():
-            supervisor = p["Supervisor UEN"]
+        if "Supervisors" in p.keys():
+            supervisor = p["Supervisors"][-1]["Supervisor UEN"]
             supervisor_uen = str("{:d} ({:s})").format(
                 supervisor, self._people[supervisor]["Person"]["Name"]
             )
@@ -43,8 +43,9 @@ class GeneralInfoWidget(InfoOrgKeyWidget):
         self._info_supervisor_uen.setText(supervisor_uen)
 
         percentage_time = 100
-        if "Percentage Time" in p.keys():
-            percentage_time = p["Percentage Time"]
+        e = p["Employments"][-1]
+        if "Percentage Time" in e.keys():
+            percentage_time = e["Percentage Time"]
 
         self._info_percentage_time.setText(str(percentage_time))
 

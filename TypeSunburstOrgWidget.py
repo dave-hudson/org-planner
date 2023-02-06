@@ -10,8 +10,8 @@ class TypeSunburstOrgWidget(SunburstOrgWidget):
         colours = [0x40, 0x40, 0x40]
 
         p = self._people[uen]
-        if "Type" in p["Person"].keys():
-            person_type = p["Person"]["Type"]
+        if "Employment" in p["Person"]["Employments"][-1].keys():
+            person_type = p["Person"]["Employments"][-1]["Employment"]
             if person_type in type_colours:
                 colours = type_colours[person_type]
 

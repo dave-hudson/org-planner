@@ -10,8 +10,8 @@ class TeamSunburstOrgWidget(SunburstOrgWidget):
         colours = [0x40, 0x40, 0x40]
 
         p = self._people[uen]
-        if "Team" in p["Person"].keys():
-            team = p["Person"]["Team"]
+        if "Teams" in p["Person"].keys():
+            team = p["Person"]["Teams"][-1]["Team"]
             if team in team_colours:
                 colours = team_colours[team]
 

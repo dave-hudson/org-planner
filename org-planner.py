@@ -88,11 +88,11 @@ def scan_teams_and_types(people):
     types = []
 
     for i in people:
-        team = people[i]["Person"]["Team"]
+        team = people[i]["Person"]["Teams"][-1]["Team"]
         if team not in teams:
             teams.append(team)
 
-        person_type = people[i]["Person"]["Type"]
+        person_type = people[i]["Person"]["Employments"][-1]["Employment"]
         if person_type not in types:
             types.append(person_type)
 
@@ -166,11 +166,13 @@ def scan_org_tree(people, locations, supervisor_uen, depth):
     num_direct_reports = str(p["Num Direct Reports"])
     p["Num Direct Reports Counts"][list(num_direct_reports_colours).index(num_direct_reports)] += 1
 
-    team = p["Person"]["Team"]
+    team = p["Person"]["Teams"][-1]["Team"]
     p["Team Counts"][list(team_colours).index(team)] += 1
 
-    person_type = p["Person"]["Type"]
-    p["Type Counts"][list(type_colours).index(person_type)] += 1
+    person_type = "Unknown"
+    if "Employment" in p["Person"]["Employments"][-1]:
+        person_type = p["Person"]["Employments"][-1]["Employment"]
+        p["Type Counts"][list(type_colours).index(person_type)] += 1
 
     if "Locations" in p["Person"].keys():
         location = p["Person"]["Locations"][-1]["Location"]
@@ -220,17 +222,19 @@ def scan_org_tree(people, locations, supervisor_uen, depth):
     # this slightly undoes the sort it's a more natural view over the org,
     # placing people who do the same sorts of things in one grouping.
     for i in range(1, len(drs)):
-        if people[drs[i - 1]]["Person"]["Team"] == people[drs[i]]["Person"]["Team"]:
+        if (people[drs[i - 1]]["Person"]["Teams"][-1]["Team"]
+                == people[drs[i]]["Person"]["Teams"][-1]["Team"]):
             continue
 
         for j in range(i + 1, len(drs)):
-            if people[drs[i - 1]]["Person"]["Team"] == people[drs[j]]["Person"]["Team"]:
+            if (people[drs[i - 1]]["Person"]["Teams"][-1]["Team"]
+                    == people[drs[j]]["Person"]["Teams"][-1]["Team"]):
                 for k in range(j, i, -1):
                     t = drs[k - 1]
                     drs[k - 1] = drs[k]
                     drs[k] = t
 
-    start_date = p["Person"]["Start Date"]
+    start_date = p["Person"]["Employments"][-1]["Start Date"]
     t = time.strptime(start_date, "%Y-%m-%d")
     ot = time.strptime("2014-10-31", "%Y-%m-%d")
     cur_time = time.time()
@@ -256,8 +260,8 @@ def scan_org_tree(people, locations, supervisor_uen, depth):
             ("Locations" in p["Person"].keys())):
         fx_rate = fx_rates[location]
         fte = 1
-        if "Percentage Time" in p["Person"].keys():
-            fte = p["Person"]["Percentage Time"] / 100
+        if "Percentage Time" in p["Person"]["Employments"][-1].keys():
+            fte = p["Person"]["Employments"][-1]["Percentage Time"] / 100
 
         location = p["Person"]["Locations"][-1]["Location"]
         band_lower_limit = int(locations[location][grade]["Low"] * fte)
@@ -336,7 +340,7 @@ def scan_json_people(all_people_list):
 
     for i in all_people_list:
         uen = i["UEN"]
-        if "Supervisor UEN" not in i.keys():
+        if "Supervisors" not in i.keys():
             if top_level == 0:
                 top_level = uen
             else:
@@ -344,14 +348,36 @@ def scan_json_people(all_people_list):
                         top_level, "is already set as top-level")
                 failed = True
         else:
-            supervisor_uen = i["Supervisor UEN"]
+            supervisor_uen = i["Supervisors"][-1]["Supervisor UEN"]
             people[supervisor_uen]["Direct Reports"].append(uen)
 
     return (failed, people, top_level)
 
+def create_employments_json(employment, start_date):
+    inner = {}
+    inner["Employment"] = employment
+    inner["Start Date"] = start_date
+    outer = []
+    outer.append(inner)
+    return outer
+
 def create_locations_json(location):
     inner = {}
     inner["Location"] = location
+    outer = []
+    outer.append(inner)
+    return outer
+
+def create_supervisors_json(supervisor):
+    inner = {}
+    inner["Supervisor UEN"] = supervisor
+    outer = []
+    outer.append(inner)
+    return outer
+
+def create_teams_json(team):
+    inner = {}
+    inner["Team"] = team
     outer = []
     outer.append(inner)
     return outer
@@ -368,8 +394,8 @@ def merge_csv(csv_file, people_list):
             if row["Employee Id"].strip() == str(uen):
                 found = True
 
-                if "Supervisor UEN" not in i.keys():
-                    i["Supervisor UEN"] = int(row["Reports To"])
+                if "Supervisors" not in i.keys():
+                    i["Supervisors"] = create_supervisors_json(int(row["Reports To"]))
                 break
 
         if not found:
@@ -380,17 +406,18 @@ def merge_csv(csv_file, people_list):
                 new_json["Name"] = " ".join(row["Full Name"].split())
                 rep_to = row["Reports To"].strip()
                 if rep_to[:1] == "7":
-                    new_json["Supervisor UEN"] = int(rep_to)
+                    new_json["Supervisors"] = create_supervisors_json(int(rep_to))
                 else:
                     print("UEN", int(emp_id), "no super", rep_to)
 
+                team = "R3"
                 if row["Division"] != "":
-                    new_json["Team"] = row["Division"]
-                else:
-                    new_json["Team"] = "R3"
+                    team = row["Division"]
 
-                new_json["Type"] = "Unknown"
-                new_json["Start Date"] = row["Start Date"]
+                new_json["Teams"] = create_teams_json(team)
+
+                start_date = row["Start Date"]
+                new_json["Employments"] = create_employments_json("Unknown", start_date)
 
                 office = row["Office"].lower()
                 location = "Other"

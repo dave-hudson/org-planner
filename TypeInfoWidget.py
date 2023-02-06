@@ -21,7 +21,7 @@ class TypeInfoWidget(InfoOrgKeyWidget):
         is_manager = self._is_manager
 
         p = self._people[uen]["Person"]
-        self._info_type.setText(p["Type"])
+        self._info_type.setText(p["Employments"][-1]["Employment"])
         self._org_widget.set_uen(uen, is_manager)
 
     def set_redacted(self, is_redacted):
