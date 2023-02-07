@@ -28,6 +28,7 @@ class SunburstOrgWidget(QtWidgets.QWidget):
         self._max_height = 0
         self._spacing = 20
         self._zoom_factor = 1.0
+        self._unknown_colour = [0x40, 0x40, 0x40]
         self.setMouseTracking(True)
 
     def _recurse_find_person(self, target_depth, target_angle, supervisor_uen,
@@ -229,3 +230,6 @@ class SunburstOrgWidget(QtWidgets.QWidget):
     def set_zoom(self, zoom_factor):
         self._zoom_factor = zoom_factor
         self._set_sizing()
+
+    def set_unknown_colour(self, colour):
+        self._unknown_colour = colour

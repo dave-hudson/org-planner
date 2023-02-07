@@ -60,3 +60,6 @@ class SunburstOrgKeyWidget(QtWidgets.QWidget):
     def set_redacted(self, is_redacted):
         self._is_redacted = is_redacted
         self.setVisible(self._is_manager and not is_redacted)
+
+    def set_unknown_colour(self, colour):
+        self._org_widget.set_unknown_colour(colour)

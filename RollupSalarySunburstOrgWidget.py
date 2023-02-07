@@ -18,7 +18,7 @@ class RollupSalarySunburstOrgWidget(SunburstOrgWidget):
     A widget class used to draw rollup salary sunburst org charts.
     """
     def _get_brush_colour(self, uen):
-        colours = [0x40, 0x40, 0x40]
+        colours = self._unknown_colour
 
         p = self._people[uen]
         rollup_salary = p["Rollup Salaries"]

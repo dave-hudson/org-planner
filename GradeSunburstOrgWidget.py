@@ -21,7 +21,7 @@ class GradeSunburstOrgWidget(SunburstOrgWidget):
     A widget class used to draw grade sunburst org charts.
     """
     def _get_brush_colour(self, uen):
-        colours = [0x40, 0x40, 0x40]
+        colours = self._unknown_colour
 
         p = self._people[uen]
         if "Grades" in p["Person"].keys():

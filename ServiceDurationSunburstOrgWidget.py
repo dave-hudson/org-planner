@@ -17,7 +17,7 @@ class ServiceDurationSunburstOrgWidget(SunburstOrgWidget):
     A widget class used to draw service duration sunburst org charts.
     """
     def _get_brush_colour(self, uen):
-        colours = [0x40, 0x40, 0x40]
+        colours = self._unknown_colour
 
         p = self._people[uen]
         base_colour = int(0xe0 * p["Service Duration Fraction"])

@@ -38,3 +38,6 @@ class InfoOrgKeyWidget(InfoWidget):
 
     def set_zoom(self, zoom_factor):
         self._org_widget.set_zoom(zoom_factor)
+
+    def set_unknown_colour(self, colour):
+        self._org_widget.set_unknown_colour(colour)

@@ -170,8 +170,8 @@ dark_qss_config = [
     "#505050",
     "#808080",
     "white",
-    "#404040",
-    "#a0a0a0",
+    "#606060",
+    "#b0b0b0",
     "#404040",
     "white",
     "white",
@@ -192,8 +192,8 @@ light_qss_config = [
     "#b0b0b0",
     "#808080",
     "black",
-    "#d8d8d8",
-    "#808080",
+    "#f8f8f8",
+    "#a0a0a0",
     "#c0c0c0",
     "black",
     "black",
@@ -223,7 +223,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self._dark_mode_action.setCheckable(True)
         self._dark_mode_action.setChecked(True)
         self._dark_mode_action.triggered.connect(self._dark_mode_triggered)
-        self._set_app_palette()
 
         # By default we hide certain sensitive data when the application
         # starts.  There is an action associated with this.
@@ -422,6 +421,7 @@ class MainWindow(QtWidgets.QMainWindow):
         splitter_widget.setStretchFactor(0, 1)
         splitter_widget.setStretchFactor(1, 3)
 
+        self._set_app_palette()
         self.setCentralWidget(splitter_widget)
 
         self._set_redacted(self._hide_sensitive_data)
@@ -441,10 +441,27 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _set_app_palette(self):
         # Set the QSS appropriately for the current light/dark mode setting.
+        unknown_colour = [0x50, 0x50, 0x50]
         if self._dark_mode:
             self.setStyleSheet(qss.format(*dark_qss_config))
         else:
             self.setStyleSheet(qss.format(*light_qss_config))
+            unknown_colour = [0xd8, 0xd8, 0xd8]
+
+        self._general_info.set_unknown_colour(unknown_colour)
+        self._num_direct_reports_info.set_unknown_colour(unknown_colour)
+        self._team_info.set_unknown_colour(unknown_colour)
+        self._employment_info.set_unknown_colour(unknown_colour)
+        self._location_info.set_unknown_colour(unknown_colour)
+        self._grade_info.set_unknown_colour(unknown_colour)
+        self._gender_info.set_unknown_colour(unknown_colour)
+        self._service_duration_info.set_unknown_colour(unknown_colour)
+        self._nine_box_info.set_unknown_colour(unknown_colour)
+        self._rating_info.set_unknown_colour(unknown_colour)
+        self._salary_info.set_unknown_colour(unknown_colour)
+        self._salary_offset_info.set_unknown_colour(unknown_colour)
+        self._salary_band_offset_info.set_unknown_colour(unknown_colour)
+        self._rollup_salary_info.set_unknown_colour(unknown_colour)
 
     def _dark_mode_triggered(self, _):
         #  Called when the "Dark Mode" menu item is triggered.
