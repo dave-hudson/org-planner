@@ -104,6 +104,15 @@ QScrollBar::handle {{
     background: {};
 }}
 
+QToolTip {{
+    color: {};
+    background: {};
+    border: 1px solid {};
+    font-size: 12px;
+    padding: 2px;
+    margin: 0px;
+}}
+
 ColourBoxWidget {{
     border-top: 1px solid #808080;
     border-left: 1px solid #808080;
@@ -160,6 +169,9 @@ dark_qss_config = [
     "#6060c0",
     "#505050",
     "#808080",
+    "white",
+    "#404040",
+    "#a0a0a0",
     "#404040",
     "white",
     "white",
@@ -178,6 +190,9 @@ light_qss_config = [
     "#808080",
     "#6060c0",
     "#b0b0b0",
+    "#808080",
+    "black",
+    "#d8d8d8",
     "#808080",
     "#c0c0c0",
     "black",

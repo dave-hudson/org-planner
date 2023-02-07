@@ -28,6 +28,7 @@ class SunburstOrgWidget(QtWidgets.QWidget):
         self._max_height = 0
         self._spacing = 20
         self._zoom_factor = 1.0
+        self.setMouseTracking(True)
 
     def _recurse_find_person(self, target_depth, target_angle, supervisor_uen,
                              depth, start_angle, start_arc):
@@ -56,16 +57,8 @@ class SunburstOrgWidget(QtWidgets.QWidget):
 
         return 0
 
-    def mousePressEvent(self, event: QtGui.QMouseEvent) -> None:
-        # If this is anything but a left click then ignore it and let our
-        # parent window deal with it.
-        if event.button() != QtCore.Qt.LeftButton:
-            event.ignore()
-            return
-
-        event.accept()
-
-        pos = event.position()
+    def _find_person_in_widget(self, pos):
+        # Given a pixel position, work out which person is shown at that location.
         x = pos.x() - self._spacing
         if x < 0:
             return
@@ -106,7 +99,35 @@ class SunburstOrgWidget(QtWidgets.QWidget):
 
         # Once we know where we're looking, go and find the person who was
         # clicked.  If we don't find one then do nothing.
-        person = self._recurse_find_person(depth, angle, self._uen, 0, 0, 360)
+        return self._recurse_find_person(depth, angle, self._uen, 0, 0, 360)
+
+    def _handle_tool_tip_event(self, event):
+        pos = event.pos()
+        person = self._find_person_in_widget(pos)
+        if person == 0:
+            QtWidgets.QToolTip.hideText()
+            return True
+
+        QtWidgets.QToolTip.showText(event.globalPos(), self._people[person]["Person"]["Name"], self)
+        return True
+
+    def event(self, e):
+        if e.type() == QtCore.QEvent.Type.ToolTip:
+            return self._handle_tool_tip_event(e)
+
+        return super().event(e)
+
+    def mousePressEvent(self, event: QtGui.QMouseEvent) -> None:
+        # If this is anything but a left click then ignore it and let our
+        # parent window deal with it.
+        if event.button() != QtCore.Qt.LeftButton:
+            event.ignore()
+            return
+
+        event.accept()
+
+        pos = event.position()
+        person = self._find_person_in_widget(pos)
         if person == 0:
             return
 
