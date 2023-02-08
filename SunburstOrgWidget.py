@@ -147,6 +147,13 @@ class SunburstOrgWidget(QtWidgets.QWidget):
 
         return super().mouseMoveEvent(event)
 
+    def leaveEvent(self, event: QtCore.QEvent) -> None:
+        if self._highlighted_person != 0:
+            self._highlighted_person = 0
+            self.update()
+
+        return super().leaveEvent(event)
+
     def _scan_depth(self, supervisor):
         org_depth = self._people[supervisor]["Org Depth"]
         for i in self._people[supervisor]["Direct Reports"]:
