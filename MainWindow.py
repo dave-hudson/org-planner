@@ -143,12 +143,12 @@ HLine {{
 }}
 
 PeopleListWidget {{
-    padding: 4px;
+    padding: 0px;
     background-color: {};
 }}
 
 PeopleTreeWidget {{
-    padding: 4px;
+    padding: 0px;
     background-color: {};
 }}
 
