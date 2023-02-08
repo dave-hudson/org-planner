@@ -414,6 +414,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._scroll_area.setWidget(widget)
         self._scroll_area.setWidgetResizable(True)
         self._scroll_area.setAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+        self._scroll_area.verticalScrollBar().valueChanged.connect(self._scroll_changed)
 
         splitter_widget = MainSplitter(self)
         splitter_widget.addWidget(people_selector_widget)
@@ -556,6 +557,13 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         self._people_list_widget.setCurrentItem(item[0])
         self._people_list_widget.setFocus()
+
+    def _scroll_changed(self):
+        # When our scroll bar moves, fake a "leave" event for the widget that was
+        # previously being highlighted.
+        pos = QtGui.QCursor.pos()
+        old = QtWidgets.QApplication.widgetAt(pos)
+        QtWidgets.QApplication.postEvent(old, QtCore.QEvent(QtCore.QEvent.Leave))
 
     def _set_scroll_position(self, scroll_pos):
         # When we move forwards and back, we'd like to have the scroll
