@@ -29,6 +29,7 @@ class SunburstOrgWidget(QtWidgets.QWidget):
         self._spacing = 20
         self._zoom_factor = 1.0
         self._unknown_colour = [0x40, 0x40, 0x40]
+        self._highlighted_person = 0
         self.setMouseTracking(True)
 
     def _recurse_find_person(self, target_depth, target_angle, supervisor_uen,
@@ -107,9 +108,11 @@ class SunburstOrgWidget(QtWidgets.QWidget):
         person = self._find_person_in_widget(pos)
         if person == 0:
             QtWidgets.QToolTip.hideText()
-            return True
+        else:
+            QtWidgets.QToolTip.showText(
+                event.globalPos(), self._people[self._highlighted_person]["Person"]["Name"], self
+            )
 
-        QtWidgets.QToolTip.showText(event.globalPos(), self._people[person]["Person"]["Name"], self)
         return True
 
     def event(self, e):
@@ -135,6 +138,15 @@ class SunburstOrgWidget(QtWidgets.QWidget):
         # Generate a signal indidating that a specific person was clicked.
         self.person_clicked.emit(person)
 
+    def mouseMoveEvent(self, event: QtGui.QMouseEvent) -> None:
+        pos = event.pos()
+        person = self._find_person_in_widget(pos)
+        if person != self._highlighted_person:
+            self._highlighted_person = person
+            self.update()
+
+        return super().mouseMoveEvent(event)
+
     def _scan_depth(self, supervisor):
         org_depth = self._people[supervisor]["Org Depth"]
         for i in self._people[supervisor]["Direct Reports"]:
@@ -149,8 +161,14 @@ class SunburstOrgWidget(QtWidgets.QWidget):
         pass
 
     def _setup_brush(self, painter, uen):
-        colours = self._get_brush_colour(uen)
-        brush = QtGui.QBrush(QtGui.QColor(colours[0], colours[1], colours[2], 0xff))
+        colour = self._get_brush_colour(uen)
+        if uen == self._highlighted_person:
+            if self._unknown_colour[0] + self._unknown_colour[1] >= 0xc0:
+                colour = [0xff, 0xff, 0xff]
+            else:
+                colour = [0x00, 0x00, 0x00]
+
+        brush = QtGui.QBrush(QtGui.QColor(colour[0], colour[1], colour[2], 0xff))
         painter.setBrush(brush)
 
     def _recurse_draw_widget(self, painter, supervisor_uen, depth, start_angle, start_arc):
