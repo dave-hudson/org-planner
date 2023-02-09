@@ -420,7 +420,7 @@ class MainWindow(QtWidgets.QMainWindow):
         splitter_widget.addWidget(people_selector_widget)
         splitter_widget.addWidget(self._scroll_area)
         splitter_widget.setStretchFactor(0, 1)
-        splitter_widget.setStretchFactor(1, 3)
+        splitter_widget.setStretchFactor(1, 4)
 
         self._set_app_palette()
         self.setCentralWidget(splitter_widget)
