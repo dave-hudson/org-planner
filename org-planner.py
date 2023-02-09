@@ -265,11 +265,12 @@ def scan_org_tree(people, locations, supervisor_uen, depth):
         if "Percentage Time" in p["Person"]["Employments"][-1].keys():
             fte = p["Person"]["Employments"][-1]["Percentage Time"] / 100
 
+        corp_grade = p["Person"]["Grades"][-1]["Grade"][:1]
         location = p["Person"]["Locations"][-1]["Location"]
-        band_lower_limit = int(locations[location][grade]["Low"] * fte)
+        band_lower_limit = int(locations[location][corp_grade]["Low"] * fte)
         p["Salary Band Lower Limit"] = band_lower_limit
         p["Salary Band Lower Limit USD"] = int(band_lower_limit * fx_rate)
-        band_upper_limit = int(locations[location][grade]["High"] * fte)
+        band_upper_limit = int(locations[location][corp_grade]["High"] * fte)
         p["Salary Band Upper Limit"] = band_upper_limit
         p["Salary Band Upper Limit USD"] = int(band_upper_limit * fx_rate)
         band_mid_salary = (band_upper_limit + band_lower_limit) // 2
