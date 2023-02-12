@@ -228,9 +228,7 @@ def scan_org_tree(people, locations, supervisor_uen, depth):
                 == people[drs[i + 1]]["Person"]["Teams"][-1]["Team"]):
             continue
 
-        print("range", drs[i])
         for j in range(i + 1, len(drs)):
-            print("  compare", drs[i], drs[j])
             if (people[drs[i]]["Person"]["Teams"][-1]["Team"]
                     == people[drs[j]]["Person"]["Teams"][-1]["Team"]):
                 drs.insert(i + 1, drs.pop(j))
