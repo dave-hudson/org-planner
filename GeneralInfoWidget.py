@@ -20,6 +20,7 @@ class GeneralInfoWidget(InfoOrgKeyWidget):
         self._layout.addWidget(QtWidgets.QLabel(""))
 
         self._info_uen = self._add_info_text("UEN")
+        self._info_email_address = self._add_info_text("Email Address")
         self._info_supervisor_uen = self._add_info_text("Supervisor UEN")
         self._org_only_widget = GeneralSunburstOrgWidget()
         self._org_widget = SunburstOrgKeyWidget(self._org_only_widget, None)
@@ -32,6 +33,13 @@ class GeneralInfoWidget(InfoOrgKeyWidget):
 
         self._info_name.setText(p["Name"])
         self._info_uen.setText(str(p["UEN"]))
+
+        email_address = "N/A"
+        if "Email Address" in p.keys():
+            email_address = p["Email Address"]
+
+        self._info_email_address.setText(email_address)
+
         supervisor_uen = "N/A"
         if "Supervisors" in p.keys():
             supervisor = p["Supervisors"][-1]["Supervisor UEN"]
