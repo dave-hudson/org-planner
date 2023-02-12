@@ -223,18 +223,18 @@ def scan_org_tree(people, locations, supervisor_uen, depth):
     # Then sort any direct reports from the same team to cluster them.  While
     # this slightly undoes the sort it's a more natural view over the org,
     # placing people who do the same sorts of things in one grouping.
-    for i in range(1, len(drs)):
-        if (people[drs[i - 1]]["Person"]["Teams"][-1]["Team"]
-                == people[drs[i]]["Person"]["Teams"][-1]["Team"]):
+    for i in range(0, len(drs) - 1):
+        if (people[drs[i]]["Person"]["Teams"][-1]["Team"]
+                == people[drs[i + 1]]["Person"]["Teams"][-1]["Team"]):
             continue
 
+        print("range", drs[i])
         for j in range(i + 1, len(drs)):
-            if (people[drs[i - 1]]["Person"]["Teams"][-1]["Team"]
+            print("  compare", drs[i], drs[j])
+            if (people[drs[i]]["Person"]["Teams"][-1]["Team"]
                     == people[drs[j]]["Person"]["Teams"][-1]["Team"]):
-                for k in range(j, i, -1):
-                    t = drs[k - 1]
-                    drs[k - 1] = drs[k]
-                    drs[k] = t
+                drs.insert(i + 1, drs.pop(j))
+                break
 
     start_date = p["Person"]["Employments"][-1]["Start Date"]
     t = time.strptime(start_date, "%Y-%m-%d")
