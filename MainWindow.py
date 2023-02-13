@@ -7,6 +7,7 @@ from MainSplitter import MainSplitter
 from HLine import HLine
 from GenderInfoWidget import GenderInfoWidget
 from GeneralInfoWidget import GeneralInfoWidget
+from GitHubInfoWidget import GitHubInfoWidget
 from GradeInfoWidget import GradeInfoWidget
 from LocationInfoWidget import LocationInfoWidget
 from NumDirectReportsInfoWidget import NumDirectReportsInfoWidget
@@ -321,6 +322,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self._general_info = GeneralInfoWidget()
         self._side_layout.addWidget(self._general_info)
         self._general_info.person_clicked.connect(self._person_clicked)
+
+        self._side_layout.addWidget(HLine())
+
+        self._github_info = GitHubInfoWidget()
+        self._side_layout.addWidget(self._github_info)
 
         self._side_layout.addWidget(HLine())
 
@@ -661,6 +667,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._locations = locations
 
         self._general_info.set_locations(locations)
+        self._github_info.set_locations(locations)
         self._num_direct_reports_info.set_locations(locations)
         self._team_info.set_locations(locations)
         self._employment_info.set_locations(locations)
@@ -699,6 +706,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._people_tree_widget.expandAll()
 
         self._general_info.set_people(people, supervisor_uen)
+        self._github_info.set_people(people, supervisor_uen)
         self._num_direct_reports_info.set_people(people, supervisor_uen)
         self._team_info.set_people(people, supervisor_uen)
         self._employment_info.set_people(people, supervisor_uen)
@@ -720,6 +728,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._uen = uen
 
         self._general_info.set_uen(uen)
+        self._github_info.set_uen(uen)
         self._num_direct_reports_info.set_uen(uen)
         self._team_info.set_uen(uen)
         self._employment_info.set_uen(uen)
@@ -742,6 +751,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return
 
         self._general_info.update_contents()
+        self._github_info.update_contents()
         self._num_direct_reports_info.update_contents()
         self._team_info.update_contents()
         self._employment_info.update_contents()
@@ -764,6 +774,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return
 
         self._general_info.set_zoom(self._zoom_factor)
+        self._github_info.set_zoom(self._zoom_factor)
         self._num_direct_reports_info.set_zoom(self._zoom_factor)
         self._team_info.set_zoom(self._zoom_factor)
         self._employment_info.set_zoom(self._zoom_factor)
