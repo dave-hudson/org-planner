@@ -103,15 +103,16 @@ class SunburstOrgWidget(QtWidgets.QWidget):
         # clicked.  If we don't find one then do nothing.
         return self._recurse_find_person(depth, angle, self._uen, 0, 0, 360)
 
+    def _get_tool_tip(self, uen):
+        return self._people[uen]["Person"]["Name"]
+
     def _handle_tool_tip_event(self, event):
         pos = event.pos()
         person = self._find_person_in_widget(pos)
         if person == 0:
             QtWidgets.QToolTip.hideText()
         else:
-            QtWidgets.QToolTip.showText(
-                event.globalPos(), self._people[self._highlighted_person]["Person"]["Name"], self
-            )
+            QtWidgets.QToolTip.showText(event.globalPos(), self._get_tool_tip(person), self)
 
         return True
 

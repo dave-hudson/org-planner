@@ -41,3 +41,22 @@ class SalaryBandOffsetSunburstOrgWidget(SunburstOrgWidget):
             colours = salary_band_offset_colours[salary_band_offset_key]
 
         return colours
+
+    def _get_tool_tip(self, uen):
+        p = self._people[uen]
+        tt = p["Person"]["Name"]
+
+        if "Salary Band Offset" in p.keys():
+            salary_band_offset = p['Salary Band Offset']
+            salary_band_offset_usd = p['Salary Band Offset USD']
+
+            sign = ""
+            if salary_band_offset < 0:
+                sign = "-"
+                salary_band_offset = -salary_band_offset
+                salary_band_offset_usd = -salary_band_offset_usd
+
+            tt += f"\nSalary Band Offset: {sign}{salary_band_offset:,}"
+            tt += f"\nSalary Band Offset: {sign}${salary_band_offset_usd:,.0f}"
+
+        return tt

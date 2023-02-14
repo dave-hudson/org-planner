@@ -41,3 +41,21 @@ class SalaryOffsetSunburstOrgWidget(SunburstOrgWidget):
             colours = salary_offset_colours[salary_offset_key]
 
         return colours
+
+    def _get_tool_tip(self, uen):
+        p = self._people[uen]
+        tt = p["Person"]["Name"]
+        if "Salary Offset" in p.keys():
+            salary_offset = p["Salary Offset"]
+            salary_offset_usd = p["Salary Offset USD"]
+
+            sign = ""
+            if salary_offset < 0:
+                sign = "-"
+                salary_offset = -salary_offset
+                salary_offset_usd = -salary_offset_usd
+
+            tt += f"\nSalary Offset: {sign}{salary_offset:,}"
+            tt += f"\nSalary Offset: {sign}${salary_offset_usd:,.0f}"
+
+        return tt

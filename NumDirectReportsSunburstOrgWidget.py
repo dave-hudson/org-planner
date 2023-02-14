@@ -37,3 +37,12 @@ class NumDirectReportsSunburstOrgWidget(SunburstOrgWidget):
             colours = num_direct_reports_colours[num_direct_reports]
 
         return colours
+
+    def _get_tool_tip(self, uen):
+        p = self._people[uen]
+        tt = p["Person"]["Name"]
+        num_direct_reports = p["Num Direct Reports"]
+        if num_direct_reports > 0:
+            tt += f"\nDirect Reports: {num_direct_reports}"
+
+        return tt

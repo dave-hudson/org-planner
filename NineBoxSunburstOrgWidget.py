@@ -25,13 +25,22 @@ class NineBoxSunburstOrgWidget(SunburstOrgWidget):
     def _get_brush_colour(self, uen):
         colours = self._unknown_colour
 
-        p = self._people[uen]
-        if "9 Box" in p["Person"].keys():
-            nine_box_potential = p["Person"]["9 Box"][-1]["Potential"]
-            nine_box_performance = p["Person"]["9 Box"][-1]["Performance"]
+        p = self._people[uen]["Person"]
+        if "9 Box" in p.keys():
+            nine_box_potential = p["9 Box"][-1]["Potential"]
+            nine_box_performance = p["9 Box"][-1]["Performance"]
             if nine_box_potential in nine_box_colours:
                 potential_colours = nine_box_colours[nine_box_potential]
                 if nine_box_performance in potential_colours:
                     colours = potential_colours[nine_box_performance]
 
         return colours
+
+    def _get_tool_tip(self, uen):
+        p = self._people[uen]["Person"]
+        tt = p["Name"]
+        if "9 Box" in p.keys():
+            tt += f"\nPotential: {p['9 Box'][-1]['Potential']}"
+            tt += f"\nPerformance: {p['9 Box'][-1]['Performance']}"
+
+        return tt

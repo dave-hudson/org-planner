@@ -16,3 +16,11 @@ class TeamSunburstOrgWidget(SunburstOrgWidget):
                 colours = team_colours[team]
 
         return colours
+
+    def _get_tool_tip(self, uen):
+        p = self._people[uen]["Person"]
+        tt = p["Name"]
+        if "Teams" in p.keys():
+            tt += f"\nTeam: {p['Teams'][-1]['Team']}"
+
+        return tt

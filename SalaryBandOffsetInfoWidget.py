@@ -41,16 +41,16 @@ class SalaryBandOffsetInfoWidget(InfoOrgKeyWidget):
             if "Salary Band Offset" in self._people[uen].keys():
                 salary_band_lower_limit = self._people[uen]["Salary Band Lower Limit"]
                 salary_band_upper_limit = self._people[uen]["Salary Band Upper Limit"]
-                salary_band = f"{salary_band_lower_limit} to {salary_band_upper_limit}"
-                salary_band_offset = str(self._people[uen]["Salary Band Offset"])
+                salary_band = f"{salary_band_lower_limit:,} to {salary_band_upper_limit:,}"
+                salary_band_offset = f"{self._people[uen]['Salary Band Offset']:,}"
                 salary_band_lower_limit_usd = self._people[uen]["Salary Band Lower Limit USD"]
                 salary_band_upper_limit_usd = self._people[uen]["Salary Band Upper Limit USD"]
-                salary_band_usd = f"{salary_band_lower_limit_usd} to {salary_band_upper_limit_usd}"
-                salary_band_offset_usd = str(self._people[uen]["Salary Band Offset USD"])
+                salary_band_usd = f"{salary_band_lower_limit_usd:,} to {salary_band_upper_limit_usd:,}"
+                salary_band_offset_usd = f"{self._people[uen]['Salary Band Offset USD']:,}"
 
-        self._info_salary_band.setText(str(salary_band))
+        self._info_salary_band.setText(salary_band)
         self._info_salary_band_offset.setText(salary_band_offset)
-        self._info_salary_band_usd.setText(str(salary_band_usd))
+        self._info_salary_band_usd.setText(salary_band_usd)
         self._info_salary_band_offset_usd.setText(salary_band_offset_usd)
         self._org_widget.set_uen(uen, is_manager)
 

@@ -23,10 +23,10 @@ class ServiceDurationInfoWidget(InfoOrgKeyWidget):
         uen = self._uen
         is_manager = self._is_manager
 
-        p = self._people[uen]["Person"]
+        p = self._people[uen]
 
-        self._info_start_date.setText(p["Employments"][-1]["Start Date"])
-        service_duration = self._people[uen]["Service Duration"] / (86400 * 7)
+        self._info_start_date.setText(p["Person"]["Employments"][-1]["Start Date"])
+        service_duration = p["Service Duration"] / (86400 * 7)
         self._info_service_duration.setText(f"{service_duration:.1f}")
         self._org_widget.set_uen(uen, is_manager)
 

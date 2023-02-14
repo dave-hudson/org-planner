@@ -33,9 +33,9 @@ class SalaryInfoWidget(InfoOrgKeyWidget):
         else:
             if "Salaries" in p.keys():
                 salary_val = p["Salaries"][-1]["Salary"]
-                salary = str(salary_val)
+                salary = f"{salary_val:,}"
                 salary_usd_val = salary_val * fx_rates[p["Locations"][-1]["Location"]]
-                salary_usd = str(int(salary_usd_val))
+                salary_usd = f"{salary_usd_val:,.0f}"
 
         self._info_salary.setText(salary)
         self._info_salary_usd.setText(salary_usd)

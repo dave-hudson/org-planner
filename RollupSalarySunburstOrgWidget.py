@@ -28,3 +28,11 @@ class RollupSalarySunburstOrgWidget(SunburstOrgWidget):
             colours = [0x20 + base_colour, 0xff - base_colour, 0x20 + base_colour, 0xff]
 
         return colours
+
+    def _get_tool_tip(self, uen):
+        p = self._people[uen]
+        tt = p["Person"]["Name"]
+        rollup_salary = int(p["Rollup Salaries"])
+        tt += f"\nRollup Salaries: ${rollup_salary:,}"
+
+        return tt

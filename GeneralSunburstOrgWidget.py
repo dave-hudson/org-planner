@@ -21,3 +21,10 @@ class GeneralSunburstOrgWidget(SunburstOrgWidget):
         self._ident_uen = ident_uen
 
         self.update()
+
+    def _get_tool_tip(self, uen):
+        p = self._people[uen]["Person"]
+        tt = p["Name"]
+        tt += f"\nUEN: {uen}"
+
+        return tt

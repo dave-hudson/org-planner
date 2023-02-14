@@ -32,3 +32,14 @@ class SalarySunburstOrgWidget(SunburstOrgWidget):
             colours = [0x20 + base_colour, 0x20 + base_colour, 0xff - base_colour, 0xff]
 
         return colours
+
+    def _get_tool_tip(self, uen):
+        p = self._people[uen]["Person"]
+        tt = p["Name"]
+        if "Salaries" in p.keys():
+            salary_val = p["Salaries"][-1]["Salary"]
+            tt += f"\nSalary: {salary_val:,}"
+            salary_usd_val = salary_val * fx_rates[p["Locations"][-1]["Location"]]
+            tt += f"\nSalary: ${salary_usd_val:,.0f}"
+
+        return tt

@@ -43,12 +43,11 @@ class SalaryOffsetInfoWidget(InfoOrgKeyWidget):
             salary_offset_percentage = "Hidden"
         else:
             if "Salary Offset" in self._people[uen].keys():
-                salary_offset_mid_point = str(self._people[uen]["Salary Band Mid Point"])
-                salary_offset_mid_point_usd = str(self._people[uen]["Salary Band Mid Point USD"])
-                salary_offset = str(self._people[uen]["Salary Offset"])
-                salary_offset_usd = str(int(self._people[uen]["Salary Offset USD"]))
-                sop = self._people[uen]["Salary Offset Percentage"]
-                salary_offset_percentage = f"{sop:.1f}%"
+                salary_offset_mid_point = f"{self._people[uen]['Salary Band Mid Point']:,}"
+                salary_offset_mid_point_usd = f"{self._people[uen]['Salary Band Mid Point USD']:,}"
+                salary_offset = f"{self._people[uen]['Salary Offset']:,}"
+                salary_offset_usd = f"{self._people[uen]['Salary Offset USD']:,.0f}"
+                salary_offset_percentage = f"{self._people[uen]['Salary Offset Percentage']:.1f}%"
 
         self._info_salary_offset_mid_point.setText(salary_offset_mid_point)
         self._info_salary_offset.setText(salary_offset)

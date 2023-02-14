@@ -23,10 +23,18 @@ class GradeSunburstOrgWidget(SunburstOrgWidget):
     def _get_brush_colour(self, uen):
         colours = self._unknown_colour
 
-        p = self._people[uen]
-        if "Grades" in p["Person"].keys():
-            grade = p["Person"]["Grades"][-1]["Grade"]
+        p = self._people[uen]["Person"]
+        if "Grades" in p.keys():
+            grade = p["Grades"][-1]["Grade"]
             if grade in grade_colours:
                 colours = grade_colours[grade]
 
         return colours
+
+    def _get_tool_tip(self, uen):
+        p = self._people[uen]["Person"]
+        tt = p["Name"]
+        if "Grades" in p.keys():
+            tt += f"\nGrade: {p['Grades'][-1]['Grade']}"
+
+        return tt

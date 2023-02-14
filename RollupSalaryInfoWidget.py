@@ -33,7 +33,7 @@ class RollupSalaryInfoWidget(InfoOrgKeyWidget):
                 if rollup_missing_salaries == 1:
                     ppl = "Person"
 
-                rollup_salary_usd = str("{} (Missing {:d} {})").format(
+                rollup_salary_usd = str("{:,} (Missing {:d} {})").format(
                     rollup_salary_usd_val, rollup_missing_salaries, ppl
                 )
 

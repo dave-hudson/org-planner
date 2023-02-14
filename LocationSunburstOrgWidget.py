@@ -19,10 +19,18 @@ class LocationSunburstOrgWidget(SunburstOrgWidget):
     def _get_brush_colour(self, uen):
         colours = self._unknown_colour
 
-        p = self._people[uen]
-        if "Locations" in p["Person"].keys():
-            location = p["Person"]["Locations"][-1]["Location"]
+        p = self._people[uen]["Person"]
+        if "Locations" in p.keys():
+            location = p["Locations"][-1]["Location"]
             if location in location_colours:
                 colours = location_colours[location]
 
         return colours
+
+    def _get_tool_tip(self, uen):
+        p = self._people[uen]["Person"]
+        tt = p["Name"]
+        if "Locations" in p.keys():
+            tt += f"\nLocation: {p['Locations'][-1]['Location']}"
+
+        return tt
