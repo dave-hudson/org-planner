@@ -29,7 +29,7 @@ class EmploymentInfoWidget(InfoOrgKeyWidget):
         if "Percentage Time" in e.keys():
             percentage_time = e["Percentage Time"]
 
-        self._info_percentage_time.setText(str(percentage_time))
+        self._info_percentage_time.setText(f"{percentage_time}%")
 
     def set_redacted(self, is_redacted):
         pass

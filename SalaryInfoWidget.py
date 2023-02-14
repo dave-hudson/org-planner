@@ -1,5 +1,5 @@
 from ColourKey1DWidget import ColourKey1DWidget
-from SunburstOrgWidget import fx_rates
+from SunburstOrgWidget import currencies, fx_rates
 from SunburstOrgKeyWidget import SunburstOrgKeyWidget
 from InfoOrgKeyWidget import InfoOrgKeyWidget
 from SalarySunburstOrgWidget import SalarySunburstOrgWidget, salary_colours
@@ -32,10 +32,12 @@ class SalaryInfoWidget(InfoOrgKeyWidget):
             salary_usd = "Hidden"
         else:
             if "Salaries" in p.keys():
+                location = p["Locations"][-1]["Location"]
                 salary_val = p["Salaries"][-1]["Salary"]
-                salary = f"{salary_val:,}"
-                salary_usd_val = salary_val * fx_rates[p["Locations"][-1]["Location"]]
-                salary_usd = f"{salary_usd_val:,.0f}"
+                _, cur_sym = currencies[location]
+                salary = f"{cur_sym}{salary_val:,}"
+                salary_usd_val = salary_val * fx_rates[location]
+                salary_usd = f"${salary_usd_val:,.0f}"
 
         self._info_salary.setText(salary)
         self._info_salary_usd.setText(salary_usd)

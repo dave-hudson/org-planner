@@ -1,5 +1,6 @@
 from ColourKey1DWidget import ColourKey1DWidget
 from SunburstOrgKeyWidget import SunburstOrgKeyWidget
+from SunburstOrgWidget import currencies
 from InfoOrgKeyWidget import InfoOrgKeyWidget
 from SalaryBandOffsetSunburstOrgWidget import (
     SalaryBandOffsetSunburstOrgWidget, salary_band_offset_colours, salary_band_offset_labels
@@ -38,15 +39,26 @@ class SalaryBandOffsetInfoWidget(InfoOrgKeyWidget):
             salary_band_usd = "Hidden"
             salary_band_offset_usd = "Hidden"
         else:
-            if "Salary Band Offset" in self._people[uen].keys():
-                salary_band_lower_limit = self._people[uen]["Salary Band Lower Limit"]
-                salary_band_upper_limit = self._people[uen]["Salary Band Upper Limit"]
-                salary_band = f"{salary_band_lower_limit:,} to {salary_band_upper_limit:,}"
-                salary_band_offset = f"{self._people[uen]['Salary Band Offset']:,}"
-                salary_band_lower_limit_usd = self._people[uen]["Salary Band Lower Limit USD"]
-                salary_band_upper_limit_usd = self._people[uen]["Salary Band Upper Limit USD"]
-                salary_band_usd = f"{salary_band_lower_limit_usd:,} to {salary_band_upper_limit_usd:,}"
-                salary_band_offset_usd = f"{self._people[uen]['Salary Band Offset USD']:,}"
+            p = self._people[uen]
+            if "Salary Band Offset" in p.keys():
+                location = p["Person"]["Locations"][-1]["Location"]
+                _, cur_sym = currencies[location]
+                salary_band_lower_limit = p["Salary Band Lower Limit"]
+                salary_band_upper_limit = p["Salary Band Upper Limit"]
+                salary_band = (
+                    f"{cur_sym}{salary_band_lower_limit:,} "
+                    + f"to {cur_sym}{salary_band_upper_limit:,}"
+                )
+                salary_band_offset = (
+                    f"{cur_sym}{p['Salary Band Offset']:,}"
+                    .replace(f"{cur_sym}-", f"-{cur_sym}")
+                )
+                salary_band_lower_limit_usd = p["Salary Band Lower Limit USD"]
+                salary_band_upper_limit_usd = p["Salary Band Upper Limit USD"]
+                salary_band_usd = (
+                    f"${salary_band_lower_limit_usd:,} to ${salary_band_upper_limit_usd:,}"
+                )
+                salary_band_offset_usd = f"${p['Salary Band Offset USD']:,}"
 
         self._info_salary_band.setText(salary_band)
         self._info_salary_band_offset.setText(salary_band_offset)

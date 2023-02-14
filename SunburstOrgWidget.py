@@ -2,6 +2,15 @@ from abc import abstractmethod
 import math
 from PySide6 import QtGui, QtWidgets, QtCore
 
+currencies = {
+    "UK": ("GBP", "£"),
+    "Ireland": ("EUR", "€"),
+    "India": ("INR", "₹"),
+    "Bulgaria": ("EUR", "€"),
+    "Singapore": ("SGD", "S$"),
+    "USA": ("USD", "$")
+}
+
 fx_rates = {
     "UK": 1.33,
     "Ireland": 1.16,

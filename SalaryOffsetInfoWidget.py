@@ -1,5 +1,6 @@
 from ColourKey1DWidget import ColourKey1DWidget
 from SunburstOrgKeyWidget import SunburstOrgKeyWidget
+from SunburstOrgWidget import currencies
 from InfoOrgKeyWidget import InfoOrgKeyWidget
 from SalaryOffsetSunburstOrgWidget import (
     SalaryOffsetSunburstOrgWidget, salary_offset_colours, salary_offset_labels
@@ -42,12 +43,18 @@ class SalaryOffsetInfoWidget(InfoOrgKeyWidget):
             salary_offset_usd = "Hidden"
             salary_offset_percentage = "Hidden"
         else:
-            if "Salary Offset" in self._people[uen].keys():
-                salary_offset_mid_point = f"{self._people[uen]['Salary Band Mid Point']:,}"
-                salary_offset_mid_point_usd = f"{self._people[uen]['Salary Band Mid Point USD']:,}"
-                salary_offset = f"{self._people[uen]['Salary Offset']:,}"
-                salary_offset_usd = f"{self._people[uen]['Salary Offset USD']:,.0f}"
-                salary_offset_percentage = f"{self._people[uen]['Salary Offset Percentage']:.1f}%"
+            p = self._people[uen]
+            if "Salary Offset" in p.keys():
+                location = p["Person"]["Locations"][-1]["Location"]
+                _, cur_sym = currencies[location]
+                salary_offset_mid_point = f"{cur_sym}{p['Salary Band Mid Point']:,}"
+                salary_offset_mid_point_usd = f"${p['Salary Band Mid Point USD']:,}"
+                salary_offset = (
+                    f"{cur_sym}{p['Salary Offset']:,}"
+                    .replace(f"{cur_sym}-", f"-{cur_sym}")
+                )
+                salary_offset_usd = f"${p['Salary Offset USD']:,.0f}".replace("$-", "-$")
+                salary_offset_percentage = f"{p['Salary Offset Percentage']:.1f}%"
 
         self._info_salary_offset_mid_point.setText(salary_offset_mid_point)
         self._info_salary_offset.setText(salary_offset)

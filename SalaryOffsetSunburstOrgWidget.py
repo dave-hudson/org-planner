@@ -1,4 +1,4 @@
-from SunburstOrgWidget import SunburstOrgWidget
+from SunburstOrgWidget import SunburstOrgWidget, currencies
 
 salary_offset_colours = {
     "-5": [0x18, 0x3c, 0xb6],
@@ -46,16 +46,12 @@ class SalaryOffsetSunburstOrgWidget(SunburstOrgWidget):
         p = self._people[uen]
         tt = p["Person"]["Name"]
         if "Salary Offset" in p.keys():
-            salary_offset = p["Salary Offset"]
-            salary_offset_usd = p["Salary Offset USD"]
-
-            sign = ""
-            if salary_offset < 0:
-                sign = "-"
-                salary_offset = -salary_offset
-                salary_offset_usd = -salary_offset_usd
-
-            tt += f"\nSalary Offset: {sign}{salary_offset:,}"
-            tt += f"\nSalary Offset: {sign}${salary_offset_usd:,.0f}"
+            location = p["Person"]["Locations"][-1]["Location"]
+            _, cur_sym = currencies[location]
+            tt += (
+                f"\nSalary Offset: {cur_sym}{p['Salary Offset']:,}"
+                .replace(f"{cur_sym}-", f"-{cur_sym}")
+            )
+            tt += f"\nSalary Offset: ${p['Salary Offset USD']:,.0f}".replace("$-", "-$")
 
         return tt

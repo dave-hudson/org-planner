@@ -27,15 +27,14 @@ class RollupSalaryInfoWidget(InfoOrgKeyWidget):
         if self._hide_sensitive_data:
             rollup_salary_usd = "Hidden"
         else:
-            if is_manager:
-                rollup_missing_salaries = self._people[uen]["Missing Salaries"]
-                ppl = "People"
-                if rollup_missing_salaries == 1:
-                    ppl = "Person"
+            rollup_missing_salaries = self._people[uen]["Missing Salaries"]
+            ppl = "People"
+            if rollup_missing_salaries == 1:
+                ppl = "Person"
 
-                rollup_salary_usd = str("{:,} (Missing {:d} {})").format(
-                    rollup_salary_usd_val, rollup_missing_salaries, ppl
-                )
+            rollup_salary_usd = (
+                f"${rollup_salary_usd_val:,} (Missing {rollup_missing_salaries:d} {ppl})"
+            )
 
         self._info_rollup_salary_usd.setText(rollup_salary_usd)
         self._org_widget.set_uen(uen, is_manager)

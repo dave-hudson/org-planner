@@ -1,5 +1,5 @@
 import math
-from SunburstOrgWidget import SunburstOrgWidget, fx_rates
+from SunburstOrgWidget import SunburstOrgWidget, currencies, fx_rates
 
 salary_colours = {
     "$10,000": [0x20, 0x20, 0xff],
@@ -37,9 +37,11 @@ class SalarySunburstOrgWidget(SunburstOrgWidget):
         p = self._people[uen]["Person"]
         tt = p["Name"]
         if "Salaries" in p.keys():
+            location = p["Locations"][-1]["Location"]
             salary_val = p["Salaries"][-1]["Salary"]
-            tt += f"\nSalary: {salary_val:,}"
-            salary_usd_val = salary_val * fx_rates[p["Locations"][-1]["Location"]]
+            _, cur_sym = currencies[location]
+            tt += f"\nSalary: {cur_sym}{salary_val:,}"
+            salary_usd_val = salary_val * fx_rates[location]
             tt += f"\nSalary: ${salary_usd_val:,.0f}"
 
         return tt
