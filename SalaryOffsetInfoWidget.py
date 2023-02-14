@@ -47,10 +47,10 @@ class SalaryOffsetInfoWidget(InfoOrgKeyWidget):
             if "Salary Offset" in p.keys():
                 location = p["Person"]["Locations"][-1]["Location"]
                 _, cur_sym = currencies[location]
-                salary_offset_mid_point = f"{cur_sym}{p['Salary Band Mid Point']:,}"
-                salary_offset_mid_point_usd = f"${p['Salary Band Mid Point USD']:,}"
+                salary_offset_mid_point = f"{cur_sym}{p['Salary Band Mid Point']:,.0f}"
+                salary_offset_mid_point_usd = f"${p['Salary Band Mid Point USD']:,.0f}"
                 salary_offset = (
-                    f"{cur_sym}{p['Salary Offset']:,}"
+                    f"{cur_sym}{p['Salary Offset']:,.0f}"
                     .replace(f"{cur_sym}-", f"-{cur_sym}")
                 )
                 salary_offset_usd = f"${p['Salary Offset USD']:,.0f}".replace("$-", "-$")

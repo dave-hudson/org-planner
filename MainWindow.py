@@ -390,15 +390,15 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._side_layout.addWidget(HLine())
 
-        self._salary_offset_info = SalaryOffsetInfoWidget()
-        self._side_layout.addWidget(self._salary_offset_info)
-        self._salary_offset_info.person_clicked.connect(self._person_clicked)
-
-        self._side_layout.addWidget(HLine())
-
         self._salary_band_offset_info = SalaryBandOffsetInfoWidget()
         self._side_layout.addWidget(self._salary_band_offset_info)
         self._salary_band_offset_info.person_clicked.connect(self._person_clicked)
+
+        self._side_layout.addWidget(HLine())
+
+        self._salary_offset_info = SalaryOffsetInfoWidget()
+        self._side_layout.addWidget(self._salary_offset_info)
+        self._salary_offset_info.person_clicked.connect(self._person_clicked)
 
         self._side_layout.addWidget(HLine())
 
@@ -466,8 +466,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self._nine_box_info.set_unknown_colour(unknown_colour)
         self._rating_info.set_unknown_colour(unknown_colour)
         self._salary_info.set_unknown_colour(unknown_colour)
-        self._salary_offset_info.set_unknown_colour(unknown_colour)
         self._salary_band_offset_info.set_unknown_colour(unknown_colour)
+        self._salary_offset_info.set_unknown_colour(unknown_colour)
         self._rollup_salary_info.set_unknown_colour(unknown_colour)
 
     def _dark_mode_triggered(self, _):
@@ -678,8 +678,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self._nine_box_info.set_locations(locations)
         self._rating_info.set_locations(locations)
         self._salary_info.set_locations(locations)
-        self._salary_offset_info.set_locations(locations)
         self._salary_band_offset_info.set_locations(locations)
+        self._salary_offset_info.set_locations(locations)
         self._rollup_salary_info.set_locations(locations)
 
         self.update()
@@ -717,8 +717,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self._nine_box_info.set_people(people, supervisor_uen)
         self._rating_info.set_people(people, supervisor_uen)
         self._salary_info.set_people(people, supervisor_uen)
-        self._salary_offset_info.set_people(people, supervisor_uen)
         self._salary_band_offset_info.set_people(people, supervisor_uen)
+        self._salary_offset_info.set_people(people, supervisor_uen)
         self._rollup_salary_info.set_people(people, supervisor_uen)
         self._update_person(supervisor_uen)
 
@@ -739,8 +739,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self._nine_box_info.set_uen(uen)
         self._rating_info.set_uen(uen)
         self._salary_info.set_uen(uen)
-        self._salary_offset_info.set_uen(uen)
         self._salary_band_offset_info.set_uen(uen)
+        self._salary_offset_info.set_uen(uen)
         self._rollup_salary_info.set_uen(uen)
 
         self._update_contents()
@@ -762,8 +762,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self._nine_box_info.update_contents()
         self._rating_info.update_contents()
         self._salary_info.update_contents()
-        self._salary_offset_info.update_contents()
         self._salary_band_offset_info.update_contents()
+        self._salary_offset_info.update_contents()
         self._rollup_salary_info.update_contents()
 
         self.update()
@@ -785,8 +785,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self._nine_box_info.set_zoom(self._zoom_factor)
         self._rating_info.set_zoom(self._zoom_factor)
         self._salary_info.set_zoom(self._zoom_factor)
-        self._salary_offset_info.set_zoom(self._zoom_factor)
         self._salary_band_offset_info.set_zoom(self._zoom_factor)
+        self._salary_offset_info.set_zoom(self._zoom_factor)
         self._rollup_salary_info.set_zoom(self._zoom_factor)
 
         self.update()
@@ -795,8 +795,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self._rating_info.set_redacted(is_redacted)
         self._nine_box_info.set_redacted(is_redacted)
         self._salary_info.set_redacted(is_redacted)
-        self._salary_offset_info.set_redacted(is_redacted)
         self._salary_band_offset_info.set_redacted(is_redacted)
+        self._salary_offset_info.set_redacted(is_redacted)
         self._rollup_salary_info.set_redacted(is_redacted)
 
         self._update_contents()

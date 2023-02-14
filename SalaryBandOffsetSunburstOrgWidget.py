@@ -50,7 +50,7 @@ class SalaryBandOffsetSunburstOrgWidget(SunburstOrgWidget):
             location = p["Person"]["Locations"][-1]["Location"]
             _, cur_sym = currencies[location]
             tt += (
-                f"\nSalary Band Offset: {cur_sym}{p['Salary Band Offset']:,}"
+                f"\nSalary Band Offset: {cur_sym}{p['Salary Band Offset']:,.0f}"
                 .replace("{cur_sym}-", "-{cur_sym}")
             )
             tt += f"\nSalary Band Offset: ${p['Salary Band Offset USD']:,.0f}".replace("$-", "-$")

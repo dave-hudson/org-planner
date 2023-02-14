@@ -46,19 +46,19 @@ class SalaryBandOffsetInfoWidget(InfoOrgKeyWidget):
                 salary_band_lower_limit = p["Salary Band Lower Limit"]
                 salary_band_upper_limit = p["Salary Band Upper Limit"]
                 salary_band = (
-                    f"{cur_sym}{salary_band_lower_limit:,} "
-                    + f"to {cur_sym}{salary_band_upper_limit:,}"
+                    f"{cur_sym}{salary_band_lower_limit:,.0f} "
+                    + f"to {cur_sym}{salary_band_upper_limit:,.0f}"
                 )
                 salary_band_offset = (
-                    f"{cur_sym}{p['Salary Band Offset']:,}"
+                    f"{cur_sym}{p['Salary Band Offset']:,.0f}"
                     .replace(f"{cur_sym}-", f"-{cur_sym}")
                 )
                 salary_band_lower_limit_usd = p["Salary Band Lower Limit USD"]
                 salary_band_upper_limit_usd = p["Salary Band Upper Limit USD"]
                 salary_band_usd = (
-                    f"${salary_band_lower_limit_usd:,} to ${salary_band_upper_limit_usd:,}"
+                    f"${salary_band_lower_limit_usd:,.0f} to ${salary_band_upper_limit_usd:,.0f}"
                 )
-                salary_band_offset_usd = f"${p['Salary Band Offset USD']:,}"
+                salary_band_offset_usd = f"${p['Salary Band Offset USD']:,.0f}"
 
         self._info_salary_band.setText(salary_band)
         self._info_salary_band_offset.setText(salary_band_offset)

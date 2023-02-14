@@ -265,15 +265,15 @@ def scan_org_tree(people, locations, supervisor_uen, depth):
 
         corp_grade = p["Person"]["Grades"][-1]["Grade"][:1]
         location = p["Person"]["Locations"][-1]["Location"]
-        band_lower_limit = int(locations[location][corp_grade]["Low"] * fte)
+        band_lower_limit = locations[location][corp_grade]["Low"] * fte
         p["Salary Band Lower Limit"] = band_lower_limit
-        p["Salary Band Lower Limit USD"] = int(band_lower_limit * fx_rate)
-        band_upper_limit = int(locations[location][corp_grade]["High"] * fte)
+        p["Salary Band Lower Limit USD"] = band_lower_limit * fx_rate
+        band_upper_limit = locations[location][corp_grade]["High"] * fte
         p["Salary Band Upper Limit"] = band_upper_limit
-        p["Salary Band Upper Limit USD"] = int(band_upper_limit * fx_rate)
-        band_mid_salary = (band_upper_limit + band_lower_limit) // 2
+        p["Salary Band Upper Limit USD"] = band_upper_limit * fx_rate
+        band_mid_salary = (band_upper_limit + band_lower_limit) / 2
         p["Salary Band Mid Point"] = band_mid_salary
-        p["Salary Band Mid Point USD"] = int(band_mid_salary * fx_rate)
+        p["Salary Band Mid Point USD"] = band_mid_salary * fx_rate
 
         salary_offset = salary - band_mid_salary
         p["Salary Offset"] = salary_offset
