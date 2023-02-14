@@ -13,7 +13,7 @@ class ServiceDurationInfoWidget(InfoOrgKeyWidget):
         super().__init__()
 
         self._info_start_date = self._add_info_text("Start Date")
-        self._info_service_duration = self._add_info_text("Service Duration (weeks)")
+        self._info_service_duration = self._add_info_text("Service Duration")
         legend = ColourKey1DWidget(service_duration_colours)
         self._org_widget = SunburstOrgKeyWidget(ServiceDurationSunburstOrgWidget(), legend)
         self._layout.addWidget(self._org_widget)
@@ -27,7 +27,7 @@ class ServiceDurationInfoWidget(InfoOrgKeyWidget):
 
         self._info_start_date.setText(p["Person"]["Employments"][-1]["Start Date"])
         service_duration = p["Service Duration"] / (86400 * 7)
-        self._info_service_duration.setText(f"{service_duration:.1f}")
+        self._info_service_duration.setText(f"{service_duration:.1f} weeks")
         self._org_widget.set_uen(uen, is_manager)
 
     def set_redacted(self, is_redacted):
