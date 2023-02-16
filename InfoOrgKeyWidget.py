@@ -42,3 +42,9 @@ class InfoOrgKeyWidget(InfoWidget):
 
     def set_unknown_colour(self, colour):
         self._org_widget.set_unknown_colour(colour)
+
+    def update_contents(self):
+        pass
+
+    def set_redacted(self, is_redacted):
+        pass
