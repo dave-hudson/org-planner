@@ -1,5 +1,5 @@
+from currencies import currencies, fx_rates
 from ColourKey1DWidget import ColourKey1DWidget
-from SunburstOrgWidget import currencies, fx_rates
 from SunburstOrgKeyWidget import SunburstOrgKeyWidget
 from InfoOrgKeyWidget import InfoOrgKeyWidget
 from SalarySunburstOrgWidget import SalarySunburstOrgWidget, salary_colours

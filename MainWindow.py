@@ -1,4 +1,5 @@
 from PySide6 import QtGui, QtWidgets, QtCore
+
 from PeopleListWidget import PeopleListWidget
 from PeopleTreeWidget import PeopleTreeWidget
 from PeopleSelectorWidget import PeopleSelectorWidget

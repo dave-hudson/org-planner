@@ -3,12 +3,15 @@ import json
 import math
 import sys
 import time
+
 from PySide6 import QtWidgets
-from SunburstOrgWidget import fx_rates
-from MainWindow import MainWindow
+
+from currencies import fx_rates
+from EmploymentSunburstOrgWidget import employment_colours
 from GenderSunburstOrgWidget import gender_colours
 from GradeSunburstOrgWidget import grade_colours
 from LocationSunburstOrgWidget import location_colours
+from MainWindow import MainWindow
 from NumDirectReportsSunburstOrgWidget import num_direct_reports_colours
 from NineBoxInfoWidget import nine_box_colours
 from RatingSunburstOrgWidget import rating_colours
@@ -16,7 +19,6 @@ from SalaryBandOffsetSunburstOrgWidget import salary_band_offset_colours
 from SalaryOffsetSunburstOrgWidget import salary_offset_colours
 from SalarySunburstOrgWidget import salary_colours
 from TeamSunburstOrgWidget import team_colours
-from EmploymentSunburstOrgWidget import employment_colours
 
 team_colours_list = [
     [0xff, 0xc0, 0xc0],

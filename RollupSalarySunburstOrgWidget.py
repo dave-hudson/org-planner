@@ -1,4 +1,5 @@
 import math
+
 from SunburstOrgWidget import SunburstOrgWidget
 
 rollup_salary_colours = {

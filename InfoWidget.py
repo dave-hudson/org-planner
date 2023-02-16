@@ -1,4 +1,5 @@
 from abc import abstractmethod
+
 from PySide6 import QtWidgets, QtCore
 
 class InfoWidget(QtWidgets.QWidget):

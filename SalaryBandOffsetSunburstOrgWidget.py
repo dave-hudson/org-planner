@@ -1,4 +1,5 @@
-from SunburstOrgWidget import SunburstOrgWidget, currencies
+from currencies import currencies
+from SunburstOrgWidget import SunburstOrgWidget
 
 salary_band_offset_colours = {
     "-5": [0x18, 0x3c, 0xb6],

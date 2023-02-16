@@ -1,4 +1,5 @@
 from PySide6 import QtWidgets
+
 from InfoWidget import InfoWidget
 
 class InfoOrgKeyWidget(InfoWidget):

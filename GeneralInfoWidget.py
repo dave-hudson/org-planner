@@ -1,4 +1,5 @@
 from PySide6 import QtGui, QtWidgets
+
 from SunburstOrgKeyWidget import SunburstOrgKeyWidget
 from InfoOrgKeyWidget import InfoOrgKeyWidget
 from GeneralSunburstOrgWidget import GeneralSunburstOrgWidget

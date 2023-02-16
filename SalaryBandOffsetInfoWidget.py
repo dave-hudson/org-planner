@@ -1,6 +1,6 @@
+from currencies import currencies
 from ColourKey1DWidget import ColourKey1DWidget
 from SunburstOrgKeyWidget import SunburstOrgKeyWidget
-from SunburstOrgWidget import currencies
 from InfoOrgKeyWidget import InfoOrgKeyWidget
 from SalaryBandOffsetSunburstOrgWidget import (
     SalaryBandOffsetSunburstOrgWidget, salary_band_offset_colours, salary_band_offset_labels

@@ -1,4 +1,5 @@
 from PySide6 import QtWidgets
+
 from ColourBoxWidget import ColourBoxWidget
 from ColourBoxLabelWidget import ColourBoxLabelWidget
 
