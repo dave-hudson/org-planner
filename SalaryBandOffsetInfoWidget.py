@@ -1,4 +1,4 @@
-from currencies import currencies
+from currencies import currencies, fx_rates
 from ColourKey1DWidget import ColourKey1DWidget
 from SunburstOrgKeyWidget import SunburstOrgKeyWidget
 from InfoOrgKeyWidget import InfoOrgKeyWidget
@@ -15,10 +15,9 @@ class SalaryBandOffsetInfoWidget(InfoOrgKeyWidget):
 
         self._hide_sensitive_data = True
 
+        self._info_salary = self._add_info_text("Salary")
         self._info_salary_band = self._add_info_text("Salary Band")
-        self._info_salary_band_offset = self._add_info_text("Band Offset")
-        self._info_salary_band_usd = self._add_info_text("Salary Band (USD)")
-        self._info_salary_band_offset_usd = self._add_info_text("Band Offset (USD)")
+        self._info_salary_band_offset = self._add_info_text("Salary Band Offset")
         legend = ColourKey1DWidget(salary_band_offset_colours, "Salary Band Offset Counts")
         legend.set_labels(salary_band_offset_labels)
         self._org_widget = SunburstOrgKeyWidget(SalaryBandOffsetSunburstOrgWidget(), legend)
@@ -29,17 +28,29 @@ class SalaryBandOffsetInfoWidget(InfoOrgKeyWidget):
         uen = self._uen
         is_manager = self._is_manager
 
+        salary = "N/A"
+        salary_usd = ""
         salary_band = "N/A"
+        salary_band_usd = ""
         salary_band_offset = "N/A"
-        salary_band_usd = "N/A"
-        salary_band_offset_usd = "N/A"
+        salary_band_offset_usd = ""
         if self._hide_sensitive_data:
+            salary = "Hidden"
+            salary_usd = ""
             salary_band = "Hidden"
+            salary_band_usd = ""
             salary_band_offset = "Hidden"
-            salary_band_usd = "Hidden"
-            salary_band_offset_usd = "Hidden"
+            salary_band_offset_usd = ""
         else:
             p = self._people[uen]
+            if "Salaries" in p["Person"].keys():
+                location = p["Person"]["Locations"][-1]["Location"]
+                salary_val = p["Person"]["Salaries"][-1]["Salary"]
+                _, cur_sym = currencies[location]
+                salary = f"{cur_sym}{salary_val:,}"
+                salary_usd_val = salary_val * fx_rates[location]
+                salary_usd = f" (${salary_usd_val:,.0f})"
+
             if "Salary Band Offset" in p.keys():
                 location = p["Person"]["Locations"][-1]["Location"]
                 _, cur_sym = currencies[location]
@@ -49,21 +60,20 @@ class SalaryBandOffsetInfoWidget(InfoOrgKeyWidget):
                     f"{cur_sym}{salary_band_lower_limit:,.0f} "
                     + f"to {cur_sym}{salary_band_upper_limit:,.0f}"
                 )
+                salary_band_lower_limit_usd = p["Salary Band Lower Limit USD"]
+                salary_band_upper_limit_usd = p["Salary Band Upper Limit USD"]
+                salary_band_usd = (
+                    f" (${salary_band_lower_limit_usd:,.0f} to ${salary_band_upper_limit_usd:,.0f})"
+                )
                 salary_band_offset = (
                     f"{cur_sym}{p['Salary Band Offset']:,.0f}"
                     .replace(f"{cur_sym}-", f"-{cur_sym}")
                 )
-                salary_band_lower_limit_usd = p["Salary Band Lower Limit USD"]
-                salary_band_upper_limit_usd = p["Salary Band Upper Limit USD"]
-                salary_band_usd = (
-                    f"${salary_band_lower_limit_usd:,.0f} to ${salary_band_upper_limit_usd:,.0f}"
-                )
-                salary_band_offset_usd = f"${p['Salary Band Offset USD']:,.0f}"
+                salary_band_offset_usd = f" (${p['Salary Band Offset USD']:,.0f})"
 
-        self._info_salary_band.setText(salary_band)
-        self._info_salary_band_offset.setText(salary_band_offset)
-        self._info_salary_band_usd.setText(salary_band_usd)
-        self._info_salary_band_offset_usd.setText(salary_band_offset_usd)
+        self._info_salary.setText(f"{salary} {salary_usd}")
+        self._info_salary_band.setText(f"{salary_band} {salary_band_usd}")
+        self._info_salary_band_offset.setText(f"{salary_band_offset} {salary_band_offset_usd}")
         self._org_widget.set_uen(uen, is_manager)
 
     def set_redacted(self, is_redacted):

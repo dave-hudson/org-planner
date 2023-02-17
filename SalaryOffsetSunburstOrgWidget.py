@@ -1,4 +1,4 @@
-from currencies import currencies
+from currencies import currencies, fx_rates
 from SunburstOrgWidget import SunburstOrgWidget
 
 salary_offset_colours = {
@@ -46,13 +46,24 @@ class SalaryOffsetSunburstOrgWidget(SunburstOrgWidget):
     def _get_tool_tip(self, uen):
         p = self._people[uen]
         tt = p["Person"]["Name"]
+        if "Salaries" in p["Person"].keys():
+            location = p["Person"]["Locations"][-1]["Location"]
+            salary_val = p["Person"]["Salaries"][-1]["Salary"]
+            _, cur_sym = currencies[location]
+            tt += f"\nSalary: {cur_sym}{salary_val:,}"
+            salary_usd_val = salary_val * fx_rates[location]
+            tt += f" (${salary_usd_val:,.0f})"
+
         if "Salary Offset" in p.keys():
             location = p["Person"]["Locations"][-1]["Location"]
             _, cur_sym = currencies[location]
+            salary_band_mid_point = f"{cur_sym}{p['Salary Band Mid Point']:,.0f}"
+            salary_band_mid_point_usd = f"${p['Salary Band Mid Point USD']:,.0f}"
+            tt += f"\nMid-band Salary: {salary_band_mid_point} ({salary_band_mid_point_usd})"
             tt += (
-                f"\nSalary Offset: {cur_sym}{p['Salary Offset']:,.0f}"
+                f"\nMid-band Salary Offset: {cur_sym}{p['Salary Offset']:,.0f}"
                 .replace(f"{cur_sym}-", f"-{cur_sym}")
             )
-            tt += f"\nSalary Offset: ${p['Salary Offset USD']:,.0f}".replace("$-", "-$")
+            tt += f" (${p['Salary Offset USD']:,.0f})".replace("$-", "-$")
 
         return tt

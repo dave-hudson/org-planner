@@ -44,6 +44,6 @@ class SalarySunburstOrgWidget(SunburstOrgWidget):
             _, cur_sym = currencies[location]
             tt += f"\nSalary: {cur_sym}{salary_val:,}"
             salary_usd_val = salary_val * fx_rates[location]
-            tt += f"\nSalary: ${salary_usd_val:,.0f}"
+            tt += f" (${salary_usd_val:,.0f})"
 
         return tt

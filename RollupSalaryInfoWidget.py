@@ -12,7 +12,7 @@ class RollupSalaryInfoWidget(InfoOrgKeyWidget):
 
         self._hide_sensitive_data = True
 
-        self._info_rollup_salary_usd = self._add_info_text("Rollup Salary (USD)")
+        self._info_rollup_salary_usd = self._add_info_text("Rollup Salaries")
         legend = ColourKey1DWidget(rollup_salary_colours)
         self._org_widget = SunburstOrgKeyWidget(RollupSalarySunburstOrgWidget(), legend)
         self._layout.addWidget(self._org_widget)

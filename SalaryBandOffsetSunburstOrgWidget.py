@@ -1,4 +1,4 @@
-from currencies import currencies
+from currencies import currencies, fx_rates
 from SunburstOrgWidget import SunburstOrgWidget
 
 salary_band_offset_colours = {
@@ -47,13 +47,33 @@ class SalaryBandOffsetSunburstOrgWidget(SunburstOrgWidget):
         p = self._people[uen]
         tt = p["Person"]["Name"]
 
+        if "Salaries" in p["Person"].keys():
+            location = p["Person"]["Locations"][-1]["Location"]
+            salary_val = p["Person"]["Salaries"][-1]["Salary"]
+            _, cur_sym = currencies[location]
+            tt += f"\nSalary: {cur_sym}{salary_val:,}"
+            salary_usd_val = salary_val * fx_rates[location]
+            tt += f" (${salary_usd_val:,.0f})"
+
         if "Salary Band Offset" in p.keys():
             location = p["Person"]["Locations"][-1]["Location"]
             _, cur_sym = currencies[location]
+            salary_band_lower_limit = p["Salary Band Lower Limit"]
+            salary_band_upper_limit = p["Salary Band Upper Limit"]
+            salary_band = (
+                f"{cur_sym}{salary_band_lower_limit:,.0f} "
+                + f"to {cur_sym}{salary_band_upper_limit:,.0f}"
+            )
+            salary_band_lower_limit_usd = p["Salary Band Lower Limit USD"]
+            salary_band_upper_limit_usd = p["Salary Band Upper Limit USD"]
+            salary_band_usd = (
+                f"${salary_band_lower_limit_usd:,.0f} to ${salary_band_upper_limit_usd:,.0f}"
+            )
+            tt += f"\nSalary Band: {salary_band} ({salary_band_usd})"
             tt += (
                 f"\nSalary Band Offset: {cur_sym}{p['Salary Band Offset']:,.0f}"
                 .replace("{cur_sym}-", "-{cur_sym}")
             )
-            tt += f"\nSalary Band Offset: ${p['Salary Band Offset USD']:,.0f}".replace("$-", "-$")
+            tt += f" (${p['Salary Band Offset USD']:,.0f})".replace("$-", "-$")
 
         return tt
