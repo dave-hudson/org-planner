@@ -16,7 +16,7 @@ from NumDirectReportsSunburstOrgWidget import num_direct_reports_colours
 from NineBoxInfoWidget import nine_box_colours
 from RatingSunburstOrgWidget import rating_colours
 from SalaryBandOffsetSunburstOrgWidget import salary_band_offset_colours
-from SalaryOffsetSunburstOrgWidget import salary_offset_colours
+from SalaryMidBandOffsetSunburstOrgWidget import salary_mid_band_offset_colours
 from SalarySunburstOrgWidget import salary_colours
 from TeamSunburstOrgWidget import team_colours
 
@@ -120,7 +120,7 @@ def scan_org_tree(people, locations, supervisor_uen, depth):
     p["Rating Counts"] = [0] * len(rating_colours)
     p["Total Reports"] = 0
     p["Salary Counts"] = [0] * len(salary_colours)
-    p["Salary Offset Counts"] = [0] * len(salary_offset_colours)
+    p["Salary Offset Counts"] = [0] * len(salary_mid_band_offset_colours)
     p["Salary Band Offset Counts"] = [0] * len(salary_band_offset_colours)
     p["Rollup Salaries"] = 0
     p["Missing Salaries"] = 0
@@ -281,8 +281,6 @@ def scan_org_tree(people, locations, supervisor_uen, depth):
         p["Salary Offset"] = salary_offset
         salary_offset_usd = salary_offset * fx_rate
         p["Salary Offset USD"] = salary_offset_usd
-        salary_offset_percentage = (salary_offset / band_mid_salary) * 100
-        p["Salary Offset Percentage"] = salary_offset_percentage
 
         salary_offset_usd_key = salary_offset_usd
         salary_offset_key = int(salary_offset_usd_key + 5000) // 10000

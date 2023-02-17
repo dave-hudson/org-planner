@@ -1,7 +1,7 @@
 from currencies import currencies, fx_rates
 from SunburstOrgWidget import SunburstOrgWidget
 
-salary_offset_colours = {
+salary_mid_band_offset_colours = {
     "-5": [0x18, 0x3c, 0xb6],
     "-4": [0x1e, 0x60, 0xb4],
     "-3": [0x2d, 0x80, 0xb0],
@@ -15,7 +15,7 @@ salary_offset_colours = {
     "5": [0xdb, 0x1f, 0x00]
 }
 
-salary_offset_labels = [
+salary_mid_band_offset_labels = [
     "-$45,001 and below",
     "-$45,000 to -$34,999",
     "-$35,000 to -$24,999",
@@ -29,7 +29,7 @@ salary_offset_labels = [
     "$45,000 and above",
 ]
 
-class SalaryOffsetSunburstOrgWidget(SunburstOrgWidget):
+class SalaryMidBandOffsetSunburstOrgWidget(SunburstOrgWidget):
     """
     A widget class used to draw salary band offset sunburst org charts.
     """
@@ -38,8 +38,8 @@ class SalaryOffsetSunburstOrgWidget(SunburstOrgWidget):
 
         p = self._people[uen]
         if "Salary Offset Key" in p.keys():
-            salary_offset_key = p["Salary Offset Key"]
-            colours = salary_offset_colours[salary_offset_key]
+            salary_mid_band_offset_key = p["Salary Offset Key"]
+            colours = salary_mid_band_offset_colours[salary_mid_band_offset_key]
 
         return colours
 
@@ -59,9 +59,9 @@ class SalaryOffsetSunburstOrgWidget(SunburstOrgWidget):
             _, cur_sym = currencies[location]
             salary_band_mid_point = f"{cur_sym}{p['Salary Band Mid Point']:,.0f}"
             salary_band_mid_point_usd = f"${p['Salary Band Mid Point USD']:,.0f}"
-            tt += f"\nMid-band Salary: {salary_band_mid_point} ({salary_band_mid_point_usd})"
+            tt += f"\nSalary Mid-band: {salary_band_mid_point} ({salary_band_mid_point_usd})"
             tt += (
-                f"\nMid-band Salary Offset: {cur_sym}{p['Salary Offset']:,.0f}"
+                f"\nSalary Mid-band Offset: {cur_sym}{p['Salary Offset']:,.0f}"
                 .replace(f"{cur_sym}-", f"-{cur_sym}")
             )
             tt += f" (${p['Salary Offset USD']:,.0f})".replace("$-", "-$")
