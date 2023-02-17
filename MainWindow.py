@@ -162,7 +162,7 @@ MainSplitter::handle {{
 
 # Parameters applied to the QSS above to give a dark mode version of the UI.
 dark_qss_config = [
-    "#303030",
+    "#202020",
     "white",
     "#3c3c3c",
     "#484848",

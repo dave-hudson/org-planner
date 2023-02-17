@@ -166,7 +166,7 @@ class SunburstOrgWidget(QtWidgets.QWidget):
             if self._unknown_colour[0] + self._unknown_colour[1] >= 0xc0:
                 colour = [0xff, 0xff, 0xff]
             else:
-                colour = [0x00, 0x00, 0x00]
+                colour = [0x30, 0x30, 0x30]
 
         brush = QtGui.QBrush(QtGui.QColor(colour[0], colour[1], colour[2], 0xff))
         painter.setBrush(brush)
