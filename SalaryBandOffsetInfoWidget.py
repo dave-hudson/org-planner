@@ -52,7 +52,7 @@ class SalaryBandOffsetInfoWidget(InfoOrgKeyWidget):
                 salary_usd = f" (${salary_usd_val:,.0f})"
 
             if "Salary Band Offset" in p.keys():
-                location = p["Person"]["Locations"][-1]["Location"]
+                location = p["Locations"][-1]["Location"]
                 _, cur_sym = currencies[location]
                 salary_band_lower_limit = p["Salary Band Lower Limit"]
                 salary_band_upper_limit = p["Salary Band Upper Limit"]

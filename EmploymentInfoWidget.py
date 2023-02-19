@@ -21,7 +21,7 @@ class EmploymentInfoWidget(InfoOrgKeyWidget):
         uen = self._uen
         is_manager = self._is_manager
 
-        e = self._people[uen]["Person"]["Employments"][-1]
+        e = self._people[uen]["Employments"][-1]
         self._info_type.setText(e["Employment"])
         self._org_widget.set_uen(uen, is_manager)
 

@@ -13,7 +13,7 @@ class GenderSunburstOrgWidget(SunburstOrgWidget):
     def _get_brush_colour(self, uen):
         colours = self._unknown_colour
 
-        p = self._people[uen]["Person"]
+        p = self._people[uen]
         if "Gender" in p.keys():
             gender = p["Gender"]
             if gender in gender_colours:
@@ -22,7 +22,7 @@ class GenderSunburstOrgWidget(SunburstOrgWidget):
         return colours
 
     def _get_tool_tip(self, uen):
-        p = self._people[uen]["Person"]
+        p = self._people[uen]
         tt = p["Name"]
         if "Gender" in p.keys():
             tt += f"\nGender: {p['Gender']}"

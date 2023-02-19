@@ -22,7 +22,7 @@ class NineBoxInfoWidget(InfoOrgKeyWidget):
     def update_contents(self):
         uen = self._uen
         is_manager = self._is_manager
-        p = self._people[uen]["Person"]
+        p = self._people[uen]
 
         nine_box_potential = "None"
         nine_box_performance = "None"

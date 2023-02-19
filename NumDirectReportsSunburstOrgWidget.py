@@ -40,7 +40,7 @@ class NumDirectReportsSunburstOrgWidget(SunburstOrgWidget):
 
     def _get_tool_tip(self, uen):
         p = self._people[uen]
-        tt = p["Person"]["Name"]
+        tt = p["Name"]
         num_direct_reports = p["Num Direct Reports"]
         if num_direct_reports > 0:
             tt += f"\nDirect Reports: {num_direct_reports}"

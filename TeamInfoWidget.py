@@ -20,7 +20,7 @@ class TeamInfoWidget(InfoOrgKeyWidget):
         uen = self._uen
         is_manager = self._is_manager
 
-        p = self._people[uen]["Person"]
+        p = self._people[uen]
         self._info_team.setText(p["Teams"][-1]["Team"])
         self._org_widget.set_uen(uen, is_manager)
 

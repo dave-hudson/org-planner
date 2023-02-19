@@ -21,7 +21,7 @@ class RatingInfoWidget(InfoOrgKeyWidget):
     def update_contents(self):
         uen = self._uen
         is_manager = self._is_manager
-        p = self._people[uen]["Person"]
+        p = self._people[uen]
 
         rating = "None"
         if self._hide_sensitive_data:

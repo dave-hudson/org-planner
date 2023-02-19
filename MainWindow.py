@@ -553,7 +553,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def _update_person(self, uen):
         # When we change the view of the currently active person we want
         # to ensure the tree and list views are updated to highlight them.
-        name = self._people[uen]["Person"]["Name"]
+        name = self._people[uen]["Name"]
         item = self._people_tree_widget.findItems(
             name, QtCore.Qt.MatchExactly | QtCore.Qt.MatchRecursive
         )
@@ -653,14 +653,14 @@ class MainWindow(QtWidgets.QMainWindow):
     def _people_list_index_changed(self, list_item):
         # Handler for when a new person is selected in the list view.
         for i in self._people:
-            if self._people[i]["Person"]["Name"] == list_item.text():
+            if self._people[i]["Name"] == list_item.text():
                 self._select_uen(i)
                 break
 
     def _people_tree_item_changed(self, tree_item):
         # Handler for when a new person is selected in the tree view.
         for i in self._people:
-            if self._people[i]["Person"]["Name"] == tree_item.text(0):
+            if self._people[i]["Name"] == tree_item.text(0):
                 self._select_uen(i)
                 break
 
@@ -688,7 +688,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def _set_people_tree(self, supervisor_uen, supervisor_item):
         for p in self._people[supervisor_uen]["Direct Reports"]:
             twi = QtWidgets.QTreeWidgetItem()
-            twi.setText(0, self._people[p]["Person"]["Name"])
+            twi.setText(0, self._people[p]["Name"])
             supervisor_item.addChild(twi)
             self._set_people_tree(p, twi)
 
@@ -696,12 +696,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self._people = people
 
         for i in people:
-            self._people_list_widget.addItem(people[i]["Person"]["Name"])
+            self._people_list_widget.addItem(people[i]["Name"])
 
         self._people_list_widget.sortItems(QtGui.Qt.AscendingOrder)
 
         top_level = QtWidgets.QTreeWidgetItem()
-        top_level.setText(0, people[supervisor_uen]["Person"]["Name"])
+        top_level.setText(0, people[supervisor_uen]["Name"])
         self._set_people_tree(supervisor_uen, top_level)
         self._people_tree_widget.insertTopLevelItem(0, top_level)
         self._people_tree_widget.expandAll()

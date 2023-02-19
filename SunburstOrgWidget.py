@@ -96,7 +96,7 @@ class SunburstOrgWidget(QtWidgets.QWidget):
         return self._recurse_find_person(depth, angle, self._uen, 0, 0, 360)
 
     def _get_tool_tip(self, uen):
-        return self._people[uen]["Person"]["Name"]
+        return self._people[uen]["Name"]
 
     def _handle_tool_tip_event(self, event):
         pos = event.pos()

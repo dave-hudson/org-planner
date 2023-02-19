@@ -30,7 +30,7 @@ class GeneralInfoWidget(InfoOrgKeyWidget):
 
     def update_contents(self):
         uen = self._uen
-        p = self._people[uen]["Person"]
+        p = self._people[uen]
 
         self._info_name.setText(p["Name"])
         self._info_uen.setText(str(p["UEN"]))
@@ -45,7 +45,7 @@ class GeneralInfoWidget(InfoOrgKeyWidget):
         if "Supervisors" in p.keys():
             supervisor = p["Supervisors"][-1]["Supervisor UEN"]
             supervisor_uen = str("{:d} ({:s})").format(
-                supervisor, self._people[supervisor]["Person"]["Name"]
+                supervisor, self._people[supervisor]["Name"]
             )
 
         self._info_supervisor_uen.setText(supervisor_uen)

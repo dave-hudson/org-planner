@@ -20,7 +20,7 @@ class GenderInfoWidget(InfoOrgKeyWidget):
         uen = self._uen
         is_manager = self._is_manager
 
-        p = self._people[uen]["Person"]
+        p = self._people[uen]
 
         gender = "None"
         if "Gender" in p.keys():

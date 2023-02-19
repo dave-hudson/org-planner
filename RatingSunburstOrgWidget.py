@@ -15,7 +15,7 @@ class RatingSunburstOrgWidget(SunburstOrgWidget):
     def _get_brush_colour(self, uen):
         colours = self._unknown_colour
 
-        p = self._people[uen]["Person"]
+        p = self._people[uen]
         if "Ratings" in p.keys():
             rating = str(p["Ratings"][-1]["Rating"])
             if rating in rating_colours:
@@ -24,7 +24,7 @@ class RatingSunburstOrgWidget(SunburstOrgWidget):
         return colours
 
     def _get_tool_tip(self, uen):
-        p = self._people[uen]["Person"]
+        p = self._people[uen]
         tt = p["Name"]
         if "Ratings" in p.keys():
             tt += f"\nRating: {p['Ratings'][-1]['Rating']}"

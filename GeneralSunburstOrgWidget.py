@@ -23,7 +23,7 @@ class GeneralSunburstOrgWidget(SunburstOrgWidget):
         self.update()
 
     def _get_tool_tip(self, uen):
-        p = self._people[uen]["Person"]
+        p = self._people[uen]
         tt = p["Name"]
         tt += f"\nUEN: {uen}"
 

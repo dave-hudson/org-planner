@@ -32,7 +32,7 @@ class RollupSalarySunburstOrgWidget(SunburstOrgWidget):
 
     def _get_tool_tip(self, uen):
         p = self._people[uen]
-        tt = p["Person"]["Name"]
+        tt = p["Name"]
 
         tt += f"\nRollup Salaries: ${p['Rollup Salaries']:,.0f}"
         rollup_missing_salaries = self._people[uen]["Missing Salaries"]

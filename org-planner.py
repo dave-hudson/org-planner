@@ -92,11 +92,11 @@ def scan_teams_and_employments(people):
     employments = []
 
     for i in people:
-        team = people[i]["Person"]["Teams"][-1]["Team"]
+        team = people[i]["Teams"][-1]["Team"]
         if team not in teams:
             teams.append(team)
 
-        employment_type = people[i]["Person"]["Employments"][-1]["Employment"]
+        employment_type = people[i]["Employments"][-1]["Employment"]
         if employment_type not in employments:
             employments.append(employment_type)
 
@@ -170,38 +170,38 @@ def scan_org_tree(people, locations, supervisor_uen, depth):
     num_direct_reports = str(p["Num Direct Reports"])
     p["Num Direct Reports Counts"][list(num_direct_reports_colours).index(num_direct_reports)] += 1
 
-    team = p["Person"]["Teams"][-1]["Team"]
+    team = p["Teams"][-1]["Team"]
     p["Team Counts"][list(team_colours).index(team)] += 1
 
     employment_type = "Unknown"
-    if "Employment" in p["Person"]["Employments"][-1]:
-        employment_type = p["Person"]["Employments"][-1]["Employment"]
+    if "Employment" in p["Employments"][-1]:
+        employment_type = p["Employments"][-1]["Employment"]
         p["Employment Counts"][list(employment_colours).index(employment_type)] += 1
 
-    if "Locations" in p["Person"].keys():
-        location = p["Person"]["Locations"][-1]["Location"]
+    if "Locations" in p.keys():
+        location = p["Locations"][-1]["Location"]
         p["Location Counts"][list(location_colours).index(location)] += 1
 
     grade = ""
-    if "Grades" in p["Person"].keys():
-        grade = p["Person"]["Grades"][-1]["Grade"]
+    if "Grades" in p.keys():
+        grade = p["Grades"][-1]["Grade"]
         p["Grade Counts"][list(grade_colours).index(grade)] += 1
 
-    if "Gender" in p["Person"].keys():
-        gender = p["Person"]["Gender"]
+    if "Gender" in p.keys():
+        gender = p["Gender"]
         p["Gender Counts"][list(gender_colours).index(gender)] += 1
 
-    if "9 Box" in p["Person"].keys():
-        nine_box_potential = p["Person"]["9 Box"][-1]["Potential"]
+    if "9 Box" in p.keys():
+        nine_box_potential = p["9 Box"][-1]["Potential"]
         nine_box_potential_index = list(nine_box_colours).index(nine_box_potential)
-        nine_box_performance = p["Person"]["9 Box"][-1]["Performance"]
+        nine_box_performance = p["9 Box"][-1]["Performance"]
         nine_box_performance_index = list(
             nine_box_colours[nine_box_potential]
         ).index(nine_box_performance)
         p["9 Box Counts"][nine_box_potential_index][nine_box_performance_index] += 1
 
-    if "Ratings" in p["Person"].keys():
-        rating = str(p["Person"]["Ratings"][-1]["Rating"])
+    if "Ratings" in p.keys():
+        rating = str(p["Ratings"][-1]["Rating"])
         p["Rating Counts"][list(rating_colours).index(rating)] += 1
 
     p["Org Depth"] = depth
@@ -226,17 +226,17 @@ def scan_org_tree(people, locations, supervisor_uen, depth):
     # this slightly undoes the sort it's a more natural view over the org,
     # placing people who do the same sorts of things in one grouping.
     for i in range(0, len(drs) - 1):
-        if (people[drs[i]]["Person"]["Teams"][-1]["Team"]
-                == people[drs[i + 1]]["Person"]["Teams"][-1]["Team"]):
+        if (people[drs[i]]["Teams"][-1]["Team"]
+                == people[drs[i + 1]]["Teams"][-1]["Team"]):
             continue
 
         for j in range(i + 1, len(drs)):
-            if (people[drs[i]]["Person"]["Teams"][-1]["Team"]
-                    == people[drs[j]]["Person"]["Teams"][-1]["Team"]):
+            if (people[drs[i]]["Teams"][-1]["Team"]
+                    == people[drs[j]]["Teams"][-1]["Team"]):
                 drs.insert(i + 1, drs.pop(j))
                 break
 
-    start_date = p["Person"]["Employments"][-1]["Start Date"]
+    start_date = p["Employments"][-1]["Start Date"]
     t = time.strptime(start_date, "%Y-%m-%d")
     ot = time.strptime("2014-10-31", "%Y-%m-%d")
     cur_time = time.time()
@@ -246,10 +246,10 @@ def scan_org_tree(people, locations, supervisor_uen, depth):
     p["Service Duration Fraction"] = worked_time / org_elapsed_time
 
     salary = 0
-    if "Salaries" not in p["Person"].keys():
+    if "Salaries" not in p.keys():
         p["Missing Salaries"] += 1
     else:
-        salary = p["Person"]["Salaries"][-1]["Salary"]
+        salary = p["Salaries"][-1]["Salary"]
         salary_usd = salary * fx_rates[location]
         p["Rollup Salaries"] += salary_usd
 
@@ -257,16 +257,16 @@ def scan_org_tree(people, locations, supervisor_uen, depth):
             log_salary_usd = int((math.log10(salary_usd) - 4) / 0.25)
             p["Salary Counts"][log_salary_usd] += 1
 
-    if (("Grades" in p["Person"].keys()) and
-            ("Salaries" in p["Person"].keys()) and
-            ("Locations" in p["Person"].keys())):
+    if (("Grades" in p.keys()) and
+            ("Salaries" in p.keys()) and
+            ("Locations" in p.keys())):
         fx_rate = fx_rates[location]
         fte = 1
-        if "Percentage Time" in p["Person"]["Employments"][-1].keys():
-            fte = p["Person"]["Employments"][-1]["Percentage Time"] / 100
+        if "Percentage Time" in p["Employments"][-1].keys():
+            fte = p["Employments"][-1]["Percentage Time"] / 100
 
-        corp_grade = p["Person"]["Grades"][-1]["Grade"][:1]
-        location = p["Person"]["Locations"][-1]["Location"]
+        corp_grade = p["Grades"][-1]["Grade"][:1]
+        location = p["Locations"][-1]["Location"]
         band_lower_limit = locations[location][corp_grade]["Low"] * fte
         p["Salary Band Lower Limit"] = band_lower_limit
         p["Salary Band Lower Limit USD"] = band_lower_limit * fx_rate
@@ -335,8 +335,7 @@ def scan_json_people(all_people_list):
 
     for i in all_people_list:
         uen = i["UEN"]
-        people[uen] = {}
-        people[uen]["Person"] = i
+        people[uen] = i
         people[uen]["Direct Reports"] = []
 
     for i in all_people_list:

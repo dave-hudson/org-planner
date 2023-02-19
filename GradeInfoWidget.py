@@ -20,7 +20,7 @@ class GradeInfoWidget(InfoOrgKeyWidget):
         uen = self._uen
         is_manager = self._is_manager
 
-        p = self._people[uen]["Person"]
+        p = self._people[uen]
 
         grade = "None"
         if "Grades" in p.keys():

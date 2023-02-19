@@ -45,7 +45,7 @@ class SalaryBandOffsetSunburstOrgWidget(SunburstOrgWidget):
 
     def _get_tool_tip(self, uen):
         p = self._people[uen]
-        tt = p["Person"]["Name"]
+        tt = p["Name"]
 
         if "Salaries" in p["Person"].keys():
             location = p["Person"]["Locations"][-1]["Location"]
@@ -56,7 +56,7 @@ class SalaryBandOffsetSunburstOrgWidget(SunburstOrgWidget):
             tt += f" (${salary_usd_val:,.0f})"
 
         if "Salary Band Offset" in p.keys():
-            location = p["Person"]["Locations"][-1]["Location"]
+            location = p["Locations"][-1]["Location"]
             _, cur_sym = currencies[location]
             salary_band_lower_limit = p["Salary Band Lower Limit"]
             salary_band_upper_limit = p["Salary Band Upper Limit"]

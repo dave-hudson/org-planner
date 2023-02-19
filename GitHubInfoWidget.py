@@ -22,7 +22,7 @@ class GitHubInfoWidget(InfoWidget):
     def update_contents(self):
         uen = self._uen
 
-        p = self._people[uen]["Person"]
+        p = self._people[uen]
 
         github_login = "N/A"
         github_profile_url = "N/A"
