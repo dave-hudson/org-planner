@@ -45,19 +45,15 @@ class SalaryMidBandOffsetSunburstOrgWidget(SunburstOrgWidget):
 
     def _get_tool_tip(self, uen):
         p = self._people[uen]
-<<<<<<< HEAD:SalaryMidBandOffsetSunburstOrgWidget.py
-        tt = p["Person"]["Name"]
-        if "Salaries" in p["Person"].keys():
-            location = p["Person"]["Locations"][-1]["Location"]
-            salary_val = p["Person"]["Salaries"][-1]["Salary"]
+        tt = p["Name"]
+        if "Salaries" in p.keys():
+            location = p["Locations"][-1]["Location"]
+            salary_val = p["Salaries"][-1]["Salary"]
             _, cur_sym = currencies[location]
             tt += f"\nSalary: {cur_sym}{salary_val:,}"
             salary_usd_val = salary_val * fx_rates[location]
             tt += f" (${salary_usd_val:,.0f})"
 
-=======
-        tt = p["Name"]
->>>>>>> e3216db (Simplify people data management.):SalaryOffsetSunburstOrgWidget.py
         if "Salary Offset" in p.keys():
             location = p["Locations"][-1]["Location"]
             _, cur_sym = currencies[location]

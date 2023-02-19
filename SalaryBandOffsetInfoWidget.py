@@ -43,9 +43,9 @@ class SalaryBandOffsetInfoWidget(InfoOrgKeyWidget):
             salary_band_offset_usd = ""
         else:
             p = self._people[uen]
-            if "Salaries" in p["Person"].keys():
-                location = p["Person"]["Locations"][-1]["Location"]
-                salary_val = p["Person"]["Salaries"][-1]["Salary"]
+            if "Salaries" in p.keys():
+                location = p["Locations"][-1]["Location"]
+                salary_val = p["Salaries"][-1]["Salary"]
                 _, cur_sym = currencies[location]
                 salary = f"{cur_sym}{salary_val:,}"
                 salary_usd_val = salary_val * fx_rates[location]

@@ -46,16 +46,16 @@ class SalaryMidBandOffsetInfoWidget(InfoOrgKeyWidget):
             salary_offset_usd = ""
         else:
             p = self._people[uen]
-            if "Salaries" in p["Person"].keys():
-                location = p["Person"]["Locations"][-1]["Location"]
-                salary_val = p["Person"]["Salaries"][-1]["Salary"]
+            if "Salaries" in p.keys():
+                location = p["Locations"][-1]["Location"]
+                salary_val = p["Salaries"][-1]["Salary"]
                 _, cur_sym = currencies[location]
                 salary = f"{cur_sym}{salary_val:,}"
                 salary_usd_val = salary_val * fx_rates[location]
                 salary_usd = f" (${salary_usd_val:,.0f})"
 
             if "Salary Offset" in p.keys():
-                location = p["Person"]["Locations"][-1]["Location"]
+                location = p["Locations"][-1]["Location"]
                 _, cur_sym = currencies[location]
                 salary_band_mid_point = f"{cur_sym}{p['Salary Band Mid Point']:,.0f}"
                 salary_band_mid_point_usd = f" (${p['Salary Band Mid Point USD']:,.0f})"
