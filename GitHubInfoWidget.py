@@ -26,10 +26,9 @@ class GitHubInfoWidget(InfoWidget):
 
         github_login = "N/A"
         github_profile_url = "N/A"
-        if "GitHub" in p.keys():
-            github = p["GitHub"][-1]
-            github_login = github["Login"]
-            github_profile_url = github["Profile URL"]
+        if p.has_github():
+            github_login = p.get_github_login()
+            github_profile_url = p.get_github_profile_url()
 
         self._info_github_login.setText(github_login)
         self._info_github_profile_url.setText(github_profile_url)

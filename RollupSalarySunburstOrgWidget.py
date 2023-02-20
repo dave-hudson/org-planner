@@ -22,7 +22,7 @@ class RollupSalarySunburstOrgWidget(SunburstOrgWidget):
         colours = self._unknown_colour
 
         p = self._people[uen]
-        rollup_salary = p["Rollup Salaries"]
+        rollup_salary = p.get_rollup_salaries()
         if rollup_salary > 0:
             log_rollup_salary = math.log10(rollup_salary) - 4
             base_colour = int(0x38 * log_rollup_salary)
@@ -32,10 +32,11 @@ class RollupSalarySunburstOrgWidget(SunburstOrgWidget):
 
     def _get_tool_tip(self, uen):
         p = self._people[uen]
-        tt = p["Name"]
+        tt = p.get_name()
 
-        tt += f"\nRollup Salaries: ${p['Rollup Salaries']:,.0f}"
-        rollup_missing_salaries = self._people[uen]["Missing Salaries"]
+        rollup_salary = p.get_rollup_salaries()
+        tt += f"\nRollup Salaries: ${rollup_salary:,.0f}"
+        rollup_missing_salaries = p.get_missing_salaries()
         if rollup_missing_salaries > 0:
             ppl = "People"
             if rollup_missing_salaries == 1:

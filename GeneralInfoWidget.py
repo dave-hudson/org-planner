@@ -32,20 +32,20 @@ class GeneralInfoWidget(InfoOrgKeyWidget):
         uen = self._uen
         p = self._people[uen]
 
-        self._info_name.setText(p["Name"])
-        self._info_uen.setText(str(p["UEN"]))
+        self._info_name.setText(p.get_name())
+        self._info_uen.setText(str(p.get_uen()))
 
         email_address = "N/A"
-        if "Email Address" in p.keys():
-            email_address = p["Email Address"]
+        if p.has_email_address():
+            email_address = p.get_email_address()
 
         self._info_email_address.setText(email_address)
 
         supervisor_uen = "N/A"
-        if "Supervisors" in p.keys():
-            supervisor = p["Supervisors"][-1]["Supervisor UEN"]
+        if p.has_supervisor():
+            supervisor = p.get_supervisor_uen()
             supervisor_uen = str("{:d} ({:s})").format(
-                supervisor, self._people[supervisor]["Name"]
+                supervisor, self._people[supervisor].get_name()
             )
 
         self._info_supervisor_uen.setText(supervisor_uen)

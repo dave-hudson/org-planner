@@ -23,9 +23,10 @@ class SalarySunburstOrgWidget(SunburstOrgWidget):
         colours = self._unknown_colour
 
         p = self._people[uen]
-        if "Salaries" in p.keys():
-            salary = p["Salaries"][-1]["Salary"]
-            salary_usd = salary * fx_rates[p["Locations"][-1]["Location"]]
+        if p.has_salary():
+            salary = p.get_salary()
+            location = p.get_location()
+            salary_usd = salary * fx_rates[location]
             log_salary_usd = 0
             if salary >= 10000:
                 log_salary_usd = math.log10(salary_usd) - 4
@@ -37,10 +38,10 @@ class SalarySunburstOrgWidget(SunburstOrgWidget):
 
     def _get_tool_tip(self, uen):
         p = self._people[uen]
-        tt = p["Name"]
-        if "Salaries" in p.keys():
-            location = p["Locations"][-1]["Location"]
-            salary_val = p["Salaries"][-1]["Salary"]
+        tt = p.get_name()
+        if p.has_salary():
+            location = p.get_location()
+            salary_val = p.get_salary()
             _, cur_sym = currencies[location]
             tt += f"\nSalary: {cur_sym}{salary_val:,}"
             salary_usd_val = salary_val * fx_rates[location]

@@ -20,8 +20,8 @@ class LocationSunburstOrgWidget(SunburstOrgWidget):
         colours = self._unknown_colour
 
         p = self._people[uen]
-        if "Locations" in p.keys():
-            location = p["Locations"][-1]["Location"]
+        if p.has_location():
+            location = p.get_location()
             if location in location_colours:
                 colours = location_colours[location]
 
@@ -29,8 +29,9 @@ class LocationSunburstOrgWidget(SunburstOrgWidget):
 
     def _get_tool_tip(self, uen):
         p = self._people[uen]
-        tt = p["Name"]
-        if "Locations" in p.keys():
-            tt += f"\nLocation: {p['Locations'][-1]['Location']}"
+        tt = p.get_name()
+        if p.has_location():
+            location = p.get_location()
+            tt += f"\nLocation: {location}"
 
         return tt

@@ -27,9 +27,10 @@ class RollupSalaryInfoWidget(InfoOrgKeyWidget):
             rollup_salary_usd = "Hidden"
         else:
             p = self._people[uen]
-            rollup_salary_usd = f"${p['Rollup Salaries']:,.0f}"
+            rollup_salaries = p.get_rollup_salaries()
+            rollup_salary_usd = f"${rollup_salaries:,.0f}"
 
-            rollup_missing_salaries = p["Missing Salaries"]
+            rollup_missing_salaries = p.get_missing_salaries()
             if rollup_missing_salaries > 0:
                 ppl = "People"
                 if rollup_missing_salaries == 1:

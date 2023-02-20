@@ -38,9 +38,9 @@ class SunburstOrgWidget(QtWidgets.QWidget):
         supervisor_person = self._people[supervisor_uen]
 
         angle = start_angle
-        for i in supervisor_person["Direct Reports"]:
+        for i in supervisor_person.get_direct_reports():
             p = self._people[i]
-            sf = p["Supervisor Fraction"]
+            sf = p.get_supervisor_fraction()
             arc = sf * start_arc
             if (target_angle >= angle) and (target_angle < (angle + arc)):
                 return self._recurse_find_person(
@@ -96,7 +96,7 @@ class SunburstOrgWidget(QtWidgets.QWidget):
         return self._recurse_find_person(depth, angle, self._uen, 0, 0, 360)
 
     def _get_tool_tip(self, uen):
-        return self._people[uen]["Name"]
+        return self._people[uen].get_name()
 
     def _handle_tool_tip_event(self, event):
         pos = event.pos()
@@ -148,8 +148,8 @@ class SunburstOrgWidget(QtWidgets.QWidget):
         return super().leaveEvent(event)
 
     def _scan_depth(self, supervisor):
-        org_depth = self._people[supervisor]["Org Depth"]
-        for i in self._people[supervisor]["Direct Reports"]:
+        org_depth = self._people[supervisor].get_org_depth()
+        for i in self._people[supervisor].get_direct_reports():
             d = self._scan_depth(i)
             if d > org_depth:
                 org_depth = d
@@ -175,10 +175,10 @@ class SunburstOrgWidget(QtWidgets.QWidget):
         supervisor_person = self._people[supervisor_uen]
 
         angle = start_angle
-        for i in supervisor_person["Direct Reports"]:
+        for i in supervisor_person.get_direct_reports():
             radius = (depth + 1) * self._ring_width
             p = self._people[i]
-            sf = p["Supervisor Fraction"]
+            sf = p.get_supervisor_fraction()
             arc = sf * start_arc
             self._recurse_draw_widget(painter, i, depth + 1, angle, arc)
             self._setup_brush(painter, i)
@@ -227,7 +227,7 @@ class SunburstOrgWidget(QtWidgets.QWidget):
 
     def _set_sizing(self):
         uen = self._uen
-        uen_org_depth = self._people[uen]["Org Depth"]
+        uen_org_depth = self._people[uen].get_org_depth()
 
         # Work out how many layers deep the org goes.
         max_org_depth = self._scan_depth(self._top_level_uen)

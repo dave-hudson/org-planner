@@ -9,4 +9,4 @@ class EmploymentColourKey1DWidget(ColourKey1DWidget):
 
     def set_uen(self, uen):
         for i in range(len(self._colour_box_widgets)):
-            self._colour_box_widgets[i].setText(str(self._people[uen]["Employment Counts"][i]))
+            self._colour_box_widgets[i].setText(str(self._people[uen].get_employment_counts()[i]))

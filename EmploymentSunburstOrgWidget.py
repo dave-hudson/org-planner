@@ -10,17 +10,16 @@ class EmploymentSunburstOrgWidget(SunburstOrgWidget):
         colours = [0x40, 0x40, 0x40]
 
         p = self._people[uen]
-        if "Employment" in p["Employments"][-1].keys():
-            employment_type = p["Employments"][-1]["Employment"]
-            if employment_type in employment_colours:
-                colours = employment_colours[employment_type]
+        employment_type = p.get_employment()
+        if employment_type in employment_colours:
+            colours = employment_colours[employment_type]
 
         return colours
 
     def _get_tool_tip(self, uen):
         p = self._people[uen]
-        tt = p["Name"]
-        if "Employment" in p["Employments"][-1].keys():
-            tt += f"\nEmployment: {p['Employments'][-1]['Employment']}"
+        tt = p.get_name()
+        employment_type = p.get_employment()
+        tt += f"\nEmployment: {employment_type}"
 
         return tt

@@ -21,10 +21,7 @@ class GenderInfoWidget(InfoOrgKeyWidget):
         is_manager = self._is_manager
 
         p = self._people[uen]
-
-        gender = "None"
-        if "Gender" in p.keys():
-            gender = p["Gender"]
+        gender = p.get_gender()
 
         self._info_gender.setText(gender)
         self._org_widget.set_uen(uen, is_manager)

@@ -23,8 +23,8 @@ class LocationInfoWidget(InfoOrgKeyWidget):
         p = self._people[uen]
 
         location = "None"
-        if "Locations" in p.keys():
-            location = p["Locations"][-1]["Location"]
+        if p.has_location():
+            location = p.get_location()
 
         self._info_location.setText(location)
         self._org_widget.set_uen(uen, is_manager)

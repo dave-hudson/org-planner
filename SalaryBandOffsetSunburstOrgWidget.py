@@ -37,43 +37,42 @@ class SalaryBandOffsetSunburstOrgWidget(SunburstOrgWidget):
         colours = self._unknown_colour
 
         p = self._people[uen]
-        if "Salary Band Offset Key" in p.keys():
-            salary_band_offset_key = p["Salary Band Offset Key"]
+        if p.has_salary_band():
+            salary_band_offset_key = p.get_salary_band_offset_key()
             colours = salary_band_offset_colours[salary_band_offset_key]
 
         return colours
 
     def _get_tool_tip(self, uen):
         p = self._people[uen]
-        tt = p["Name"]
+        tt = p.get_name()
 
-        if "Salaries" in p.keys():
-            location = p["Locations"][-1]["Location"]
-            salary_val = p["Salaries"][-1]["Salary"]
+        if p.has_salary_band():
+            location = p.get_location()
+            salary_val = p.get_salary()
             _, cur_sym = currencies[location]
             tt += f"\nSalary: {cur_sym}{salary_val:,}"
             salary_usd_val = salary_val * fx_rates[location]
             tt += f" (${salary_usd_val:,.0f})"
 
-        if "Salary Band Offset" in p.keys():
-            location = p["Locations"][-1]["Location"]
-            _, cur_sym = currencies[location]
-            salary_band_lower_limit = p["Salary Band Lower Limit"]
-            salary_band_upper_limit = p["Salary Band Upper Limit"]
+            salary_band_lower_limit = p.get_salary_band_lower_limit()
+            salary_band_upper_limit = p.get_salary_band_upper_limit()
             salary_band = (
                 f"{cur_sym}{salary_band_lower_limit:,.0f} "
                 + f"to {cur_sym}{salary_band_upper_limit:,.0f}"
             )
-            salary_band_lower_limit_usd = p["Salary Band Lower Limit USD"]
-            salary_band_upper_limit_usd = p["Salary Band Upper Limit USD"]
+            salary_band_lower_limit_usd = p.get_salary_band_lower_limit_usd()
+            salary_band_upper_limit_usd = p.get_salary_band_upper_limit_usd()
             salary_band_usd = (
                 f"${salary_band_lower_limit_usd:,.0f} to ${salary_band_upper_limit_usd:,.0f}"
             )
             tt += f"\nSalary Band: {salary_band} ({salary_band_usd})"
+            salary_band_offset = p.get_salary_band_offset()
             tt += (
-                f"\nSalary Band Offset: {cur_sym}{p['Salary Band Offset']:,.0f}"
+                f"\nSalary Band Offset: {cur_sym}{salary_band_offset:,.0f}"
                 .replace("{cur_sym}-", "-{cur_sym}")
             )
-            tt += f" (${p['Salary Band Offset USD']:,.0f})".replace("$-", "-$")
+            salary_band_offset_usd = p.get_salary_band_offset_usd()
+            tt += f" (${salary_band_offset_usd:,.0f})".replace("$-", "-$")
 
         return tt

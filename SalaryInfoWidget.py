@@ -30,9 +30,9 @@ class SalaryInfoWidget(InfoOrgKeyWidget):
             salary = "Hidden"
             salary_usd = ""
         else:
-            if "Salaries" in p.keys():
-                location = p["Locations"][-1]["Location"]
-                salary_val = p["Salaries"][-1]["Salary"]
+            if p.has_salary():
+                location = p.get_location()
+                salary_val = p.get_salary()
                 _, cur_sym = currencies[location]
                 salary = f"{cur_sym}{salary_val:,}"
                 salary_usd_val = salary_val * fx_rates[location]

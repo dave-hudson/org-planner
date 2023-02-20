@@ -21,14 +21,11 @@ class EmploymentInfoWidget(InfoOrgKeyWidget):
         uen = self._uen
         is_manager = self._is_manager
 
-        e = self._people[uen]["Employments"][-1]
-        self._info_type.setText(e["Employment"])
+        p = self._people[uen]
+        self._info_type.setText(p.get_employment())
         self._org_widget.set_uen(uen, is_manager)
 
-        percentage_time = 100
-        if "Percentage Time" in e.keys():
-            percentage_time = e["Percentage Time"]
-
+        percentage_time = int(100 * p.get_fte())
         self._info_percentage_time.setText(f"{percentage_time}%")
 
     def set_redacted(self, is_redacted):

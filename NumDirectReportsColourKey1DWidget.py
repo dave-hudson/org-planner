@@ -9,4 +9,4 @@ class NumDirectReportsColourKey1DWidget(ColourKey1DWidget):
 
     def set_uen(self, uen):
         for i in range(len(self._colour_box_widgets)):
-            self._colour_box_widgets[i].setText(str(self._people[uen]["Num Direct Reports Counts"][i]))
+            self._colour_box_widgets[i].setText(str(self._people[uen].get_num_direct_reports_counts()[i]))

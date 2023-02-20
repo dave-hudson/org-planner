@@ -32,7 +32,7 @@ class NumDirectReportsSunburstOrgWidget(SunburstOrgWidget):
         colours = self._unknown_colour
 
         p = self._people[uen]
-        num_direct_reports = str(p["Num Direct Reports"])
+        num_direct_reports = str(p.get_num_direct_reports())
         if num_direct_reports in num_direct_reports_colours:
             colours = num_direct_reports_colours[num_direct_reports]
 
@@ -40,8 +40,8 @@ class NumDirectReportsSunburstOrgWidget(SunburstOrgWidget):
 
     def _get_tool_tip(self, uen):
         p = self._people[uen]
-        tt = p["Name"]
-        num_direct_reports = p["Num Direct Reports"]
+        tt = p.get_name()
+        num_direct_reports = p.get_num_direct_reports()
         if num_direct_reports > 0:
             tt += f"\nDirect Reports: {num_direct_reports}"
 

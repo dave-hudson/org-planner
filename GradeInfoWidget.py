@@ -23,8 +23,8 @@ class GradeInfoWidget(InfoOrgKeyWidget):
         p = self._people[uen]
 
         grade = "None"
-        if "Grades" in p.keys():
-            grade = p["Grades"][-1]["Grade"]
+        if p.has_grade():
+            grade = p.get_grade()
 
         self._info_grade.setText(grade)
         self._org_widget.set_uen(uen, is_manager)

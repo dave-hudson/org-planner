@@ -24,8 +24,8 @@ class GradeSunburstOrgWidget(SunburstOrgWidget):
         colours = self._unknown_colour
 
         p = self._people[uen]
-        if "Grades" in p.keys():
-            grade = p["Grades"][-1]["Grade"]
+        if p.has_grade():
+            grade = p.get_grade()
             if grade in grade_colours:
                 colours = grade_colours[grade]
 
@@ -33,8 +33,9 @@ class GradeSunburstOrgWidget(SunburstOrgWidget):
 
     def _get_tool_tip(self, uen):
         p = self._people[uen]
-        tt = p["Name"]
-        if "Grades" in p.keys():
-            tt += f"\nGrade: {p['Grades'][-1]['Grade']}"
+        tt = p.get_name()
+        if p.has_grade():
+            grade = p. get_grade()
+            tt += f"\nGrade: {grade}"
 
         return tt

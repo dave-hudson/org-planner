@@ -30,9 +30,9 @@ class NineBoxInfoWidget(InfoOrgKeyWidget):
             nine_box_potential = "Hidden"
             nine_box_performance = "Hidden"
         else:
-            if "9 Box" in p.keys():
-                nine_box_potential = p["9 Box"][-1]["Potential"]
-                nine_box_performance = p["9 Box"][-1]["Performance"]
+            if p.has_nine_box():
+                nine_box_potential = p.get_nine_box_potential()
+                nine_box_performance = p.get_nine_box_performance()
 
         self._info_nine_box_potential.setText(nine_box_potential)
         self._info_nine_box_performance.setText(nine_box_performance)

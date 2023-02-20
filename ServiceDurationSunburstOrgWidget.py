@@ -20,16 +20,17 @@ class ServiceDurationSunburstOrgWidget(SunburstOrgWidget):
         colours = self._unknown_colour
 
         p = self._people[uen]
-        base_colour = int(0xe0 * p["Service Duration Fraction"])
+        base_colour = int(0xe0 * p.get_service_duration_fraction())
         colours = [0xe0, 0xe0 - base_colour, 0xe0 - base_colour, 0xff]
 
         return colours
 
     def _get_tool_tip(self, uen):
         p = self._people[uen]
-        tt = p["Name"]
-        tt += f"\nStart Date: {p['Employments'][-1]['Start Date']}"
-        service_duration = p['Service Duration'] / (86400 * 7)
+        tt = p.get_name()
+        start_date = p.get_start_date()
+        tt += f"\nStart Date: {start_date}"
+        service_duration = p.get_service_duration() / (86400 * 7)
         tt += f"\nService Duration: {service_duration:.1f} weeks"
 
         return tt

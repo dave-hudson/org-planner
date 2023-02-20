@@ -26,9 +26,9 @@ class NineBoxSunburstOrgWidget(SunburstOrgWidget):
         colours = self._unknown_colour
 
         p = self._people[uen]
-        if "9 Box" in p.keys():
-            nine_box_potential = p["9 Box"][-1]["Potential"]
-            nine_box_performance = p["9 Box"][-1]["Performance"]
+        if p.has_nine_box():
+            nine_box_potential = p.get_nine_box_potential()
+            nine_box_performance = p.get_nine_box_performance()
             if nine_box_potential in nine_box_colours:
                 potential_colours = nine_box_colours[nine_box_potential]
                 if nine_box_performance in potential_colours:
@@ -38,9 +38,11 @@ class NineBoxSunburstOrgWidget(SunburstOrgWidget):
 
     def _get_tool_tip(self, uen):
         p = self._people[uen]
-        tt = p["Name"]
-        if "9 Box" in p.keys():
-            tt += f"\nPotential: {p['9 Box'][-1]['Potential']}"
-            tt += f"\nPerformance: {p['9 Box'][-1]['Performance']}"
+        tt = p.get_name()
+        if p.has_nine_box():
+            nine_box_potential = p.get_nine_box_potential()
+            nine_box_performance = p.get_nine_box_performance()
+            tt += f"\nPotential: {nine_box_potential}"
+            tt += f"\nPerformance: {nine_box_performance}"
 
         return tt

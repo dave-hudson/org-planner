@@ -33,43 +33,44 @@ class SalaryMidBandOffsetInfoWidget(InfoOrgKeyWidget):
 
         salary = "N/A"
         salary_usd = ""
-        salary_band_mid_point = "N/A"
-        salary_band_mid_point_usd = ""
-        salary_offset = "N/A"
-        salary_offset_usd = ""
+        salary_band_mid_point_str = "N/A"
+        salary_band_mid_point_usd_str = ""
+        salary_offset_str = "N/A"
+        salary_offset_usd_str = ""
         if self._hide_sensitive_data:
             salary = "Hidden"
             salary_usd = ""
-            salary_band_mid_point = "Hidden"
-            salary_band_mid_point_usd = ""
-            salary_offset = "Hidden"
-            salary_offset_usd = ""
+            salary_band_mid_point_str = "Hidden"
+            salary_band_mid_point_usd_str = ""
+            salary_offset_str = "Hidden"
+            salary_offset_usd_str = ""
         else:
             p = self._people[uen]
-            if "Salaries" in p.keys():
-                location = p["Locations"][-1]["Location"]
-                salary_val = p["Salaries"][-1]["Salary"]
+            if p.has_salary_band():
+                location = p.get_location()
+                salary_val = p.get_salary()
                 _, cur_sym = currencies[location]
                 salary = f"{cur_sym}{salary_val:,}"
                 salary_usd_val = salary_val * fx_rates[location]
                 salary_usd = f" (${salary_usd_val:,.0f})"
 
-            if "Salary Offset" in p.keys():
-                location = p["Locations"][-1]["Location"]
-                _, cur_sym = currencies[location]
-                salary_band_mid_point = f"{cur_sym}{p['Salary Band Mid Point']:,.0f}"
-                salary_band_mid_point_usd = f" (${p['Salary Band Mid Point USD']:,.0f})"
-                salary_offset = (
-                    f"{cur_sym}{p['Salary Offset']:,.0f}"
+                salary_band_mid_point = p.get_salary_band_mid_point()
+                salary_band_mid_point_str = f"{cur_sym}{salary_band_mid_point:,.0f}"
+                salary_band_mid_point_usd = p.get_salary_band_mid_point_usd()
+                salary_band_mid_point_usd_str = f" (${salary_band_mid_point_usd:,.0f})"
+                salary_offset = p.get_salary_offset()
+                salary_offset_str = (
+                    f"{cur_sym}{salary_offset:,.0f}"
                     .replace(f"{cur_sym}-", f"-{cur_sym}")
                 )
-                salary_offset_usd = f" (${p['Salary Offset USD']:,.0f})".replace("$-", "-$")
+                salary_offset_usd = p.get_salary_offset_usd()
+                salary_offset_usd_str = f" (${salary_offset_usd:,.0f})".replace("$-", "-$")
 
         self._info_salary.setText(f"{salary} {salary_usd}")
         self._info_salary_band_mid_point.setText(
-            f"{salary_band_mid_point} {salary_band_mid_point_usd}"
+            f"{salary_band_mid_point_str} {salary_band_mid_point_usd_str}"
         )
-        self._info_salary_offset.setText(f"{salary_offset} {salary_offset_usd}")
+        self._info_salary_offset.setText(f"{salary_offset_str} {salary_offset_usd_str}")
         self._org_widget.set_uen(uen, is_manager)
 
     def set_redacted(self, is_redacted):

@@ -31,7 +31,7 @@ class InfoOrgKeyWidget(InfoWidget):
         self._uen = uen
 
         is_manager = False
-        if len(self._people[uen]["Direct Reports"]) != 0:
+        if self._people[uen].get_num_direct_reports() > 0:
             is_manager = True
 
         self._is_manager = is_manager

@@ -24,7 +24,7 @@ class GeneralSunburstOrgWidget(SunburstOrgWidget):
 
     def _get_tool_tip(self, uen):
         p = self._people[uen]
-        tt = p["Name"]
+        tt = p.get_name()
         tt += f"\nUEN: {uen}"
 
         return tt

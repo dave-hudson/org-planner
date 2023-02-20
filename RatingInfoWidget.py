@@ -27,8 +27,8 @@ class RatingInfoWidget(InfoOrgKeyWidget):
         if self._hide_sensitive_data:
             rating = "Hidden"
         else:
-            if "Ratings" in p.keys():
-                rating = str(p["Ratings"][-1]["Rating"])
+            if p.has_rating():
+                rating = str(p.get_rating())
 
         self._info_rating.setText(rating)
         self._org_widget.set_uen(uen, is_manager)

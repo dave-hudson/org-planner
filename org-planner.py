@@ -1,23 +1,12 @@
 import csv
 import json
-import math
 import sys
-import time
 
 from PySide6 import QtWidgets
 
-from currencies import fx_rates
 from EmploymentSunburstOrgWidget import employment_colours
-from GenderSunburstOrgWidget import gender_colours
-from GradeSunburstOrgWidget import grade_colours
-from LocationSunburstOrgWidget import location_colours
 from MainWindow import MainWindow
-from NumDirectReportsSunburstOrgWidget import num_direct_reports_colours
-from NineBoxInfoWidget import nine_box_colours
-from RatingSunburstOrgWidget import rating_colours
-from SalaryBandOffsetSunburstOrgWidget import salary_band_offset_colours
-from SalaryMidBandOffsetSunburstOrgWidget import salary_mid_band_offset_colours
-from SalarySunburstOrgWidget import salary_colours
+from person import person
 from TeamSunburstOrgWidget import team_colours
 
 team_colours_list = [
@@ -92,11 +81,11 @@ def scan_teams_and_employments(people):
     employments = []
 
     for i in people:
-        team = people[i]["Teams"][-1]["Team"]
+        team = i["Teams"][-1]["Team"]
         if team not in teams:
             teams.append(team)
 
-        employment_type = people[i]["Employments"][-1]["Employment"]
+        employment_type = i["Employments"][-1]["Employment"]
         if employment_type not in employments:
             employments.append(employment_type)
 
@@ -106,118 +95,54 @@ def scan_org_tree(people, locations, supervisor_uen, depth):
     # Scan each direct report recursively, computing how deep each person is in
     # the overall org, and how many reports roll up to them in total.
     p = people[supervisor_uen]
-    p["Num Direct Reports"] = len(p["Direct Reports"])
-    p["Num Direct Reports Counts"] = [0] * len(num_direct_reports_colours)
-    p["Location Counts"] = [0] * len(location_colours)
-    p["Team Counts"] = [0] * len(team_colours)
-    p["Employment Counts"] = [0] * len(employment_colours)
-    p["Grade Counts"] = [0] * len(grade_colours)
-    p["Gender Counts"] = [0] * len(gender_colours)
-    p["9 Box Counts"] = [[] for i in range(3)]
-    for i in range(3):
-        p["9 Box Counts"][i] = [0] * 3
 
-    p["Rating Counts"] = [0] * len(rating_colours)
-    p["Total Reports"] = 0
-    p["Salary Counts"] = [0] * len(salary_colours)
-    p["Salary Offset Counts"] = [0] * len(salary_mid_band_offset_colours)
-    p["Salary Band Offset Counts"] = [0] * len(salary_band_offset_colours)
-    p["Rollup Salaries"] = 0
-    p["Missing Salaries"] = 0
-
-    for i in p["Direct Reports"]:
+    for i in p.get_direct_reports():
         scan_org_tree(people, locations, i, depth + 1)
         dr = people[i]
 
-        for j in range(len(p["Num Direct Reports Counts"])):
-            p["Num Direct Reports Counts"][j] += dr["Num Direct Reports Counts"][j]
+        p.sum_num_direct_reports_counts(dr)
+        p.sum_team_counts(dr)
+        p.sum_employment_counts(dr)
+        p.sum_location_counts(dr)
+        p.sum_grade_counts(dr)
+        p.sum_gender_counts(dr)
+        p.sum_nine_box_counts(dr)
+        p.sum_salary_counts(dr)
+        p.sum_salary_offset_counts(dr)
+        p.sum_salary_band_offset_counts(dr)
+        p.sum_rating_counts(dr)
+        p.sum_total_reports(dr)
+        p.inc_total_reports()
+        p.sum_rollup_salaries(dr)
 
-        for j in range(len(p["Team Counts"])):
-            p["Team Counts"][j] += dr["Team Counts"][j]
+    p.inc_num_direct_reports_counts()
+    p.inc_team_counts()
+    p.inc_employment_counts()
+    p.inc_location_counts()
+    p.inc_grade_counts()
+    p.inc_gender_counts()
+    p.inc_nine_box_counts()
+    p.inc_salary_counts()
+    p.inc_salary_offset_counts()
+    p.inc_salary_band_offset_counts()
+    p.inc_rating_counts()
+    p.inc_rollup_salaries()
 
-        for j in range(len(p["Employment Counts"])):
-            p["Employment Counts"][j] += dr["Employment Counts"][j]
-
-        for j in range(len(p["Location Counts"])):
-            p["Location Counts"][j] += dr["Location Counts"][j]
-
-        for j in range(len(p["Grade Counts"])):
-            p["Grade Counts"][j] += dr["Grade Counts"][j]
-
-        for j in range(len(p["Gender Counts"])):
-            p["Gender Counts"][j] += dr["Gender Counts"][j]
-
-        for j in range(len(p["9 Box Counts"])):
-            for k in range(len(p["9 Box Counts"][j])):
-                p["9 Box Counts"][j][k] += dr["9 Box Counts"][j][k]
-
-        for j in range(len(p["Salary Counts"])):
-            p["Salary Counts"][j] += dr["Salary Counts"][j]
-
-        for j in range(len(p["Salary Offset Counts"])):
-            p["Salary Offset Counts"][j] += dr["Salary Offset Counts"][j]
-
-        for j in range(len(p["Salary Band Offset Counts"])):
-            p["Salary Band Offset Counts"][j] += dr["Salary Band Offset Counts"][j]
-
-        for j in range(len(p["Rating Counts"])):
-            p["Rating Counts"][j] += dr["Rating Counts"][j]
-
-        p["Total Reports"] += (dr["Total Reports"] + 1)
-        p["Rollup Salaries"] += dr["Rollup Salaries"]
-        p["Missing Salaries"] += dr["Missing Salaries"]
-
-    num_direct_reports = str(p["Num Direct Reports"])
-    p["Num Direct Reports Counts"][list(num_direct_reports_colours).index(num_direct_reports)] += 1
-
-    team = p["Teams"][-1]["Team"]
-    p["Team Counts"][list(team_colours).index(team)] += 1
-
-    employment_type = "Unknown"
-    if "Employment" in p["Employments"][-1]:
-        employment_type = p["Employments"][-1]["Employment"]
-        p["Employment Counts"][list(employment_colours).index(employment_type)] += 1
-
-    if "Locations" in p.keys():
-        location = p["Locations"][-1]["Location"]
-        p["Location Counts"][list(location_colours).index(location)] += 1
-
-    grade = ""
-    if "Grades" in p.keys():
-        grade = p["Grades"][-1]["Grade"]
-        p["Grade Counts"][list(grade_colours).index(grade)] += 1
-
-    if "Gender" in p.keys():
-        gender = p["Gender"]
-        p["Gender Counts"][list(gender_colours).index(gender)] += 1
-
-    if "9 Box" in p.keys():
-        nine_box_potential = p["9 Box"][-1]["Potential"]
-        nine_box_potential_index = list(nine_box_colours).index(nine_box_potential)
-        nine_box_performance = p["9 Box"][-1]["Performance"]
-        nine_box_performance_index = list(
-            nine_box_colours[nine_box_potential]
-        ).index(nine_box_performance)
-        p["9 Box Counts"][nine_box_potential_index][nine_box_performance_index] += 1
-
-    if "Ratings" in p.keys():
-        rating = str(p["Ratings"][-1]["Rating"])
-        p["Rating Counts"][list(rating_colours).index(rating)] += 1
-
-    p["Org Depth"] = depth
+    p.set_org_depth(depth)
 
     # Scan each direct report, but this time compute the fraction of the overall
     # team their subteam represents.
-    drs = p["Direct Reports"]
-    num_reports = p["Total Reports"]
+    drs = p.get_direct_reports()
+    num_reports = p.get_total_reports()
     for i in drs:
-        people[i]["Supervisor Fraction"] = (people[i]["Total Reports"] + 1) / num_reports
+        people[i].set_supervisor_fraction((people[i].get_total_reports() + 1) / num_reports)
 
     # Sort the direct reports to put the one with the largest fraction of the
     # org first.
     for i in range(len(drs)):
         for j in range(len(drs) - i - 1):
-            if people[drs[j]]["Supervisor Fraction"] < people[drs[j + 1]]["Supervisor Fraction"]:
+            if (people[drs[j]].get_supervisor_fraction()
+                    < people[drs[j + 1]].get_supervisor_fraction()):
                 t = drs[j + 1]
                 drs[j + 1] = drs[j]
                 drs[j] = t
@@ -226,92 +151,13 @@ def scan_org_tree(people, locations, supervisor_uen, depth):
     # this slightly undoes the sort it's a more natural view over the org,
     # placing people who do the same sorts of things in one grouping.
     for i in range(0, len(drs) - 1):
-        if (people[drs[i]]["Teams"][-1]["Team"]
-                == people[drs[i + 1]]["Teams"][-1]["Team"]):
+        if people[drs[i]].get_team() == people[drs[i + 1]].get_team():
             continue
 
         for j in range(i + 1, len(drs)):
-            if (people[drs[i]]["Teams"][-1]["Team"]
-                    == people[drs[j]]["Teams"][-1]["Team"]):
+            if people[drs[i]].get_team() == people[drs[j]].get_team():
                 drs.insert(i + 1, drs.pop(j))
                 break
-
-    start_date = p["Employments"][-1]["Start Date"]
-    t = time.strptime(start_date, "%Y-%m-%d")
-    ot = time.strptime("2014-10-31", "%Y-%m-%d")
-    cur_time = time.time()
-    org_elapsed_time = cur_time - time.mktime(ot)
-    worked_time = cur_time - time.mktime(t)
-    p["Service Duration"] = cur_time - time.mktime(t)
-    p["Service Duration Fraction"] = worked_time / org_elapsed_time
-
-    salary = 0
-    if "Salaries" not in p.keys():
-        p["Missing Salaries"] += 1
-    else:
-        salary = p["Salaries"][-1]["Salary"]
-        salary_usd = salary * fx_rates[location]
-        p["Rollup Salaries"] += salary_usd
-
-        if salary_usd >= 10000:
-            log_salary_usd = int((math.log10(salary_usd) - 4) / 0.25)
-            p["Salary Counts"][log_salary_usd] += 1
-
-    if (("Grades" in p.keys()) and
-            ("Salaries" in p.keys()) and
-            ("Locations" in p.keys())):
-        fx_rate = fx_rates[location]
-        fte = 1
-        if "Percentage Time" in p["Employments"][-1].keys():
-            fte = p["Employments"][-1]["Percentage Time"] / 100
-
-        corp_grade = p["Grades"][-1]["Grade"][:1]
-        location = p["Locations"][-1]["Location"]
-        band_lower_limit = locations[location][corp_grade]["Low"] * fte
-        p["Salary Band Lower Limit"] = band_lower_limit
-        p["Salary Band Lower Limit USD"] = band_lower_limit * fx_rate
-        band_upper_limit = locations[location][corp_grade]["High"] * fte
-        p["Salary Band Upper Limit"] = band_upper_limit
-        p["Salary Band Upper Limit USD"] = band_upper_limit * fx_rate
-        band_mid_salary = (band_upper_limit + band_lower_limit) / 2
-        p["Salary Band Mid Point"] = band_mid_salary
-        p["Salary Band Mid Point USD"] = band_mid_salary * fx_rate
-
-        salary_offset = salary - band_mid_salary
-        p["Salary Offset"] = salary_offset
-        salary_offset_usd = salary_offset * fx_rate
-        p["Salary Offset USD"] = salary_offset_usd
-
-        salary_offset_usd_key = salary_offset_usd
-        salary_offset_key = int(salary_offset_usd_key + 5000) // 10000
-        if salary_offset_key > 5:
-            salary_offset_key = 5
-        elif salary_offset_key < -5:
-            salary_offset_key = -5
-
-        p["Salary Offset Key"] = str(salary_offset_key)
-        p["Salary Offset Counts"][5 + salary_offset_key] += 1
-
-        band_offset = 0
-        band_offset_usd = 0
-        band_offset_key = 0
-        if salary < band_lower_limit:
-            band_offset = salary - band_lower_limit
-            band_offset_usd = int(band_offset * fx_rate)
-            band_offset_key = (band_offset_usd - 9999) // 10000
-            if band_offset_key < -5:
-                band_offset_key = -5
-        elif salary > band_upper_limit:
-            band_offset = salary - band_upper_limit
-            band_offset_usd = int(band_offset * fx_rate)
-            band_offset_key = (band_offset_usd + 9999) // 10000
-            if band_offset_key > 5:
-                band_offset_key = 5
-
-        p["Salary Band Offset"] = band_offset
-        p["Salary Band Offset USD"] = band_offset_usd
-        p["Salary Band Offset Key"] = str(band_offset_key)
-        p["Salary Band Offset Counts"][5 + band_offset_key] += 1
 
 def scan_json_locations(all_locations_list):
     locations = {}
@@ -328,15 +174,15 @@ def scan_json_locations(all_locations_list):
 
     return locations
 
-def scan_json_people(all_people_list):
+def scan_json_people(all_people_list, locations):
     people = {}
     top_level = 0
     failed = False
 
     for i in all_people_list:
         uen = i["UEN"]
-        people[uen] = i
-        people[uen]["Direct Reports"] = []
+        people[uen] = person()
+        people[uen].load(i, locations)
 
     for i in all_people_list:
         uen = i["UEN"]
@@ -349,7 +195,7 @@ def scan_json_people(all_people_list):
                 failed = True
         else:
             supervisor_uen = i["Supervisors"][-1]["Supervisor UEN"]
-            people[supervisor_uen]["Direct Reports"].append(uen)
+            people[supervisor_uen].append_direct_report(uen)
 
     return (failed, people, top_level)
 
@@ -458,11 +304,7 @@ def main():
         with open(csv_file_path, encoding = 'utf-8') as csv_file:
             merge_csv(csv_file, all_people_list)
 
-    fail, all_people, supervisor_uen = scan_json_people(all_people_list)
-    if fail:
-        exit()
-
-    all_teams, all_employments = scan_teams_and_employments(all_people)
+    all_teams, all_employments = scan_teams_and_employments(all_people_list)
     all_teams.sort()
 
     ci = 0
@@ -475,8 +317,12 @@ def main():
         employment_colours[i] = employment_colours_list[ci]
         ci += 1
 
+    fail, all_people, supervisor_uen = scan_json_people(all_people_list, all_locations)
+    if fail:
+        exit()
+
     scan_org_tree(all_people, all_locations, supervisor_uen, 0)
-    all_people[supervisor_uen]["Supervisor Fraction"] = 1
+    all_people[supervisor_uen].set_supervisor_fraction(1)
 
     app = QtWidgets.QApplication(sys.argv)
     window = MainWindow()

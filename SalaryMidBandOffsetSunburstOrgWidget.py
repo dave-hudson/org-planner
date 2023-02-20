@@ -37,33 +37,34 @@ class SalaryMidBandOffsetSunburstOrgWidget(SunburstOrgWidget):
         colours = self._unknown_colour
 
         p = self._people[uen]
-        if "Salary Offset Key" in p.keys():
-            salary_mid_band_offset_key = p["Salary Offset Key"]
+        if p.has_salary_band():
+            salary_mid_band_offset_key = p.get_salary_offset_key()
             colours = salary_mid_band_offset_colours[salary_mid_band_offset_key]
 
         return colours
 
     def _get_tool_tip(self, uen):
         p = self._people[uen]
-        tt = p["Name"]
-        if "Salaries" in p.keys():
-            location = p["Locations"][-1]["Location"]
-            salary_val = p["Salaries"][-1]["Salary"]
+        tt = p.get_name()
+        if p.has_salary_band():
+            location = p.get_location()
+            salary_val = p.get_salary()
             _, cur_sym = currencies[location]
             tt += f"\nSalary: {cur_sym}{salary_val:,}"
             salary_usd_val = salary_val * fx_rates[location]
             tt += f" (${salary_usd_val:,.0f})"
 
-        if "Salary Offset" in p.keys():
-            location = p["Locations"][-1]["Location"]
-            _, cur_sym = currencies[location]
-            salary_band_mid_point = f"{cur_sym}{p['Salary Band Mid Point']:,.0f}"
-            salary_band_mid_point_usd = f"${p['Salary Band Mid Point USD']:,.0f}"
-            tt += f"\nSalary Mid-band: {salary_band_mid_point} ({salary_band_mid_point_usd})"
+            salary_band_mid_point = p.get_salary_band_mid_point()
+            salary_band_mid_point_str = f"{cur_sym}{salary_band_mid_point:,.0f}"
+            salary_band_mid_point_usd = p.get_salary_band_mid_point_usd()
+            salary_band_mid_point_usd_str = f"${salary_band_mid_point_usd:,.0f}"
+            tt += f"\nSalary Mid-band: {salary_band_mid_point_str} ({salary_band_mid_point_usd_str})"
+            salary_offset = p.get_salary_offset()
             tt += (
-                f"\nSalary Mid-band Offset: {cur_sym}{p['Salary Offset']:,.0f}"
+                f"\nSalary Mid-band Offset: {cur_sym}{salary_offset:,.0f}"
                 .replace(f"{cur_sym}-", f"-{cur_sym}")
             )
-            tt += f" (${p['Salary Offset USD']:,.0f})".replace("$-", "-$")
+            salary_offset_usd = p.get_salary_offset_usd()
+            tt += f" (${salary_offset_usd:,.0f})".replace("$-", "-$")
 
         return tt

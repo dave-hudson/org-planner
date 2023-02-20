@@ -9,4 +9,4 @@ class SalaryBandOffsetColourKey1DWidget(ColourKey1DWidget):
 
     def set_uen(self, uen):
         for i in range(len(self._colour_box_widgets)):
-            self._colour_box_widgets[i].setText(str(self._people[uen]["Salary Band Offset Counts"][i]))
+            self._colour_box_widgets[i].setText(str(self._people[uen].get_salary_band_offset_counts()[i]))

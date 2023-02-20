@@ -11,5 +11,5 @@ class NineBoxColourKey2DWidget(ColourKey2DWidget):
         for i in range(len(self._colour_box_widgets)):
             for j in range(len(self._colour_box_widgets[i])):
                 self._colour_box_widgets[i][j].setText(
-                    str(self._people[uen]["9 Box Counts"][i][j])
+                    str(self._people[uen].get_nine_box_counts()[i][j])
                 )
