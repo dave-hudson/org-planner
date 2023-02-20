@@ -1,7 +1,7 @@
-from ColourKey1DWidget import ColourKey1DWidget
-from SunburstOrgKeyWidget import SunburstOrgKeyWidget
 from InfoOrgKeyWidget import InfoOrgKeyWidget
+from RatingColourKey1DWidget import RatingColourKey1DWidget
 from RatingSunburstOrgWidget import RatingSunburstOrgWidget, rating_colours
+from SunburstOrgKeyWidget import SunburstOrgKeyWidget
 
 class RatingInfoWidget(InfoOrgKeyWidget):
     """
@@ -13,7 +13,7 @@ class RatingInfoWidget(InfoOrgKeyWidget):
         self._hide_sensitive_data = True
 
         self._info_rating = self._add_info_text("Rating")
-        legend = ColourKey1DWidget(rating_colours, "Rating Counts")
+        legend = RatingColourKey1DWidget(rating_colours)
         self._org_widget = SunburstOrgKeyWidget(RatingSunburstOrgWidget(), legend)
         self._layout.addWidget(self._org_widget)
         self._org_widget.person_clicked.connect(self._person_clicked)

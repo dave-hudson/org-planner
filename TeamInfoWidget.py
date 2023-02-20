@@ -1,6 +1,6 @@
-from ColourKey1DWidget import ColourKey1DWidget
-from SunburstOrgKeyWidget import SunburstOrgKeyWidget
 from InfoOrgKeyWidget import InfoOrgKeyWidget
+from SunburstOrgKeyWidget import SunburstOrgKeyWidget
+from TeamColourKey1DWidget import TeamColourKey1DWidget
 from TeamSunburstOrgWidget import TeamSunburstOrgWidget, team_colours
 
 class TeamInfoWidget(InfoOrgKeyWidget):
@@ -11,7 +11,7 @@ class TeamInfoWidget(InfoOrgKeyWidget):
         super().__init__()
 
         self._info_team = self._add_info_text("Team")
-        legend = ColourKey1DWidget(team_colours, "Team Counts")
+        legend = TeamColourKey1DWidget(team_colours)
         self._org_widget = SunburstOrgKeyWidget(TeamSunburstOrgWidget(), legend)
         self._layout.addWidget(self._org_widget)
         self._org_widget.person_clicked.connect(self._person_clicked)

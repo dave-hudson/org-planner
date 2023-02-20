@@ -1,9 +1,9 @@
-from ColourKey1DWidget import ColourKey1DWidget
-from SunburstOrgKeyWidget import SunburstOrgKeyWidget
 from InfoOrgKeyWidget import InfoOrgKeyWidget
+from NumDirectReportsColourKey1DWidget import NumDirectReportsColourKey1DWidget
 from NumDirectReportsSunburstOrgWidget import (
     NumDirectReportsSunburstOrgWidget, num_direct_reports_colours
 )
+from SunburstOrgKeyWidget import SunburstOrgKeyWidget
 
 class NumDirectReportsInfoWidget(InfoOrgKeyWidget):
     """
@@ -14,7 +14,7 @@ class NumDirectReportsInfoWidget(InfoOrgKeyWidget):
 
         self._info_num_direct_reports = self._add_info_text("Direct Reports")
         self._info_total_reports = self._add_info_text("Total Reports")
-        legend = ColourKey1DWidget(num_direct_reports_colours, "Num Direct Reports Counts")
+        legend = NumDirectReportsColourKey1DWidget(num_direct_reports_colours)
         self._org_widget = SunburstOrgKeyWidget(NumDirectReportsSunburstOrgWidget(), legend)
         self._layout.addWidget(self._org_widget)
         self._org_widget.person_clicked.connect(self._person_clicked)

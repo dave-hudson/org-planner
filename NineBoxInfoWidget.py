@@ -1,7 +1,7 @@
-from ColourKey2DWidget import ColourKey2DWidget
-from SunburstOrgKeyWidget import SunburstOrgKeyWidget
 from InfoOrgKeyWidget import InfoOrgKeyWidget
+from NineBoxColourKey2DWidget import NineBoxColourKey2DWidget
 from NineBoxSunburstOrgWidget import NineBoxSunburstOrgWidget, nine_box_colours
+from SunburstOrgKeyWidget import SunburstOrgKeyWidget
 
 class NineBoxInfoWidget(InfoOrgKeyWidget):
     """
@@ -14,7 +14,7 @@ class NineBoxInfoWidget(InfoOrgKeyWidget):
 
         self._info_nine_box_potential = self._add_info_text("9-box Grid Potential")
         self._info_nine_box_performance = self._add_info_text("9-box Grid Performance")
-        legend = ColourKey2DWidget(nine_box_colours, "9 Box Counts")
+        legend = NineBoxColourKey2DWidget(nine_box_colours)
         self._org_widget = SunburstOrgKeyWidget(NineBoxSunburstOrgWidget(), legend)
         self._layout.addWidget(self._org_widget)
         self._org_widget.person_clicked.connect(self._person_clicked)

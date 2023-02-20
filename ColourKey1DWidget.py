@@ -7,7 +7,7 @@ class ColourKey1DWidget(QtWidgets.QFrame):
     """
     A widget class used to draw colour keys in 1 dimension.
     """
-    def __init__(self, colour_dict, count_key = None) -> None:
+    def __init__(self, colour_dict) -> None:
         super().__init__()
         self._layout = QtWidgets.QGridLayout()
         self._layout.setContentsMargins(0, 0, 0, 0)
@@ -16,7 +16,6 @@ class ColourKey1DWidget(QtWidgets.QFrame):
         self._people = {}
         self._label_widgets = []
         self._colour_box_widgets = []
-        self._count_key = count_key
 
         row = 0
         for cd in colour_dict:
@@ -42,8 +41,4 @@ class ColourKey1DWidget(QtWidgets.QFrame):
         self._people = people
 
     def set_uen(self, uen):
-        if self._count_key is None:
-            return
-
-        for i in range(len(self._colour_box_widgets)):
-            self._colour_box_widgets[i].setText(str(self._people[uen][self._count_key][i]))
+        pass

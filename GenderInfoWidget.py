@@ -1,7 +1,7 @@
-from ColourKey1DWidget import ColourKey1DWidget
-from SunburstOrgKeyWidget import SunburstOrgKeyWidget
-from InfoOrgKeyWidget import InfoOrgKeyWidget
+from GenderColourKey1DWidget import GenderColourKey1DWidget
 from GenderSunburstOrgWidget import GenderSunburstOrgWidget, gender_colours
+from InfoOrgKeyWidget import InfoOrgKeyWidget
+from SunburstOrgKeyWidget import SunburstOrgKeyWidget
 
 class GenderInfoWidget(InfoOrgKeyWidget):
     """
@@ -11,7 +11,7 @@ class GenderInfoWidget(InfoOrgKeyWidget):
         super().__init__()
 
         self._info_gender = self._add_info_text("Gender")
-        legend = ColourKey1DWidget(gender_colours, "Gender Counts")
+        legend = GenderColourKey1DWidget(gender_colours)
         self._org_widget = SunburstOrgKeyWidget(GenderSunburstOrgWidget(), legend)
         self._layout.addWidget(self._org_widget)
         self._org_widget.person_clicked.connect(self._person_clicked)

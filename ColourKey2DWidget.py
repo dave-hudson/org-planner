@@ -7,14 +7,13 @@ class ColourKey2DWidget(QtWidgets.QFrame):
     """
     A widget class used to draw colour keys in 2 dimensions.
     """
-    def __init__(self, colour_dict, count_key = None) -> None:
+    def __init__(self, colour_dict) -> None:
         super().__init__()
         self._layout = QtWidgets.QGridLayout()
         self._layout.setContentsMargins(0, 0, 0, 0)
         self._layout.setSpacing(0)
         self._people = {}
         self._colour_box_widgets = []
-        self._count_key = count_key
 
         col = 1
         for cdj in colour_dict["Low"]:
@@ -50,11 +49,4 @@ class ColourKey2DWidget(QtWidgets.QFrame):
         self._people = people
 
     def set_uen(self, uen):
-        if self._count_key is None:
-            return
-
-        for i in range(len(self._colour_box_widgets)):
-            for j in range(len(self._colour_box_widgets[i])):
-                self._colour_box_widgets[i][j].setText(
-                    str(self._people[uen][self._count_key][i][j])
-                )
+        pass

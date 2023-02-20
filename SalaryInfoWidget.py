@@ -1,8 +1,8 @@
 from currencies import currencies, fx_rates
-from ColourKey1DWidget import ColourKey1DWidget
-from SunburstOrgKeyWidget import SunburstOrgKeyWidget
 from InfoOrgKeyWidget import InfoOrgKeyWidget
+from SalaryColourKey1DWidget import SalaryColourKey1DWidget
 from SalarySunburstOrgWidget import SalarySunburstOrgWidget, salary_colours
+from SunburstOrgKeyWidget import SunburstOrgKeyWidget
 
 class SalaryInfoWidget(InfoOrgKeyWidget):
     """
@@ -14,7 +14,7 @@ class SalaryInfoWidget(InfoOrgKeyWidget):
         self._hide_sensitive_data = True
 
         self._info_salary = self._add_info_text("Salary")
-        legend = ColourKey1DWidget(salary_colours, "Salary Counts")
+        legend = SalaryColourKey1DWidget(salary_colours)
         self._org_widget = SunburstOrgKeyWidget(SalarySunburstOrgWidget(), legend)
         self._layout.addWidget(self._org_widget)
         self._org_widget.person_clicked.connect(self._person_clicked)

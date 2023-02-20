@@ -1,10 +1,10 @@
 from currencies import currencies, fx_rates
-from ColourKey1DWidget import ColourKey1DWidget
-from SunburstOrgKeyWidget import SunburstOrgKeyWidget
 from InfoOrgKeyWidget import InfoOrgKeyWidget
+from SalaryBandOffsetColourKey1DWidget import SalaryBandOffsetColourKey1DWidget
 from SalaryBandOffsetSunburstOrgWidget import (
     SalaryBandOffsetSunburstOrgWidget, salary_band_offset_colours, salary_band_offset_labels
 )
+from SunburstOrgKeyWidget import SunburstOrgKeyWidget
 
 class SalaryBandOffsetInfoWidget(InfoOrgKeyWidget):
     """
@@ -18,7 +18,7 @@ class SalaryBandOffsetInfoWidget(InfoOrgKeyWidget):
         self._info_salary = self._add_info_text("Salary")
         self._info_salary_band = self._add_info_text("Salary Band")
         self._info_salary_band_offset = self._add_info_text("Salary Band Offset")
-        legend = ColourKey1DWidget(salary_band_offset_colours, "Salary Band Offset Counts")
+        legend = SalaryBandOffsetColourKey1DWidget(salary_band_offset_colours)
         legend.set_labels(salary_band_offset_labels)
         self._org_widget = SunburstOrgKeyWidget(SalaryBandOffsetSunburstOrgWidget(), legend)
         self._layout.addWidget(self._org_widget)

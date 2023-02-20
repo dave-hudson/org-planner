@@ -1,4 +1,4 @@
-from ColourKey1DWidget import ColourKey1DWidget
+from EmploymentColourKey1DWidget import EmploymentColourKey1DWidget
 from SunburstOrgKeyWidget import SunburstOrgKeyWidget
 from InfoOrgKeyWidget import InfoOrgKeyWidget
 from EmploymentSunburstOrgWidget import EmploymentSunburstOrgWidget, employment_colours
@@ -12,7 +12,7 @@ class EmploymentInfoWidget(InfoOrgKeyWidget):
 
         self._info_type = self._add_info_text("Employment")
         self._info_percentage_time = self._add_info_text("FTE (%)")
-        legend = ColourKey1DWidget(employment_colours, "Employment Counts")
+        legend = EmploymentColourKey1DWidget(employment_colours)
         self._org_widget = SunburstOrgKeyWidget(EmploymentSunburstOrgWidget(), legend)
         self._layout.addWidget(self._org_widget)
         self._org_widget.person_clicked.connect(self._person_clicked)

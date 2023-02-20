@@ -1,7 +1,7 @@
-from ColourKey1DWidget import ColourKey1DWidget
-from SunburstOrgKeyWidget import SunburstOrgKeyWidget
 from InfoOrgKeyWidget import InfoOrgKeyWidget
+from LocationColourKey1DWidget import LocationColourKey1DWidget
 from LocationSunburstOrgWidget import LocationSunburstOrgWidget, location_colours
+from SunburstOrgKeyWidget import SunburstOrgKeyWidget
 
 class LocationInfoWidget(InfoOrgKeyWidget):
     """
@@ -11,7 +11,7 @@ class LocationInfoWidget(InfoOrgKeyWidget):
         super().__init__()
 
         self._info_location = self._add_info_text("Location")
-        legend = ColourKey1DWidget(location_colours, "Location Counts")
+        legend = LocationColourKey1DWidget(location_colours)
         self._org_widget = SunburstOrgKeyWidget(LocationSunburstOrgWidget(), legend)
         self._layout.addWidget(self._org_widget)
         self._org_widget.person_clicked.connect(self._person_clicked)

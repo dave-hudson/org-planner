@@ -1,7 +1,7 @@
-from ColourKey1DWidget import ColourKey1DWidget
-from SunburstOrgKeyWidget import SunburstOrgKeyWidget
-from InfoOrgKeyWidget import InfoOrgKeyWidget
+from GradeColourKey1DWidget import GradeColourKey1DWidget
 from GradeSunburstOrgWidget import GradeSunburstOrgWidget, grade_colours
+from InfoOrgKeyWidget import InfoOrgKeyWidget
+from SunburstOrgKeyWidget import SunburstOrgKeyWidget
 
 class GradeInfoWidget(InfoOrgKeyWidget):
     """
@@ -11,7 +11,7 @@ class GradeInfoWidget(InfoOrgKeyWidget):
         super().__init__()
 
         self._info_grade = self._add_info_text("Grade")
-        legend = ColourKey1DWidget(grade_colours, "Grade Counts")
+        legend = GradeColourKey1DWidget(grade_colours)
         self._org_widget = SunburstOrgKeyWidget(GradeSunburstOrgWidget(), legend)
         self._layout.addWidget(self._org_widget)
         self._org_widget.person_clicked.connect(self._person_clicked)
