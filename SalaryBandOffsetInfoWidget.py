@@ -29,14 +29,12 @@ class SalaryBandOffsetInfoWidget(InfoOrgKeyWidget):
         is_manager = self._is_manager
 
         salary = "N/A"
-        salary_usd = ""
         salary_band = "N/A"
         salary_band_usd = ""
         salary_band_offset_str = "N/A"
         salary_band_offset_usd_str = ""
         if self._hide_sensitive_data:
             salary = "Hidden"
-            salary_usd = ""
             salary_band = "Hidden"
             salary_band_usd = ""
             salary_band_offset_str = "Hidden"
@@ -44,12 +42,12 @@ class SalaryBandOffsetInfoWidget(InfoOrgKeyWidget):
         else:
             p = self._people[uen]
             if p.has_salary_band():
+                salary_str = p.get_salary_str()
+                salary_usd_str = p.get_salary_usd_str()
+                salary = f"{salary_str} ({salary_usd_str})"
+
                 location = p.get_location()
-                salary_val = p.get_salary()
                 _, cur_sym = currencies[location]
-                salary = f"{cur_sym}{salary_val:,}"
-                salary_usd_val = p.get_salary_usd()
-                salary_usd = f" (${salary_usd_val:,.0f})"
 
                 salary_band_lower_limit = p.get_salary_band_lower_limit()
                 salary_band_upper_limit = p.get_salary_band_upper_limit()
@@ -70,7 +68,7 @@ class SalaryBandOffsetInfoWidget(InfoOrgKeyWidget):
                 salary_band_offset_usd = p.get_salary_band_offset_usd()
                 salary_band_offset_usd_str = f" (${salary_band_offset_usd:,.0f})"
 
-        self._info_salary.setText(f"{salary} {salary_usd}")
+        self._info_salary.setText(salary)
         self._info_salary_band.setText(f"{salary_band} {salary_band_usd}")
         self._info_salary_band_offset.setText(f"{salary_band_offset_str} {salary_band_offset_usd_str}")
         self._org_widget.set_uen(uen, is_manager)

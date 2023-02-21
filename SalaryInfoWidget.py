@@ -1,4 +1,3 @@
-from currencies import currencies
 from InfoOrgKeyWidget import InfoOrgKeyWidget
 from SalaryColourKey1DWidget import SalaryColourKey1DWidget
 from SalarySunburstOrgWidget import SalarySunburstOrgWidget, salary_colours
@@ -25,20 +24,15 @@ class SalaryInfoWidget(InfoOrgKeyWidget):
         p = self._people[uen]
 
         salary = "N/A"
-        salary_usd = ""
         if self._hide_sensitive_data:
             salary = "Hidden"
-            salary_usd = ""
         else:
             if p.has_salary():
-                location = p.get_location()
-                salary_val = p.get_salary()
-                _, cur_sym = currencies[location]
-                salary = f"{cur_sym}{salary_val:,}"
-                salary_usd_val = p.get_salary_usd()
-                salary_usd = f" (${salary_usd_val:,.0f})"
+                salary_str = p.get_salary_str()
+                salary_usd_str = p.get_salary_usd_str()
+                salary = f"{salary_str} ({salary_usd_str})"
 
-        self._info_salary.setText(f"{salary} {salary_usd}")
+        self._info_salary.setText(salary)
         self._org_widget.set_uen(uen, is_manager)
 
     def set_redacted(self, is_redacted):
