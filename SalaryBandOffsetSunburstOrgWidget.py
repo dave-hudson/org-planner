@@ -1,4 +1,3 @@
-from currencies import currencies
 from SunburstOrgWidget import SunburstOrgWidget
 
 salary_band_offset_colours = {
@@ -50,24 +49,17 @@ class SalaryBandOffsetSunburstOrgWidget(SunburstOrgWidget):
         if p.has_salary_band():
             salary_str = p.get_salary_str()
             salary_usd_str = p.get_salary_usd_str()
-            tt += f"\nSalary: {salary_str} ({salary_usd_str})"
-
-            location = p.get_location()
-            _, cur_sym = currencies[location]
-            salary_band_lower_limit = p.get_salary_band_lower_limit()
-            salary_band_upper_limit = p.get_salary_band_upper_limit()
-            salary_band = (
-                f"{cur_sym}{salary_band_lower_limit:,.0f} "
-                + f"to {cur_sym}{salary_band_upper_limit:,.0f}"
-            )
-            salary_band_lower_limit_usd = p.get_salary_band_lower_limit_usd()
-            salary_band_upper_limit_usd = p.get_salary_band_upper_limit_usd()
-            salary_band_usd = (
-                f"${salary_band_lower_limit_usd:,.0f} to ${salary_band_upper_limit_usd:,.0f}"
-            )
-            tt += f"\nSalary Band: {salary_band} ({salary_band_usd})"
+            salary_band_lower_limit_str = p.get_salary_band_lower_limit_str()
+            salary_band_upper_limit_str = p.get_salary_band_upper_limit_str()
+            salary_band_str = f"{salary_band_lower_limit_str} to {salary_band_upper_limit_str}"
+            salary_band_lower_limit_usd_str = p.get_salary_band_lower_limit_usd_str()
+            salary_band_upper_limit_usd_str = p.get_salary_band_upper_limit_usd_str()
+            salary_band_usd_str = f"{salary_band_lower_limit_usd_str} to {salary_band_upper_limit_usd_str}"
             salary_band_offset_str = p.get_salary_band_offset_str()
             salary_band_offset_usd_str = p.get_salary_band_offset_usd_str()
+
+            tt += f"\nSalary: {salary_str} ({salary_usd_str})"
+            tt += f"\nSalary Band: {salary_band_str} ({salary_band_usd_str})"
             tt += f"\nSalary Band Offset: {salary_band_offset_str} ({salary_band_offset_usd_str})"
 
         return tt

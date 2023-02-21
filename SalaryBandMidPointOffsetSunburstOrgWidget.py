@@ -1,4 +1,3 @@
-from currencies import currencies
 from SunburstOrgWidget import SunburstOrgWidget
 
 salary_band_mid_point_offset_colours = {
@@ -49,17 +48,13 @@ class SalaryBandMidPointOffsetSunburstOrgWidget(SunburstOrgWidget):
         if p.has_salary_band():
             salary_str = p.get_salary_str()
             salary_usd_str = p.get_salary_usd_str()
-            tt += f"\nSalary: {salary_str} ({salary_usd_str})"
-
-            location = p.get_location()
-            _, cur_sym = currencies[location]
-            salary_band_mid_point = p.get_salary_band_mid_point()
-            salary_band_mid_point_str = f"{cur_sym}{salary_band_mid_point:,.0f}"
-            salary_band_mid_point_usd = p.get_salary_band_mid_point_usd()
-            salary_band_mid_point_usd_str = f"${salary_band_mid_point_usd:,.0f}"
-            tt += f"\nSalary Band Mid Point: {salary_band_mid_point_str} ({salary_band_mid_point_usd_str})"
+            salary_band_mid_point_str = p.get_salary_band_mid_point_str()
+            salary_band_mid_point_usd_str = p.get_salary_band_mid_point_usd_str()
             salary_offset_str = p.get_salary_band_mid_point_offset_str()
             salary_offset_usd_str = p.get_salary_band_mid_point_offset_usd_str()
+
+            tt += f"\nSalary: {salary_str} ({salary_usd_str})"
+            tt += f"\nSalary Band Mid Point: {salary_band_mid_point_str} ({salary_band_mid_point_usd_str})"
             tt += f"\nSalary Band Mid Point Offset: {salary_offset_str} ({salary_offset_usd_str})"
 
         return tt

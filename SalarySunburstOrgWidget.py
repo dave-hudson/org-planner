@@ -39,7 +39,6 @@ class SalarySunburstOrgWidget(SunburstOrgWidget):
         if p.has_salary():
             salary_str = p.get_salary_str()
             salary_usd_str = p.get_salary_usd_str()
-            salary = f"{salary_str} ({salary_usd_str})"
-            tt += f"\nSalary: {salary}"
+            tt += f"\nSalary: {salary_str} ({salary_usd_str})"
 
         return tt

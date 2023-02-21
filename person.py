@@ -382,20 +382,38 @@ class person(object):
     def get_salary_band_lower_limit(self):
         return self._salary_band_lower_limit
 
+    def get_salary_band_lower_limit_str(self):
+        return self._str_local(self.get_salary_band_lower_limit())
+
     def get_salary_band_lower_limit_usd(self):
         return self._salary_band_lower_limit_usd
+
+    def get_salary_band_lower_limit_usd_str(self):
+        return self._str_usd(self.get_salary_band_lower_limit_usd())
 
     def get_salary_band_mid_point(self):
         return self._salary_band_mid_point
 
+    def get_salary_band_mid_point_str(self):
+        return self._str_local(self.get_salary_band_mid_point())
+
     def get_salary_band_mid_point_usd(self):
         return self._salary_band_mid_point_usd
+
+    def get_salary_band_mid_point_usd_str(self):
+        return self._str_usd(self.get_salary_band_mid_point_usd())
 
     def get_salary_band_upper_limit(self):
         return self._salary_band_upper_limit
 
+    def get_salary_band_upper_limit_str(self):
+        return self._str_local(self.get_salary_band_upper_limit())
+
     def get_salary_band_upper_limit_usd(self):
         return self._salary_band_upper_limit_usd
+
+    def get_salary_band_upper_limit_usd_str(self):
+        return self._str_usd(self.get_salary_band_upper_limit_usd())
 
     def get_salary_band_offset(self):
         return self._salary_band_offset

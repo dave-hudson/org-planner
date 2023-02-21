@@ -27,10 +27,11 @@ class ServiceDurationSunburstOrgWidget(SunburstOrgWidget):
 
     def _get_tool_tip(self, uen):
         p = self._people[uen]
-        tt = p.get_name()
         start_date = p.get_start_date()
-        tt += f"\nStart Date: {start_date}"
         service_duration = p.get_service_duration() / (86400 * 7)
+
+        tt = p.get_name()
+        tt += f"\nStart Date: {start_date}"
         tt += f"\nService Duration: {service_duration:.1f} weeks"
 
         return tt
