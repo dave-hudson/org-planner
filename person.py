@@ -14,7 +14,7 @@ from SalaryMidBandOffsetSunburstOrgWidget import salary_mid_band_offset_colours
 from SalarySunburstOrgWidget import salary_colours
 from TeamSunburstOrgWidget import team_colours
 
-class person:
+class person(object):
     """
     A class used to track information about a person.
     """
@@ -40,21 +40,7 @@ class person:
         self._org_depth = -1
         self._supervisor_fraction = 0.0
         self._fte = 1.0
-        self._num_direct_reports_counts = [0] * len(num_direct_reports_colours)
-        self._location_counts = [0] * len(location_colours)
-        self._team_counts = [0] * len(team_colours)
-        self._employment_counts = [0] * len(employment_colours)
-        self._grade_counts = [0] * len(grade_colours)
-        self._gender_counts = [0] * len(gender_colours)
-        self._nine_box_counts = [[] for i in range(3)]
-        for i in range(3):
-            self._nine_box_counts[i] = [0] * 3
-
-        self._rating_counts = [0] * len(rating_colours)
         self._total_reports = 0
-        self._salary_counts = [0] * len(salary_colours)
-        self._salary_offset_counts = [0] * len(salary_mid_band_offset_colours)
-        self._salary_band_offset_counts = [0] * len(salary_band_offset_colours)
         self._rollup_salaries = 0
         self._missing_salaries = 0
         self._salary_band_lower_limit = 0
@@ -133,7 +119,7 @@ class person:
             location = self.get_location()
             fx_rate = fx_rates[location]
 
-            corp_grade = self.get_grade()
+            corp_grade = self.get_grade()[:1]
             band_lower_limit = locations[location][corp_grade]["Low"] * self._fte
             self._salary_band_lower_limit = band_lower_limit
             self._salary_band_lower_limit_usd = band_lower_limit * fx_rate
@@ -157,8 +143,7 @@ class person:
             elif salary_offset_key < -5:
                 salary_offset_key = -5
 
-            self._salary_offset_key = str(salary_offset_key)
-            self._salary_offset_counts[5 + salary_offset_key] += 1
+            self._salary_offset_key = salary_offset_key
 
             band_offset = 0
             band_offset_usd = 0
@@ -178,8 +163,7 @@ class person:
 
             self._salary_band_offset = band_offset
             self._salary_band_offset_usd = band_offset_usd
-            self._salary_band_offset_key = str(band_offset_key)
-            self._salary_band_offset_counts[5 + band_offset_key] += 1
+            self._salary_band_offset_key = band_offset_key
 
     def get_name(self):
         return self._name
@@ -229,17 +213,16 @@ class person:
     def get_num_direct_reports(self):
         return len(self._direct_reports)
 
-    def get_num_direct_reports_counts(self):
-        return self._num_direct_reports_counts
+    def _get_num_direct_reports_counts(self, people, counts):
+        for i in self._direct_reports:
+            people[i]._get_num_direct_reports_counts(people, counts)
 
-    def sum_num_direct_reports_counts(self, dr):
-        for i in range(len(self._num_direct_reports_counts)):
-            self._num_direct_reports_counts[i] += dr.get_num_direct_reports_counts()[i]
+        counts[list(num_direct_reports_colours).index(str(self.get_num_direct_reports()))] += 1
 
-    def inc_num_direct_reports_counts(self):
-        self._num_direct_reports_counts[(
-            list(num_direct_reports_colours).index(str(self.get_num_direct_reports()))
-        )] += 1
+    def get_num_direct_reports_counts(self, people):
+        counts = [0] * len(num_direct_reports_colours)
+        self._get_num_direct_reports_counts(people, counts)
+        return counts
 
     def get_fte(self):
         return self._fte
@@ -247,15 +230,16 @@ class person:
     def get_team(self):
         return self._teams[-1]["Team"]
 
-    def get_team_counts(self):
-        return self._team_counts
+    def _get_team_counts(self, people, counts):
+        for i in self._direct_reports:
+            people[i]._get_team_counts(people, counts)
 
-    def sum_team_counts(self, dr):
-        for i in range(len(self._team_counts)):
-            self._team_counts[i] += dr.get_team_counts()[i]
+        counts[list(team_colours).index(str(self.get_team()))] += 1
 
-    def inc_team_counts(self):
-        self._team_counts[list(team_colours).index(self.get_team())] += 1
+    def get_team_counts(self, people):
+        counts = [0] * len(team_colours)
+        self._get_team_counts(people, counts)
+        return counts
 
     def get_employment(self):
         return self._employments[-1]["Employment"]
@@ -263,15 +247,16 @@ class person:
     def get_start_date(self):
         return self._employments[-1]["Start Date"]
 
-    def get_employment_counts(self):
-        return self._employment_counts
+    def _get_employment_counts(self, people, counts):
+        for i in self._direct_reports:
+            people[i]._get_employment_counts(people, counts)
 
-    def sum_employment_counts(self, dr):
-        for i in range(len(self._employment_counts)):
-            self._employment_counts[i] += dr.get_employment_counts()[i]
+        counts[list(employment_colours).index(str(self.get_employment()))] += 1
 
-    def inc_employment_counts(self):
-        self._employment_counts[list(employment_colours).index(self.get_employment())] += 1
+    def get_employment_counts(self, people):
+        counts = [0] * len(team_colours)
+        self._get_employment_counts(people, counts)
+        return counts
 
     def has_location(self):
         return len(self._locations) > 0
@@ -279,16 +264,17 @@ class person:
     def get_location(self):
         return self._locations[-1]["Location"]
 
-    def get_location_counts(self):
-        return self._location_counts
+    def _get_location_counts(self, people, counts):
+        for i in self._direct_reports:
+            people[i]._get_location_counts(people, counts)
 
-    def sum_location_counts(self, dr):
-        for i in range(len(self._location_counts)):
-            self._location_counts[i] += dr.get_location_counts()[i]
-
-    def inc_location_counts(self):
         if self.has_location():
-            self._location_counts[list(location_colours).index(self.get_location())] += 1
+            counts[list(location_colours).index(str(self.get_location()))] += 1
+
+    def get_location_counts(self, people):
+        counts = [0] * len(location_colours)
+        self._get_location_counts(people, counts)
+        return counts
 
     def has_grade(self):
         return len(self._grades) > 0
@@ -296,29 +282,31 @@ class person:
     def get_grade(self):
         return self._grades[-1]["Grade"]
 
-    def get_grade_counts(self):
-        return self._grade_counts
+    def _get_grade_counts(self, people, counts):
+        for i in self._direct_reports:
+            people[i]._get_grade_counts(people, counts)
 
-    def sum_grade_counts(self, dr):
-        for i in range(len(self._grade_counts)):
-            self._grade_counts[i] += dr.get_grade_counts()[i]
-
-    def inc_grade_counts(self):
         if self.has_grade():
-            self._grade_counts[list(grade_colours).index(self.get_grade())] += 1
+            counts[list(grade_colours).index(str(self.get_grade()))] += 1
+
+    def get_grade_counts(self, people):
+        counts = [0] * len(grade_colours)
+        self._get_grade_counts(people, counts)
+        return counts
 
     def get_gender(self):
         return self._gender
 
-    def get_gender_counts(self):
-        return self._gender_counts
+    def _get_gender_counts(self, people, counts):
+        for i in self._direct_reports:
+            people[i]._get_gender_counts(people, counts)
 
-    def sum_gender_counts(self, dr):
-        for i in range(len(self._gender_counts)):
-            self._gender_counts[i] += dr.get_gender_counts()[i]
+        counts[list(gender_colours).index(str(self.get_gender()))] += 1
 
-    def inc_gender_counts(self):
-        self._gender_counts[list(gender_colours).index(self.get_gender())] += 1
+    def get_gender_counts(self, people):
+        counts = [0] * len(gender_colours)
+        self._get_gender_counts(people, counts)
+        return counts
 
     def has_nine_box(self):
         return len(self._nine_boxes) > 0
@@ -329,22 +317,25 @@ class person:
     def get_nine_box_performance(self):
         return self._nine_boxes[-1]["Performance"]
 
-    def get_nine_box_counts(self):
-        return self._nine_box_counts
+    def _get_nine_box_counts(self, people, counts):
+        for i in self._direct_reports:
+            people[i]._get_nine_box_counts(people, counts)
 
-    def sum_nine_box_counts(self, dr):
-        for i in range(len(self._nine_box_counts)):
-            for j in range(len(self._nine_box_counts[i])):
-                self._nine_box_counts[i][j] += dr.get_nine_box_counts()[i][j]
-
-    def inc_nine_box_counts(self):
         if self.has_nine_box():
             nine_box_potential = self.get_nine_box_potential()
             nine_box_potential_index = list(nine_box_colours).index(nine_box_potential)
             nine_box_performance_index = list(
                 nine_box_colours[nine_box_potential]).index(self.get_nine_box_performance()
             )
-            self._nine_box_counts[nine_box_potential_index][nine_box_performance_index] += 1
+            counts[nine_box_potential_index][nine_box_performance_index] += 1
+
+    def get_nine_box_counts(self, people):
+        counts = [[] for i in range(3)]
+        for i in range(3):
+            counts[i] = [0] * 3
+
+        self._get_nine_box_counts(people, counts)
+        return counts
 
     def has_salary(self):
         return len(self._salaries) > 0
@@ -352,33 +343,35 @@ class person:
     def get_salary(self):
         return self._salaries[-1]["Salary"]
 
-    def get_salary_counts(self):
-        return self._salary_counts
+    def _get_salary_counts(self, people, counts):
+        for i in self._direct_reports:
+            people[i]._get_salary_counts(people, counts)
 
-    def sum_salary_counts(self, dr):
-        for i in range(len(self._salary_counts)):
-            self._salary_counts[i] += dr.get_salary_counts()[i]
-
-    def inc_salary_counts(self):
         if self.has_salary() and self.has_location():
             salary = self.get_salary()
             salary_usd = salary * fx_rates[self.get_location()]
             if salary_usd >= 10000:
                 log_salary_usd = int((math.log10(salary_usd) - 4) / 0.25)
-                self._salary_counts[log_salary_usd] += 1
+                counts[log_salary_usd] += 1
+
+    def get_salary_counts(self, people):
+        counts = [0] * len(salary_colours)
+        self._get_salary_counts(people, counts)
+        return counts
 
     def get_salary_offset_key(self):
         return self._salary_offset_key
 
-    def get_salary_offset_counts(self):
-        return self._salary_offset_counts
+    def _get_salary_offset_counts(self, people, counts):
+        for i in self._direct_reports:
+            people[i]._get_salary_offset_counts(people, counts)
 
-    def sum_salary_offset_counts(self, dr):
-        for i in range(len(self._salary_offset_counts)):
-            self._salary_offset_counts[i] += dr.get_salary_offset_counts()[i]
+        counts[5 + self.get_salary_offset_key()] += 1
 
-    def inc_salary_offset_counts(self):
-        pass
+    def get_salary_offset_counts(self, people):
+        counts = [0] * len(salary_mid_band_offset_colours)
+        self._get_salary_offset_counts(people, counts)
+        return counts
 
     def has_salary_band(self):
         return self.has_salary() and self.has_grade() and self.has_location()
@@ -386,15 +379,16 @@ class person:
     def get_salary_band_offset_key(self):
         return self._salary_band_offset_key
 
-    def get_salary_band_offset_counts(self):
-        return self._salary_band_offset_counts
+    def _get_salary_band_offset_counts(self, people, counts):
+        for i in self._direct_reports:
+            people[i]._get_salary_band_offset_counts(people, counts)
 
-    def sum_salary_band_offset_counts(self, dr):
-        for i in range(len(self._salary_band_offset_counts)):
-            self._salary_band_offset_counts[i] += dr.get_salary_band_offset_counts()[i]
+        counts[5 + self.get_salary_band_offset_key()] += 1
 
-    def inc_salary_band_offset_counts(self):
-        pass
+    def get_salary_band_offset_counts(self, people):
+        counts = [0] * len(salary_band_offset_colours)
+        self._get_salary_band_offset_counts(people, counts)
+        return counts
 
     def has_rating(self):
         return len(self._ratings) > 0
@@ -402,44 +396,47 @@ class person:
     def get_rating(self):
         return self._ratings[-1]["Rating"]
 
-    def get_rating_counts(self):
-        return self._rating_counts
+    def _get_rating_counts(self, people, counts):
+        for i in self._direct_reports:
+            people[i]._get_rating_counts(people, counts)
 
-    def sum_rating_counts(self, dr):
-        for i in range(len(self._rating_counts)):
-            self._rating_counts[i] += dr.get_rating_counts()[i]
-
-    def inc_rating_counts(self):
         if self.has_rating():
-            self._rating_counts[list(rating_colours).index(str(self.get_rating()))] += 1
+            counts[list(rating_colours).index(str(self.get_rating()))] += 1
 
-    def get_total_reports(self):
-        return self._total_reports
+    def get_rating_counts(self, people):
+        counts = [0] * len(rating_colours)
+        self._get_rating_counts(people, counts)
+        return counts
 
-    def sum_total_reports(self, dr):
-        self._total_reports += dr.get_total_reports()
+    def _get_total_reports(self, people):
+        reports = 0
+        for i in self._direct_reports:
+            reports += people[i]._get_total_reports(people) + 1
 
-    def inc_total_reports(self):
-        self._total_reports += 1
+        return reports
 
-    def get_rollup_salaries(self):
-        return self._rollup_salaries
+    def get_total_reports(self, people):
+        return self._get_total_reports(people)
 
-    def get_missing_salaries(self):
-        return self._missing_salaries
+    def _get_rollup_salaries(self, people):
+        rollup_salaries = 0
+        missing_salaries = 0
+        for i in self._direct_reports:
+            (r, m) = people[i]._get_rollup_salaries(people)
+            rollup_salaries += r
+            missing_salaries += m
 
-    def sum_rollup_salaries(self, dr):
-        self._rollup_salaries += dr.get_rollup_salaries()
-        self._missing_salaries += dr.get_missing_salaries()
-
-    def inc_rollup_salaries(self):
         if not self.has_salary() or not self.has_location():
-            self._missing_salaries += 1
-            return
+            missing_salaries += 1
+        else:
+            salary = self.get_salary()
+            salary_usd = salary * fx_rates[self.get_location()]
+            rollup_salaries += salary_usd
 
-        salary = self.get_salary()
-        salary_usd = salary * fx_rates[self.get_location()]
-        self._rollup_salaries += salary_usd
+        return (rollup_salaries, missing_salaries)
+
+    def get_rollup_salaries(self, people):
+        return self._get_rollup_salaries(people)
 
     def get_org_depth(self):
         return self._org_depth

@@ -22,10 +22,10 @@ class RollupSalarySunburstOrgWidget(SunburstOrgWidget):
         colours = self._unknown_colour
 
         p = self._people[uen]
-        rollup_salary = p.get_rollup_salaries()
-        if rollup_salary > 0:
-            log_rollup_salary = math.log10(rollup_salary) - 4
-            base_colour = int(0x38 * log_rollup_salary)
+        (rollup_salaries, _) = p.get_rollup_salaries(self._people)
+        if rollup_salaries > 0:
+            log_rollup_salaries = math.log10(rollup_salaries) - 4
+            base_colour = int(0x38 * log_rollup_salaries)
             colours = [0x20 + base_colour, 0xff - base_colour, 0x20 + base_colour, 0xff]
 
         return colours
@@ -34,14 +34,13 @@ class RollupSalarySunburstOrgWidget(SunburstOrgWidget):
         p = self._people[uen]
         tt = p.get_name()
 
-        rollup_salary = p.get_rollup_salaries()
-        tt += f"\nRollup Salaries: ${rollup_salary:,.0f}"
-        rollup_missing_salaries = p.get_missing_salaries()
-        if rollup_missing_salaries > 0:
+        (rollup_salaries, missing_salaries) = p.get_rollup_salaries(self._people)
+        tt += f"\nRollup Salaries: ${rollup_salaries:,.0f}"
+        if missing_salaries > 0:
             ppl = "People"
-            if rollup_missing_salaries == 1:
+            if missing_salaries == 1:
                 ppl = "Person"
 
-            tt += f" (Missing {rollup_missing_salaries} {ppl})"
+            tt += f" (Missing {missing_salaries} {ppl})"
 
         return tt

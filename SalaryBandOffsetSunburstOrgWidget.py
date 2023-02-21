@@ -38,7 +38,7 @@ class SalaryBandOffsetSunburstOrgWidget(SunburstOrgWidget):
 
         p = self._people[uen]
         if p.has_salary_band():
-            salary_band_offset_key = p.get_salary_band_offset_key()
+            salary_band_offset_key = str(p.get_salary_band_offset_key())
             colours = salary_band_offset_colours[salary_band_offset_key]
 
         return colours

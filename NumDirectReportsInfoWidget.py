@@ -25,7 +25,7 @@ class NumDirectReportsInfoWidget(InfoOrgKeyWidget):
 
         p = self._people[uen]
         self._info_num_direct_reports.setText(str(p.get_num_direct_reports()))
-        self._info_total_reports.setText(str(p.get_total_reports()))
+        self._info_total_reports.setText(str(p.get_total_reports(self._people)))
         self._org_widget.set_uen(uen, is_manager)
 
     def set_redacted(self, is_redacted):

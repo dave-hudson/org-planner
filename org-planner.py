@@ -98,44 +98,15 @@ def scan_org_tree(people, locations, supervisor_uen, depth):
 
     for i in p.get_direct_reports():
         scan_org_tree(people, locations, i, depth + 1)
-        dr = people[i]
-
-        p.sum_num_direct_reports_counts(dr)
-        p.sum_team_counts(dr)
-        p.sum_employment_counts(dr)
-        p.sum_location_counts(dr)
-        p.sum_grade_counts(dr)
-        p.sum_gender_counts(dr)
-        p.sum_nine_box_counts(dr)
-        p.sum_salary_counts(dr)
-        p.sum_salary_offset_counts(dr)
-        p.sum_salary_band_offset_counts(dr)
-        p.sum_rating_counts(dr)
-        p.sum_total_reports(dr)
-        p.inc_total_reports()
-        p.sum_rollup_salaries(dr)
-
-    p.inc_num_direct_reports_counts()
-    p.inc_team_counts()
-    p.inc_employment_counts()
-    p.inc_location_counts()
-    p.inc_grade_counts()
-    p.inc_gender_counts()
-    p.inc_nine_box_counts()
-    p.inc_salary_counts()
-    p.inc_salary_offset_counts()
-    p.inc_salary_band_offset_counts()
-    p.inc_rating_counts()
-    p.inc_rollup_salaries()
 
     p.set_org_depth(depth)
 
     # Scan each direct report, but this time compute the fraction of the overall
     # team their subteam represents.
     drs = p.get_direct_reports()
-    num_reports = p.get_total_reports()
+    num_reports = p.get_total_reports(people)
     for i in drs:
-        people[i].set_supervisor_fraction((people[i].get_total_reports() + 1) / num_reports)
+        people[i].set_supervisor_fraction((people[i].get_total_reports(people) + 1) / num_reports)
 
     # Sort the direct reports to put the one with the largest fraction of the
     # org first.
