@@ -1,7 +1,7 @@
 import math
 import time
 
-from currencies import fx_rates
+from currencies import currencies, fx_rates
 from EmploymentSunburstOrgWidget import employment_colours
 from GenderSunburstOrgWidget import gender_colours
 from GradeSunburstOrgWidget import grade_colours
@@ -336,6 +336,14 @@ class person(object):
         self._get_nine_box_counts(people, counts)
         return counts
 
+    def _str_usd(self, value):
+        return f"${value:,.0f}".replace("$-", "-$")
+
+    def _str_local(self, value):
+        location = self.get_location()
+        _, cur_sym = currencies[location]
+        return f"{cur_sym}{value:,.0f}".replace(f"{cur_sym}-", f"-{cur_sym}")
+
     def has_salary(self):
         return len(self._salaries) > 0
 
@@ -388,6 +396,42 @@ class person(object):
         counts = [0] * len(salary_band_offset_colours)
         self._get_salary_band_offset_counts(people, counts)
         return counts
+
+    def get_salary_mid_band_offset(self):
+        return self._salary_mid_band_offset
+
+    def get_salary_mid_band_offset_str(self):
+        return self._str_local(self.get_salary_mid_band_offset())
+
+    def get_salary_mid_band_offset_usd(self):
+        return self._salary_mid_band_offset_usd
+
+    def get_salary_mid_band_offset_usd_str(self):
+        return self._str_usd(self.get_salary_mid_band_offset_usd())
+
+    def get_salary_band_offset(self):
+        return self._salary_band_offset
+
+    def get_salary_band_offset_usd(self):
+        return self._salary_band_offset_usd
+
+    def get_salary_band_mid_point(self):
+        return self._salary_band_mid_point
+
+    def get_salary_band_mid_point_usd(self):
+        return self._salary_band_mid_point_usd
+
+    def get_salary_band_lower_limit(self):
+        return self._salary_band_lower_limit
+
+    def get_salary_band_lower_limit_usd(self):
+        return self._salary_band_lower_limit_usd
+
+    def get_salary_band_upper_limit(self):
+        return self._salary_band_upper_limit
+
+    def get_salary_band_upper_limit_usd(self):
+        return self._salary_band_upper_limit_usd
 
     def has_rating(self):
         return len(self._ratings) > 0
@@ -442,33 +486,3 @@ class person(object):
 
     def set_org_depth(self, depth):
         self._org_depth = depth
-
-    def get_salary_mid_band_offset(self):
-        return self._salary_mid_band_offset
-
-    def get_salary_mid_band_offset_usd(self):
-        return self._salary_mid_band_offset_usd
-
-    def get_salary_band_offset(self):
-        return self._salary_band_offset
-
-    def get_salary_band_offset_usd(self):
-        return self._salary_band_offset_usd
-
-    def get_salary_band_mid_point(self):
-        return self._salary_band_mid_point
-
-    def get_salary_band_mid_point_usd(self):
-        return self._salary_band_mid_point_usd
-
-    def get_salary_band_lower_limit(self):
-        return self._salary_band_lower_limit
-
-    def get_salary_band_lower_limit_usd(self):
-        return self._salary_band_lower_limit_usd
-
-    def get_salary_band_upper_limit(self):
-        return self._salary_band_upper_limit
-
-    def get_salary_band_upper_limit_usd(self):
-        return self._salary_band_upper_limit_usd
