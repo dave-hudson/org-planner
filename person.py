@@ -10,7 +10,7 @@ from NumDirectReportsSunburstOrgWidget import num_direct_reports_colours
 from NineBoxInfoWidget import nine_box_colours
 from RatingSunburstOrgWidget import rating_colours
 from SalaryBandOffsetSunburstOrgWidget import salary_band_offset_colours
-from SalaryMidBandOffsetSunburstOrgWidget import salary_mid_band_offset_colours
+from SalaryMidBandOffsetSunburstOrgWidget import salary_band_mid_point_offset_colours
 from SalarySunburstOrgWidget import salary_colours
 from TeamSunburstOrgWidget import team_colours
 
@@ -49,9 +49,9 @@ class person(object):
         self._salary_band_upper_limit_usd = 0
         self._salary_band_mid_point = 0
         self._salary_band_mid_point_usd = 0
-        self._salary_mid_band_offset = 0
-        self._salary_mid_band_offset_usd = 0
-        self._salary_mid_band_offset_key = 0
+        self._salary_band_mid_point_offset = 0
+        self._salary_band_mid_point_offset_usd = 0
+        self._salary_band_mid_point_offset_key = 0
         self._salary_band_offset = 0
         self._salary_band_offset_usd = 0
         self._salary_band_offset_key = 0
@@ -131,18 +131,18 @@ class person(object):
             self._salary_band_mid_point_usd = band_mid_salary * fx_rate
 
             salary = self.get_salary()
-            salary_mid_band_offset = salary - band_mid_salary
-            self._salary_mid_band_offset = salary_mid_band_offset
-            salary_mid_band_offset_usd = salary_mid_band_offset * fx_rate
-            self._salary_mid_band_offset_usd = salary_mid_band_offset_usd
+            salary_band_mid_point_offset = salary - band_mid_salary
+            self._salary_band_mid_point_offset = salary_band_mid_point_offset
+            salary_band_mid_point_offset_usd = salary_band_mid_point_offset * fx_rate
+            self._salary_band_mid_point_offset_usd = salary_band_mid_point_offset_usd
 
-            salary_mid_band_offset_key = int(salary_mid_band_offset_usd + 5000) // 10000
-            if salary_mid_band_offset_key > 5:
-                salary_mid_band_offset_key = 5
-            elif salary_mid_band_offset_key < -5:
-                salary_mid_band_offset_key = -5
+            salary_band_mid_point_offset_key = int(salary_band_mid_point_offset_usd + 5000) // 10000
+            if salary_band_mid_point_offset_key > 5:
+                salary_band_mid_point_offset_key = 5
+            elif salary_band_mid_point_offset_key < -5:
+                salary_band_mid_point_offset_key = -5
 
-            self._salary_mid_band_offset_key = salary_mid_band_offset_key
+            self._salary_band_mid_point_offset_key = salary_band_mid_point_offset_key
 
             band_offset = 0
             band_offset_usd = 0
@@ -376,18 +376,18 @@ class person(object):
         self._get_salary_counts(people, counts)
         return counts
 
-    def get_salary_mid_band_offset_key(self):
-        return self._salary_mid_band_offset_key
+    def get_salary_band_mid_point_offset_key(self):
+        return self._salary_band_mid_point_offset_key
 
-    def _get_salary_mid_band_offset_counts(self, people, counts):
+    def _get_salary_band_mid_point_offset_counts(self, people, counts):
         for i in self._direct_reports:
-            people[i]._get_salary_mid_band_offset_counts(people, counts)
+            people[i]._get_salary_band_mid_point_offset_counts(people, counts)
 
-        counts[5 + self.get_salary_mid_band_offset_key()] += 1
+        counts[5 + self.get_salary_band_mid_point_offset_key()] += 1
 
-    def get_salary_mid_band_offset_counts(self, people):
-        counts = [0] * len(salary_mid_band_offset_colours)
-        self._get_salary_mid_band_offset_counts(people, counts)
+    def get_salary_band_mid_point_offset_counts(self, people):
+        counts = [0] * len(salary_band_mid_point_offset_colours)
+        self._get_salary_band_mid_point_offset_counts(people, counts)
         return counts
 
     def has_salary_band(self):
@@ -407,17 +407,17 @@ class person(object):
         self._get_salary_band_offset_counts(people, counts)
         return counts
 
-    def get_salary_mid_band_offset(self):
-        return self._salary_mid_band_offset
+    def get_salary_band_mid_point_offset(self):
+        return self._salary_band_mid_point_offset
 
-    def get_salary_mid_band_offset_str(self):
-        return self._str_local(self.get_salary_mid_band_offset())
+    def get_salary_band_mid_point_offset_str(self):
+        return self._str_local(self.get_salary_band_mid_point_offset())
 
-    def get_salary_mid_band_offset_usd(self):
-        return self._salary_mid_band_offset_usd
+    def get_salary_band_mid_point_offset_usd(self):
+        return self._salary_band_mid_point_offset_usd
 
-    def get_salary_mid_band_offset_usd_str(self):
-        return self._str_usd(self.get_salary_mid_band_offset_usd())
+    def get_salary_band_mid_point_offset_usd_str(self):
+        return self._str_usd(self.get_salary_band_mid_point_offset_usd())
 
     def get_salary_band_offset(self):
         return self._salary_band_offset

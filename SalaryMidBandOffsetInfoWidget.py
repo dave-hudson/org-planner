@@ -3,8 +3,8 @@ from InfoOrgKeyWidget import InfoOrgKeyWidget
 from SalaryMidBandOffsetColourKey1DWidget import SalaryMidBandOffsetColourKey1DWidget
 from SalaryMidBandOffsetSunburstOrgWidget import (
     SalaryMidBandOffsetSunburstOrgWidget,
-    salary_mid_band_offset_colours,
-    salary_mid_band_offset_labels
+    salary_band_mid_point_offset_colours,
+    salary_band_mid_point_offset_labels
 )
 from SunburstOrgKeyWidget import SunburstOrgKeyWidget
 
@@ -21,8 +21,8 @@ class SalaryMidBandOffsetInfoWidget(InfoOrgKeyWidget):
         self._info_salary = self._add_info_text("Salary")
         self._info_salary_band_mid_point = self._add_info_text("Salary Mid-band")
         self._info_salary_offset = self._add_info_text("Salary Mid-band Offset")
-        legend = SalaryMidBandOffsetColourKey1DWidget(salary_mid_band_offset_colours)
-        legend.set_labels(salary_mid_band_offset_labels)
+        legend = SalaryMidBandOffsetColourKey1DWidget(salary_band_mid_point_offset_colours)
+        legend.set_labels(salary_band_mid_point_offset_labels)
         self._org_widget = SunburstOrgKeyWidget(SalaryMidBandOffsetSunburstOrgWidget(), legend)
         self._layout.addWidget(self._org_widget)
         self._org_widget.person_clicked.connect(self._person_clicked)
@@ -51,8 +51,8 @@ class SalaryMidBandOffsetInfoWidget(InfoOrgKeyWidget):
                 salary_band_mid_point_str = f"{cur_sym}{salary_band_mid_point:,.0f}"
                 salary_band_mid_point_usd = p.get_salary_band_mid_point_usd()
                 salary_band_mid_point_str += f" (${salary_band_mid_point_usd:,.0f})"
-                salary_offset_str = p.get_salary_mid_band_offset_str()
-                salary_offset_usd_str = p.get_salary_mid_band_offset_usd_str()
+                salary_offset_str = p.get_salary_band_mid_point_offset_str()
+                salary_offset_usd_str = p.get_salary_band_mid_point_offset_usd_str()
                 salary_offset_str += f" ({salary_offset_usd_str})"
 
         self._info_salary.setText(salary)
