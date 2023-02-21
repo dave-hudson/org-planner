@@ -41,12 +41,12 @@ class SalaryMidBandOffsetInfoWidget(InfoOrgKeyWidget):
         else:
             p = self._people[uen]
             if p.has_salary_band():
-                location = p.get_location()
-                salary_val = p.get_salary()
-                salary_usd_val = p.get_salary_usd()
-                _, cur_sym = currencies[location]
-                salary = f"{cur_sym}{salary_val:,} (${salary_usd_val:,.0f})"
+                salary_str = p.get_salary_str()
+                salary_usd_str = p.get_salary_usd_str()
+                salary = f"{salary_str} ({salary_usd_str})"
 
+                location = p.get_location()
+                _, cur_sym = currencies[location]
                 salary_band_mid_point = p.get_salary_band_mid_point()
                 salary_band_mid_point_str = f"{cur_sym}{salary_band_mid_point:,.0f}"
                 salary_band_mid_point_usd = p.get_salary_band_mid_point_usd()

@@ -48,13 +48,12 @@ class SalaryBandOffsetSunburstOrgWidget(SunburstOrgWidget):
         tt = p.get_name()
 
         if p.has_salary_band():
-            location = p.get_location()
-            salary_val = p.get_salary()
-            _, cur_sym = currencies[location]
-            tt += f"\nSalary: {cur_sym}{salary_val:,}"
-            salary_usd_val = p.get_salary_usd()
-            tt += f" (${salary_usd_val:,.0f})"
+            salary_str = p.get_salary_str()
+            salary_usd_str = p.get_salary_usd_str()
+            tt += f"\nSalary: {salary_str} ({salary_usd_str})"
 
+            location = p.get_location()
+            _, cur_sym = currencies[location]
             salary_band_lower_limit = p.get_salary_band_lower_limit()
             salary_band_upper_limit = p.get_salary_band_upper_limit()
             salary_band = (
