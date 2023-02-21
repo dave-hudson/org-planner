@@ -31,14 +31,12 @@ class SalaryBandOffsetInfoWidget(InfoOrgKeyWidget):
         salary = "N/A"
         salary_band = "N/A"
         salary_band_usd = ""
-        salary_band_offset_str = "N/A"
-        salary_band_offset_usd_str = ""
+        salary_band_offset = "N/A"
         if self._hide_sensitive_data:
             salary = "Hidden"
             salary_band = "Hidden"
             salary_band_usd = ""
-            salary_band_offset_str = "Hidden"
-            salary_band_offset_usd_str = ""
+            salary_band_offset = "Hidden"
         else:
             p = self._people[uen]
             if p.has_salary_band():
@@ -60,17 +58,13 @@ class SalaryBandOffsetInfoWidget(InfoOrgKeyWidget):
                 salary_band_usd = (
                     f" (${salary_band_lower_limit_usd:,.0f} to ${salary_band_upper_limit_usd:,.0f})"
                 )
-                salary_band_offset = p.get_salary_band_offset()
-                salary_band_offset_str = (
-                    f"{cur_sym}{salary_band_offset:,.0f}"
-                    .replace(f"{cur_sym}-", f"-{cur_sym}")
-                )
-                salary_band_offset_usd = p.get_salary_band_offset_usd()
-                salary_band_offset_usd_str = f" (${salary_band_offset_usd:,.0f})"
+                salary_band_offset_str = p.get_salary_band_offset_str()
+                salary_band_offset_usd_str = p.get_salary_band_offset_usd_str()
+                salary_band_offset = f"{salary_band_offset_str} ({salary_band_offset_usd_str})"
 
         self._info_salary.setText(salary)
         self._info_salary_band.setText(f"{salary_band} {salary_band_usd}")
-        self._info_salary_band_offset.setText(f"{salary_band_offset_str} {salary_band_offset_usd_str}")
+        self._info_salary_band_offset.setText(salary_band_offset)
         self._org_widget.set_uen(uen, is_manager)
 
     def set_redacted(self, is_redacted):

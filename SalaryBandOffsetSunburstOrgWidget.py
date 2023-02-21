@@ -66,12 +66,8 @@ class SalaryBandOffsetSunburstOrgWidget(SunburstOrgWidget):
                 f"${salary_band_lower_limit_usd:,.0f} to ${salary_band_upper_limit_usd:,.0f}"
             )
             tt += f"\nSalary Band: {salary_band} ({salary_band_usd})"
-            salary_band_offset = p.get_salary_band_offset()
-            tt += (
-                f"\nSalary Band Offset: {cur_sym}{salary_band_offset:,.0f}"
-                .replace("{cur_sym}-", "-{cur_sym}")
-            )
-            salary_band_offset_usd = p.get_salary_band_offset_usd()
-            tt += f" (${salary_band_offset_usd:,.0f})".replace("$-", "-$")
+            salary_band_offset_str = p.get_salary_band_offset_str()
+            salary_band_offset_usd_str = p.get_salary_band_offset_usd_str()
+            tt += f"\nSalary Band Offset: {salary_band_offset_str} ({salary_band_offset_usd_str})"
 
         return tt
