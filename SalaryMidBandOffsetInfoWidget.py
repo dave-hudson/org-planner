@@ -58,7 +58,7 @@ class SalaryMidBandOffsetInfoWidget(InfoOrgKeyWidget):
                 salary_band_mid_point_str = f"{cur_sym}{salary_band_mid_point:,.0f}"
                 salary_band_mid_point_usd = p.get_salary_band_mid_point_usd()
                 salary_band_mid_point_usd_str = f" (${salary_band_mid_point_usd:,.0f})"
-                salary_offset = p.get_salary_offset()
+                salary_offset = p.get_salary_mid_band_offset()
                 salary_offset_str = (
                     f"{cur_sym}{salary_offset:,.0f}"
                     .replace(f"{cur_sym}-", f"-{cur_sym}")
