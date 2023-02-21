@@ -1,4 +1,4 @@
-from currencies import currencies, fx_rates
+from currencies import currencies
 from InfoOrgKeyWidget import InfoOrgKeyWidget
 from SalaryMidBandOffsetColourKey1DWidget import SalaryMidBandOffsetColourKey1DWidget
 from SalaryMidBandOffsetSunburstOrgWidget import (
@@ -43,7 +43,7 @@ class SalaryMidBandOffsetInfoWidget(InfoOrgKeyWidget):
             if p.has_salary_band():
                 location = p.get_location()
                 salary_val = p.get_salary()
-                salary_usd_val = salary_val * fx_rates[location]
+                salary_usd_val = p.get_salary_usd()
                 _, cur_sym = currencies[location]
                 salary = f"{cur_sym}{salary_val:,} (${salary_usd_val:,.0f})"
 

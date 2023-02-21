@@ -350,6 +350,10 @@ class person(object):
     def get_salary(self):
         return self._salaries[-1]["Salary"]
 
+    def get_salary_usd(self):
+        salary = self._salaries[-1]["Salary"]
+        return salary * fx_rates[self.get_location()]
+
     def _get_salary_counts(self, people, counts):
         for i in self._direct_reports:
             people[i]._get_salary_counts(people, counts)

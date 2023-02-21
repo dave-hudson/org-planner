@@ -1,4 +1,4 @@
-from currencies import currencies, fx_rates
+from currencies import currencies
 from InfoOrgKeyWidget import InfoOrgKeyWidget
 from SalaryColourKey1DWidget import SalaryColourKey1DWidget
 from SalarySunburstOrgWidget import SalarySunburstOrgWidget, salary_colours
@@ -35,7 +35,7 @@ class SalaryInfoWidget(InfoOrgKeyWidget):
                 salary_val = p.get_salary()
                 _, cur_sym = currencies[location]
                 salary = f"{cur_sym}{salary_val:,}"
-                salary_usd_val = salary_val * fx_rates[location]
+                salary_usd_val = p.get_salary_usd()
                 salary_usd = f" (${salary_usd_val:,.0f})"
 
         self._info_salary.setText(f"{salary} {salary_usd}")

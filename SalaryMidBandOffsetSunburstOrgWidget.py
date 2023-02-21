@@ -1,4 +1,4 @@
-from currencies import currencies, fx_rates
+from currencies import currencies
 from SunburstOrgWidget import SunburstOrgWidget
 
 salary_mid_band_offset_colours = {
@@ -51,7 +51,7 @@ class SalaryMidBandOffsetSunburstOrgWidget(SunburstOrgWidget):
             salary_val = p.get_salary()
             _, cur_sym = currencies[location]
             tt += f"\nSalary: {cur_sym}{salary_val:,}"
-            salary_usd_val = salary_val * fx_rates[location]
+            salary_usd_val = p.get_salary_usd()
             tt += f" (${salary_usd_val:,.0f})"
 
             salary_band_mid_point = p.get_salary_band_mid_point()
