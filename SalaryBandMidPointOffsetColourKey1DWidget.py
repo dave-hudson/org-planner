@@ -1,6 +1,6 @@
 from ColourKey1DWidget import ColourKey1DWidget
 
-class SalaryMidBandOffsetColourKey1DWidget(ColourKey1DWidget):
+class SalaryBandMidPointOffsetColourKey1DWidget(ColourKey1DWidget):
     """
     A widget class used to draw a colour key for salary mid-band offset charts.
     """

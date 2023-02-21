@@ -1,14 +1,14 @@
 from currencies import currencies
 from InfoOrgKeyWidget import InfoOrgKeyWidget
-from SalaryMidBandOffsetColourKey1DWidget import SalaryMidBandOffsetColourKey1DWidget
-from SalaryMidBandOffsetSunburstOrgWidget import (
-    SalaryMidBandOffsetSunburstOrgWidget,
+from SalaryBandMidPointOffsetColourKey1DWidget import SalaryBandMidPointOffsetColourKey1DWidget
+from SalaryBandMidPointOffsetSunburstOrgWidget import (
+    SalaryBandMidPointOffsetSunburstOrgWidget,
     salary_band_mid_point_offset_colours,
     salary_band_mid_point_offset_labels
 )
 from SunburstOrgKeyWidget import SunburstOrgKeyWidget
 
-class SalaryMidBandOffsetInfoWidget(InfoOrgKeyWidget):
+class SalaryBandMidPointOffsetInfoWidget(InfoOrgKeyWidget):
     """
     A widget class used to display information about offsets of salaries from
     salary band mid-points.
@@ -19,11 +19,11 @@ class SalaryMidBandOffsetInfoWidget(InfoOrgKeyWidget):
         self._hide_sensitive_data = True
 
         self._info_salary = self._add_info_text("Salary")
-        self._info_salary_band_mid_point = self._add_info_text("Salary Mid-band")
-        self._info_salary_offset = self._add_info_text("Salary Mid-band Offset")
-        legend = SalaryMidBandOffsetColourKey1DWidget(salary_band_mid_point_offset_colours)
+        self._info_salary_band_mid_point = self._add_info_text("Salary Band Mid Point")
+        self._info_salary_offset = self._add_info_text("Salary Band Mid Point Offset")
+        legend = SalaryBandMidPointOffsetColourKey1DWidget(salary_band_mid_point_offset_colours)
         legend.set_labels(salary_band_mid_point_offset_labels)
-        self._org_widget = SunburstOrgKeyWidget(SalaryMidBandOffsetSunburstOrgWidget(), legend)
+        self._org_widget = SunburstOrgKeyWidget(SalaryBandMidPointOffsetSunburstOrgWidget(), legend)
         self._layout.addWidget(self._org_widget)
         self._org_widget.person_clicked.connect(self._person_clicked)
 

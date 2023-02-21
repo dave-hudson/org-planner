@@ -29,7 +29,7 @@ salary_band_mid_point_offset_labels = [
     "$45,000 and above",
 ]
 
-class SalaryMidBandOffsetSunburstOrgWidget(SunburstOrgWidget):
+class SalaryBandMidPointOffsetSunburstOrgWidget(SunburstOrgWidget):
     """
     A widget class used to draw salary band offset sunburst org charts.
     """
@@ -57,9 +57,9 @@ class SalaryMidBandOffsetSunburstOrgWidget(SunburstOrgWidget):
             salary_band_mid_point_str = f"{cur_sym}{salary_band_mid_point:,.0f}"
             salary_band_mid_point_usd = p.get_salary_band_mid_point_usd()
             salary_band_mid_point_usd_str = f"${salary_band_mid_point_usd:,.0f}"
-            tt += f"\nSalary Mid-band: {salary_band_mid_point_str} ({salary_band_mid_point_usd_str})"
+            tt += f"\nSalary Band Mid Point: {salary_band_mid_point_str} ({salary_band_mid_point_usd_str})"
             salary_offset_str = p.get_salary_band_mid_point_offset_str()
             salary_offset_usd_str = p.get_salary_band_mid_point_offset_usd_str()
-            tt += f"\nSalary Mid-band Offset: {salary_offset_str} ({salary_offset_usd_str})"
+            tt += f"\nSalary Band Mid Point Offset: {salary_offset_str} ({salary_offset_usd_str})"
 
         return tt

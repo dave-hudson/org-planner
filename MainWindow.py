@@ -17,7 +17,7 @@ from RatingInfoWidget import RatingInfoWidget
 from RollupSalaryInfoWidget import RollupSalaryInfoWidget
 from SalaryInfoWidget import SalaryInfoWidget
 from SalaryBandOffsetInfoWidget import SalaryBandOffsetInfoWidget
-from SalaryMidBandOffsetInfoWidget import SalaryMidBandOffsetInfoWidget
+from SalaryBandMidPointOffsetInfoWidget import SalaryBandMidPointOffsetInfoWidget
 from ServiceDurationInfoWidget import ServiceDurationInfoWidget
 from TeamInfoWidget import TeamInfoWidget
 from EmploymentInfoWidget import EmploymentInfoWidget
@@ -397,7 +397,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._side_layout.addWidget(HLine())
 
-        self._salary_band_mid_point_offset_info = SalaryMidBandOffsetInfoWidget()
+        self._salary_band_mid_point_offset_info = SalaryBandMidPointOffsetInfoWidget()
         self._side_layout.addWidget(self._salary_band_mid_point_offset_info)
         self._salary_band_mid_point_offset_info.person_clicked.connect(self._person_clicked)
 
