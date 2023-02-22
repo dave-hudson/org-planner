@@ -18,8 +18,9 @@ class TeamSunburstOrgWidget(SunburstOrgWidget):
 
     def _get_tool_tip(self, uen):
         p = self._people[uen]
-        tt = p.get_name()
-        team = p.get_team()
-        tt += f"\nTeam: {team}"
+        tt = (
+            f"{p.get_name()}"
+            f"\nTeam: {p.get_team()}"
+        )
 
         return tt

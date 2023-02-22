@@ -18,8 +18,10 @@ class EmploymentSunburstOrgWidget(SunburstOrgWidget):
 
     def _get_tool_tip(self, uen):
         p = self._people[uen]
-        tt = p.get_name()
-        employment_type = p.get_employment()
-        tt += f"\nEmployment: {employment_type}"
+        tt = (
+            f"\n{p.get_name()}"
+            f"\nEmployment: {p.get_employment_type()}"
+            f"\nFTE: {p.get_fte():.1f}"
+        )
 
         return tt

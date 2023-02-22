@@ -45,25 +45,15 @@ class SalaryBandOffsetSunburstOrgWidget(SunburstOrgWidget):
     def _get_tool_tip(self, uen):
         p = self._people[uen]
         tt = p.get_name()
-
         if p.has_salary_band():
-            salary_str = p.get_salary_str()
-            salary_usd_str = p.get_salary_usd_str()
-            salary_band_lower_limit_str = p.get_salary_band_lower_limit_str()
-            salary_band_upper_limit_str = p.get_salary_band_upper_limit_str()
-            salary_band_str = f"{salary_band_lower_limit_str} to {salary_band_upper_limit_str}"
-            salary_band_lower_limit_usd_str = p.get_salary_band_lower_limit_usd_str()
-            salary_band_upper_limit_usd_str = p.get_salary_band_upper_limit_usd_str()
-            salary_band_usd_str = (
-                f"{salary_band_lower_limit_usd_str} to {salary_band_upper_limit_usd_str}"
-            )
-            salary_band_offset_str = p.get_salary_band_offset_str()
-            salary_band_offset_usd_str = p.get_salary_band_offset_usd_str()
-
             tt += (
-                f"\nSalary: {salary_str} ({salary_usd_str})"
-                f"\nSalary Band: {salary_band_str} ({salary_band_usd_str})"
-                f"\nSalary Band Offset: {salary_band_offset_str} ({salary_band_offset_usd_str})"
+                f"\nSalary: {p.get_salary_str()} ({p.get_salary_usd_str()})"
+                f"\nSalary Band: {p.get_salary_band_lower_limit_str()} to "
+                f"{p.get_salary_band_upper_limit_str()} "
+                f"({p.get_salary_band_lower_limit_usd_str()} to "
+                f"{p.get_salary_band_upper_limit_usd_str()})"
+                f"\nSalary Band Offset: {p.get_salary_band_offset_str()} "
+                f"({p.get_salary_band_offset_usd_str()})"
             )
 
         return tt

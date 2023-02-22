@@ -40,15 +40,15 @@ class SalaryBandMidPointOffsetInfoWidget(InfoOrgKeyWidget):
         else:
             p = self._people[uen]
             if p.has_salary_band():
-                salary_str = p.get_salary_str()
-                salary_usd_str = p.get_salary_usd_str()
-                salary = f"{salary_str} ({salary_usd_str})"
-                salary_band_mid_point_str = p.get_salary_band_mid_point_str()
-                salary_band_mid_point_usd_str = p.get_salary_band_mid_point_usd_str()
-                salary_band_mid_point = f"{salary_band_mid_point_str} ({salary_band_mid_point_usd_str})"
-                salary_band_mid_point_offset_str = p.get_salary_band_mid_point_offset_str()
-                salary_band_mid_point_offset_usd_str = p.get_salary_band_mid_point_offset_usd_str()
-                salary_band_mid_point_offset = f"{salary_band_mid_point_offset_str} ({salary_band_mid_point_offset_usd_str})"
+                salary = f"{p.get_salary_str()} ({p.get_salary_usd_str()})"
+                salary_band_mid_point = (
+                    f"{p.get_salary_band_mid_point_str()} "
+                    f"({p.get_salary_band_mid_point_usd_str()})"
+                )
+                salary_band_mid_point_offset = (
+                    f"{p.get_salary_band_mid_point_offset_str()} "
+                    f"({p.get_salary_band_mid_point_offset_usd_str()})"
+                )
 
         self._info_salary.setText(salary)
         self._info_salary_band_mid_point.setText(salary_band_mid_point)

@@ -44,9 +44,7 @@ class GeneralInfoWidget(InfoOrgKeyWidget):
         supervisor_uen = "N/A"
         if p.has_supervisor():
             supervisor = p.get_supervisor_uen()
-            supervisor_uen = str("{:d} ({:s})").format(
-                supervisor, self._people[supervisor].get_name()
-            )
+            supervisor_uen = f"{supervisor} ({self._people[supervisor].get_name()})"
 
         self._info_supervisor_uen.setText(supervisor_uen)
 

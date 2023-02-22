@@ -42,7 +42,9 @@ class NineBoxSunburstOrgWidget(SunburstOrgWidget):
         if p.has_nine_box():
             nine_box_potential = p.get_nine_box_potential()
             nine_box_performance = p.get_nine_box_performance()
-            tt += f"\nPotential: {nine_box_potential}"
-            tt += f"\nPerformance: {nine_box_performance}"
+            tt += (
+                f"\nPotential: {nine_box_potential}"
+                f"\nPerformance: {nine_box_performance}"
+            )
 
         return tt

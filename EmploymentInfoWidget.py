@@ -11,7 +11,7 @@ class EmploymentInfoWidget(InfoOrgKeyWidget):
         super().__init__()
 
         self._info_type = self._add_info_text("Employment")
-        self._info_percentage_time = self._add_info_text("FTE (%)")
+        self._info_fte = self._add_info_text("FTE")
         legend = EmploymentColourKey1DWidget(employment_colours)
         self._org_widget = SunburstOrgKeyWidget(EmploymentSunburstOrgWidget(), legend)
         self._layout.addWidget(self._org_widget)
@@ -25,8 +25,7 @@ class EmploymentInfoWidget(InfoOrgKeyWidget):
         self._info_type.setText(p.get_employment())
         self._org_widget.set_uen(uen, is_manager)
 
-        percentage_time = int(100 * p.get_fte())
-        self._info_percentage_time.setText(f"{percentage_time}%")
+        self._info_fte.setText(f"{p.get_fte():.1f}")
 
     def set_redacted(self, is_redacted):
         pass

@@ -27,7 +27,6 @@ class RatingSunburstOrgWidget(SunburstOrgWidget):
         p = self._people[uen]
         tt = p.get_name()
         if p.has_rating():
-            rating = str(p.get_rating())
-            tt += f"\nRating: {rating}"
+            tt += f"\nRating: {str(p.get_rating())}"
 
         return tt

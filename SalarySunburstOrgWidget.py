@@ -37,8 +37,6 @@ class SalarySunburstOrgWidget(SunburstOrgWidget):
         p = self._people[uen]
         tt = p.get_name()
         if p.has_salary():
-            salary_str = p.get_salary_str()
-            salary_usd_str = p.get_salary_usd_str()
-            tt += f"\nSalary: {salary_str} ({salary_usd_str})"
+            tt += f"\nSalary: {p.get_salary_str()} ({p.get_salary_usd_str()})"
 
         return tt

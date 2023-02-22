@@ -23,8 +23,9 @@ class GenderSunburstOrgWidget(SunburstOrgWidget):
 
     def _get_tool_tip(self, uen):
         p = self._people[uen]
-        tt = p.get_name()
-        gender = p.get_gender()
-        tt += f"\nGender: {gender}"
+        tt = (
+            f"{p.get_name()}"
+            f"\nGender: {p.get_gender()}"
+        )
 
         return tt

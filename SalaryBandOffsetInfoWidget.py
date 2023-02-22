@@ -37,18 +37,16 @@ class SalaryBandOffsetInfoWidget(InfoOrgKeyWidget):
         else:
             p = self._people[uen]
             if p.has_salary_band():
-                salary_str = p.get_salary_str()
-                salary_usd_str = p.get_salary_usd_str()
-                salary = f"{salary_str} ({salary_usd_str})"
-                salary_band_lower_limit_str = p.get_salary_band_lower_limit_str()
-                salary_band_upper_limit_str = p.get_salary_band_upper_limit_str()
-                salary_band = f"{salary_band_lower_limit_str} to {salary_band_upper_limit_str}"
-                salary_band_lower_limit_usd_str = p.get_salary_band_lower_limit_usd_str()
-                salary_band_upper_limit_usd_str = p.get_salary_band_upper_limit_usd_str()
-                salary_band += f" ({salary_band_lower_limit_usd_str} to {salary_band_upper_limit_usd_str})"
-                salary_band_offset_str = p.get_salary_band_offset_str()
-                salary_band_offset_usd_str = p.get_salary_band_offset_usd_str()
-                salary_band_offset = f"{salary_band_offset_str} ({salary_band_offset_usd_str})"
+                salary = f"{p.get_salary_str()} ({p.get_salary_usd_str()})"
+                salary_band = (
+                    f"{p.get_salary_band_lower_limit_str()} to "
+                    f"{p.get_salary_band_upper_limit_str()}"
+                    f" ({p.get_salary_band_lower_limit_usd_str()} to "
+                    f"{p.get_salary_band_upper_limit_usd_str()})"
+                )
+                salary_band_offset = (
+                    f"{p.get_salary_band_offset_str()} ({p.get_salary_band_offset_usd_str()})"
+                )
 
         self._info_salary.setText(salary)
         self._info_salary_band.setText(salary_band)
