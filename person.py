@@ -138,22 +138,27 @@ class person(object):
         # Sort the direct reports to put the one with the largest fraction of the
         # org first.
         drs = self._direct_reports
-        for i in range(len(drs)):
-            for j in range(len(drs) - i - 1):
-                if (people[drs[j]].get_supervisor_fraction(people)
-                        < people[drs[j + 1]].get_supervisor_fraction(people)):
-                    t = drs[j + 1]
-                    drs[j + 1] = drs[j]
-                    drs[j] = t
+        len_drs = len(drs)
+        for i in range(len_drs):
+            drs_j_sup_frac = people[drs[0]].get_supervisor_fraction(people)
+            for j in range(len_drs - i - 1):
+                drs_j_next_sup_frac = people[drs[j + 1]].get_supervisor_fraction(people)
+                if drs_j_sup_frac >= drs_j_next_sup_frac:
+                    drs_j_sup_frac = drs_j_next_sup_frac
+                    continue
+
+                t = drs[j + 1]
+                drs[j + 1] = drs[j]
+                drs[j] = t
 
         # Then sort any direct reports from the same team to cluster them.  While
         # this slightly undoes the sort it's a more natural view over the org,
         # placing people who do the same sorts of things in one grouping.
-        for i in range(0, len(drs) - 1):
+        for i in range(0, len_drs - 1):
             if people[drs[i]].get_team() == people[drs[i + 1]].get_team():
                 continue
 
-            for j in range(i + 1, len(drs)):
+            for j in range(i + 1, len_drs):
                 if people[drs[i]].get_team() == people[drs[j]].get_team():
                     drs.insert(i + 1, drs.pop(j))
                     break
