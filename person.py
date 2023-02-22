@@ -40,7 +40,6 @@ class person(object):
         self._direct_reports = []
         self._org_depth = -1
         self._supervisor_fraction = 0.0
-        self._fte = 1.0
 
     def load(self, init, locations):
         """
@@ -69,9 +68,6 @@ class person(object):
             worked_time = cur_time - time.mktime(t)
             self._service_duration = cur_time - time.mktime(t)
             self._service_duration_fraction = worked_time / org_elapsed_time
-
-            if "Percentage Time" in self._employments[-1].keys():
-                self._fte = self._employments[-1]["Percentage Time"] / 100
 
         if "Supervisors" in init.keys():
             self._supervisors = init["Supervisors"]
@@ -160,7 +156,10 @@ class person(object):
         return counts
 
     def get_fte(self):
-        return self._fte
+        if "Percentage Time" in self._employments[-1].keys():
+            return self._employments[-1]["Percentage Time"] / 100
+
+        return 1.0
 
     def get_team(self):
         return self._teams[-1]["Team"]
@@ -318,7 +317,7 @@ class person(object):
     def get_salary_band_lower_limit(self):
         location = self.get_location()
         corp_grade = self.get_grade()[:1]
-        return self._locations_ref_data[location][corp_grade]["Low"] * self._fte
+        return self._locations_ref_data[location][corp_grade]["Low"] * self.get_fte()
 
     def get_salary_band_lower_limit_str(self):
         return self._str_local(self.get_salary_band_lower_limit())
@@ -348,7 +347,7 @@ class person(object):
     def get_salary_band_upper_limit(self):
         location = self.get_location()
         corp_grade = self.get_grade()[:1]
-        return self._locations_ref_data[location][corp_grade]["High"] * self._fte
+        return self._locations_ref_data[location][corp_grade]["High"] * self.get_fte()
 
     def get_salary_band_upper_limit_str(self):
         return self._str_local(self.get_salary_band_upper_limit())
