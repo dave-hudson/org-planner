@@ -19,6 +19,7 @@ class person(object):
     A class used to track information about a person.
     """
     def __init__(self) -> None:
+        self._locations_ref_data = None
         self._uen = 0
         self._name = ""
         self._gender = "Unknown"
@@ -40,26 +41,12 @@ class person(object):
         self._org_depth = -1
         self._supervisor_fraction = 0.0
         self._fte = 1.0
-        self._total_reports = 0
-        self._rollup_salaries = 0
-        self._missing_salaries = 0
-        self._salary_band_lower_limit = 0
-        self._salary_band_lower_limit_usd = 0
-        self._salary_band_upper_limit = 0
-        self._salary_band_upper_limit_usd = 0
-        self._salary_band_mid_point = 0
-        self._salary_band_mid_point_usd = 0
-        self._salary_band_mid_point_offset = 0
-        self._salary_band_mid_point_offset_usd = 0
-        self._salary_band_mid_point_offset_key = 0
-        self._salary_band_offset = 0
-        self._salary_band_offset_usd = 0
-        self._salary_band_offset_key = 0
 
     def load(self, init, locations):
         """
         Load data into a person from a JSON-derived dictionary.
         """
+        self._locations_ref_data = locations
         self._uen = init["UEN"]
         self._name = init["Name"]
 
@@ -112,57 +99,6 @@ class person(object):
 
         if "9 Box" in init.keys():
             self._nine_boxes = init["9 Box"]
-
-        if (("Grades" in init.keys()) and
-                ("Salaries" in init.keys()) and
-                ("Locations" in init.keys())):
-            location = self.get_location()
-            fx_rate = fx_rates[location]
-
-            corp_grade = self.get_grade()[:1]
-            band_lower_limit = locations[location][corp_grade]["Low"] * self._fte
-            self._salary_band_lower_limit = band_lower_limit
-            self._salary_band_lower_limit_usd = band_lower_limit * fx_rate
-            band_upper_limit = locations[location][corp_grade]["High"] * self._fte
-            self._salary_band_upper_limit = band_upper_limit
-            self._salary_band_upper_limit_usd = band_upper_limit * fx_rate
-            band_mid_salary = (band_upper_limit + band_lower_limit) / 2
-            self._salary_band_mid_point = band_mid_salary
-            self._salary_band_mid_point_usd = band_mid_salary * fx_rate
-
-            salary = self.get_salary()
-            salary_band_mid_point_offset = salary - band_mid_salary
-            self._salary_band_mid_point_offset = salary_band_mid_point_offset
-            salary_band_mid_point_offset_usd = salary_band_mid_point_offset * fx_rate
-            self._salary_band_mid_point_offset_usd = salary_band_mid_point_offset_usd
-
-            salary_band_mid_point_offset_key = int(salary_band_mid_point_offset_usd + 5000) // 10000
-            if salary_band_mid_point_offset_key > 5:
-                salary_band_mid_point_offset_key = 5
-            elif salary_band_mid_point_offset_key < -5:
-                salary_band_mid_point_offset_key = -5
-
-            self._salary_band_mid_point_offset_key = salary_band_mid_point_offset_key
-
-            band_offset = 0
-            band_offset_usd = 0
-            band_offset_key = 0
-            if salary < band_lower_limit:
-                band_offset = salary - band_lower_limit
-                band_offset_usd = int(band_offset * fx_rate)
-                band_offset_key = (band_offset_usd - 9999) // 10000
-                if band_offset_key < -5:
-                    band_offset_key = -5
-            elif salary > band_upper_limit:
-                band_offset = salary - band_upper_limit
-                band_offset_usd = int(band_offset * fx_rate)
-                band_offset_key = (band_offset_usd + 9999) // 10000
-                if band_offset_key > 5:
-                    band_offset_key = 5
-
-            self._salary_band_offset = band_offset
-            self._salary_band_offset_usd = band_offset_usd
-            self._salary_band_offset_key = band_offset_key
 
     def get_name(self):
         return self._name
@@ -380,73 +316,110 @@ class person(object):
         return self.has_salary() and self.has_grade() and self.has_location()
 
     def get_salary_band_lower_limit(self):
-        return self._salary_band_lower_limit
+        location = self.get_location()
+        corp_grade = self.get_grade()[:1]
+        return self._locations_ref_data[location][corp_grade]["Low"] * self._fte
 
     def get_salary_band_lower_limit_str(self):
         return self._str_local(self.get_salary_band_lower_limit())
 
     def get_salary_band_lower_limit_usd(self):
-        return self._salary_band_lower_limit_usd
+        location = self.get_location()
+        fx_rate = fx_rates[location]
+        return self.get_salary_band_lower_limit() * fx_rate
 
     def get_salary_band_lower_limit_usd_str(self):
         return self._str_usd(self.get_salary_band_lower_limit_usd())
 
     def get_salary_band_mid_point(self):
-        return self._salary_band_mid_point
+        return (self.get_salary_band_upper_limit() + self.get_salary_band_lower_limit()) / 2
 
     def get_salary_band_mid_point_str(self):
         return self._str_local(self.get_salary_band_mid_point())
 
     def get_salary_band_mid_point_usd(self):
-        return self._salary_band_mid_point_usd
+        location = self.get_location()
+        fx_rate = fx_rates[location]
+        return self.get_salary_band_mid_point() * fx_rate
 
     def get_salary_band_mid_point_usd_str(self):
         return self._str_usd(self.get_salary_band_mid_point_usd())
 
     def get_salary_band_upper_limit(self):
-        return self._salary_band_upper_limit
+        location = self.get_location()
+        corp_grade = self.get_grade()[:1]
+        return self._locations_ref_data[location][corp_grade]["High"] * self._fte
 
     def get_salary_band_upper_limit_str(self):
         return self._str_local(self.get_salary_band_upper_limit())
 
     def get_salary_band_upper_limit_usd(self):
-        return self._salary_band_upper_limit_usd
+        location = self.get_location()
+        fx_rate = fx_rates[location]
+        return self.get_salary_band_upper_limit() * fx_rate
 
     def get_salary_band_upper_limit_usd_str(self):
         return self._str_usd(self.get_salary_band_upper_limit_usd())
 
     def get_salary_band_offset(self):
-        return self._salary_band_offset
+        salary = self.get_salary()
+        band_lower_limit = self.get_salary_band_lower_limit()
+        if salary < band_lower_limit:
+            return salary - band_lower_limit
+
+        band_upper_limit = self.get_salary_band_upper_limit()
+        if salary > band_upper_limit:
+            return salary - band_upper_limit
+
+        return 0
 
     def get_salary_band_offset_str(self):
         return self._str_local(self.get_salary_band_offset())
 
     def get_salary_band_offset_usd(self):
-        return self._salary_band_offset_usd
+        location = self.get_location()
+        fx_rate = fx_rates[location]
+        return self.get_salary_band_offset() * fx_rate
 
     def get_salary_band_offset_usd_str(self):
         return self._str_usd(self.get_salary_band_offset_usd())
 
     def get_salary_band_mid_point_offset(self):
-        return self._salary_band_mid_point_offset
+        return self.get_salary() - self.get_salary_band_mid_point()
 
     def get_salary_band_mid_point_offset_str(self):
         return self._str_local(self.get_salary_band_mid_point_offset())
 
     def get_salary_band_mid_point_offset_usd(self):
-        return self._salary_band_mid_point_offset_usd
+        location = self.get_location()
+        fx_rate = fx_rates[location]
+        return self.get_salary_band_mid_point_offset() * fx_rate
 
     def get_salary_band_mid_point_offset_usd_str(self):
         return self._str_usd(self.get_salary_band_mid_point_offset_usd())
 
     def get_salary_band_offset_key(self):
-        return self._salary_band_offset_key
+        offset = int(self.get_salary_band_offset_usd())
+        if offset == 0:
+            return 0
+
+        if offset < 0:
+            key = (offset - 9999) // 10000
+            if key < -5:
+                key = -5
+        else:
+            key = (offset + 9999) // 10000
+            if key > 5:
+                key = 5
+
+        return key
 
     def _get_salary_band_offset_counts(self, people, counts):
         for i in self._direct_reports:
             people[i]._get_salary_band_offset_counts(people, counts)
 
-        counts[5 + self.get_salary_band_offset_key()] += 1
+        if self.has_salary_band():
+            counts[5 + self.get_salary_band_offset_key()] += 1
 
     def get_salary_band_offset_counts(self, people):
         counts = [0] * len(salary_band_offset_colours)
@@ -454,13 +427,21 @@ class person(object):
         return counts
 
     def get_salary_band_mid_point_offset_key(self):
-        return self._salary_band_mid_point_offset_key
+        key = int(self.get_salary_band_mid_point_offset_usd() + 5000) // 10000
+        if key > 5:
+            return 5
+
+        if key < -5:
+            return -5
+
+        return key
 
     def _get_salary_band_mid_point_offset_counts(self, people, counts):
         for i in self._direct_reports:
             people[i]._get_salary_band_mid_point_offset_counts(people, counts)
 
-        counts[5 + self.get_salary_band_mid_point_offset_key()] += 1
+        if self.has_salary_band():
+            counts[5 + self.get_salary_band_mid_point_offset_key()] += 1
 
     def get_salary_band_mid_point_offset_counts(self, people):
         counts = [0] * len(salary_band_mid_point_offset_colours)
