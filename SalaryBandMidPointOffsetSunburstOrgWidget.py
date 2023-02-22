@@ -53,8 +53,12 @@ class SalaryBandMidPointOffsetSunburstOrgWidget(SunburstOrgWidget):
             salary_offset_str = p.get_salary_band_mid_point_offset_str()
             salary_offset_usd_str = p.get_salary_band_mid_point_offset_usd_str()
 
-            tt += f"\nSalary: {salary_str} ({salary_usd_str})"
-            tt += f"\nSalary Band Mid Point: {salary_band_mid_point_str} ({salary_band_mid_point_usd_str})"
-            tt += f"\nSalary Band Mid Point Offset: {salary_offset_str} ({salary_offset_usd_str})"
+            tt += (
+                f"\nSalary: {salary_str} ({salary_usd_str})"
+                f"\nSalary Band Mid Point: {salary_band_mid_point_str} "
+                f"({salary_band_mid_point_usd_str})"
+                f"\nSalary Band Mid Point Offset: {salary_offset_str} "
+                f"({salary_offset_usd_str})"
+            )
 
         return tt
