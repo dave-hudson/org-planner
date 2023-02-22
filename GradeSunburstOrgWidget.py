@@ -35,7 +35,6 @@ class GradeSunburstOrgWidget(SunburstOrgWidget):
         p = self._people[uen]
         tt = p.get_name()
         if p.has_grade():
-            grade = p. get_grade()
-            tt += f"\nGrade: {grade}"
+            tt += f"\nGrade: {p.get_grade()}"
 
         return tt

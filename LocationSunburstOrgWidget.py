@@ -31,7 +31,6 @@ class LocationSunburstOrgWidget(SunburstOrgWidget):
         p = self._people[uen]
         tt = p.get_name()
         if p.has_location():
-            location = p.get_location()
-            tt += f"\nLocation: {location}"
+            tt += f"\nLocation: {p.get_location()}"
 
         return tt
