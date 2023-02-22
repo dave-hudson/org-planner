@@ -36,7 +36,6 @@ class person(object):
         self._ratings = []
         self._nine_boxes = []
         self._direct_reports = []
-        self._supervisor_fraction = 0.0
 
     def load(self, init, locations):
         """
