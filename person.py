@@ -128,7 +128,9 @@ class person(object):
     def get_service_duration_fraction(self):
         start_date = self._employments[-1]["Start Date"]
         t = time.strptime(start_date, "%Y-%m-%d")
-        ot = time.strptime("2014-10-31", "%Y-%m-%d")
+
+        # The company started on 2014-10-31.
+        ot = (2014, 10, 31, 0, 0, 0, 0, 0, 0)
         cur_time = time.time()
         org_elapsed_time = cur_time - time.mktime(ot)
         worked_time = cur_time - time.mktime(t)
