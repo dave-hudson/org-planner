@@ -174,15 +174,14 @@ class person(object):
     def get_num_direct_reports(self):
         return len(self._direct_reports)
 
-    def _get_num_direct_reports_counts(self, people, counts):
-        for i in self._direct_reports:
-            people[i]._get_num_direct_reports_counts(people, counts)
-
-        counts[list(num_direct_reports_colours).index(str(self.get_num_direct_reports()))] += 1
-
     def get_num_direct_reports_counts(self, people):
         counts = [0] * len(num_direct_reports_colours)
-        self._get_num_direct_reports_counts(people, counts)
+
+        for i in self._direct_reports:
+            res_counts = people[i].get_num_direct_reports_counts(people)
+            counts = [x + y for x, y in zip(counts, res_counts)]
+
+        counts[list(num_direct_reports_colours).index(str(self.get_num_direct_reports()))] += 1
         return counts
 
     def get_fte(self):
@@ -194,15 +193,14 @@ class person(object):
     def get_team(self):
         return self._teams[-1]["Team"]
 
-    def _get_team_counts(self, people, counts):
-        for i in self._direct_reports:
-            people[i]._get_team_counts(people, counts)
-
-        counts[list(team_colours).index(str(self.get_team()))] += 1
-
     def get_team_counts(self, people):
         counts = [0] * len(team_colours)
-        self._get_team_counts(people, counts)
+
+        for i in self._direct_reports:
+            res_counts = people[i].get_team_counts(people)
+            counts = [x + y for x, y in zip(counts, res_counts)]
+
+        counts[list(team_colours).index(str(self.get_team()))] += 1
         return counts
 
     def get_employment(self):
@@ -211,15 +209,14 @@ class person(object):
     def get_start_date(self):
         return self._employments[-1]["Start Date"]
 
-    def _get_employment_counts(self, people, counts):
+    def get_employment_counts(self, people):
+        counts = [0] * len(employment_colours)
+
         for i in self._direct_reports:
-            people[i]._get_employment_counts(people, counts)
+            res_counts = people[i].get_employment_counts(people)
+            counts = [x + y for x, y in zip(counts, res_counts)]
 
         counts[list(employment_colours).index(str(self.get_employment()))] += 1
-
-    def get_employment_counts(self, people):
-        counts = [0] * len(team_colours)
-        self._get_employment_counts(people, counts)
         return counts
 
     def has_location(self):
@@ -228,16 +225,16 @@ class person(object):
     def get_location(self):
         return self._locations[-1]["Location"]
 
-    def _get_location_counts(self, people, counts):
+    def get_location_counts(self, people):
+        counts = [0] * len(location_colours)
+
         for i in self._direct_reports:
-            people[i]._get_location_counts(people, counts)
+            res_counts = people[i].get_location_counts(people)
+            counts = [x + y for x, y in zip(counts, res_counts)]
 
         if self.has_location():
             counts[list(location_colours).index(str(self.get_location()))] += 1
 
-    def get_location_counts(self, people):
-        counts = [0] * len(location_colours)
-        self._get_location_counts(people, counts)
         return counts
 
     def has_grade(self):
@@ -246,30 +243,29 @@ class person(object):
     def get_grade(self):
         return self._grades[-1]["Grade"]
 
-    def _get_grade_counts(self, people, counts):
+    def get_grade_counts(self, people):
+        counts = [0] * len(grade_colours)
+
         for i in self._direct_reports:
-            people[i]._get_grade_counts(people, counts)
+            res_counts = people[i].get_grade_counts(people)
+            counts = [x + y for x, y in zip(counts, res_counts)]
 
         if self.has_grade():
             counts[list(grade_colours).index(str(self.get_grade()))] += 1
 
-    def get_grade_counts(self, people):
-        counts = [0] * len(grade_colours)
-        self._get_grade_counts(people, counts)
         return counts
 
     def get_gender(self):
         return self._gender
 
-    def _get_gender_counts(self, people, counts):
-        for i in self._direct_reports:
-            people[i]._get_gender_counts(people, counts)
-
-        counts[list(gender_colours).index(str(self.get_gender()))] += 1
-
     def get_gender_counts(self, people):
         counts = [0] * len(gender_colours)
-        self._get_gender_counts(people, counts)
+
+        for i in self._direct_reports:
+            res_counts = people[i].get_gender_counts(people)
+            counts = [x + y for x, y in zip(counts, res_counts)]
+
+        counts[list(gender_colours).index(str(self.get_gender()))] += 1
         return counts
 
     def has_nine_box(self):
@@ -281,9 +277,15 @@ class person(object):
     def get_nine_box_performance(self):
         return self._nine_boxes[-1]["Performance"]
 
-    def _get_nine_box_counts(self, people, counts):
+    def get_nine_box_counts(self, people):
+        counts = [[] for i in range(3)]
+        for i in range(3):
+            counts[i] = [0] * 3
+
         for i in self._direct_reports:
-            people[i]._get_nine_box_counts(people, counts)
+            res_counts = people[i].get_nine_box_counts(people)
+            for j in range(3):
+                counts[j] = [x + y for x, y in zip(counts[j], res_counts[j])]
 
         if self.has_nine_box():
             nine_box_potential = self.get_nine_box_potential()
@@ -293,12 +295,6 @@ class person(object):
             )
             counts[nine_box_potential_index][nine_box_performance_index] += 1
 
-    def get_nine_box_counts(self, people):
-        counts = [[] for i in range(3)]
-        for i in range(3):
-            counts[i] = [0] * 3
-
-        self._get_nine_box_counts(people, counts)
         return counts
 
     def _str_usd(self, value):
@@ -325,9 +321,12 @@ class person(object):
     def get_salary_usd_str(self):
         return self._str_usd(self.get_salary_usd())
 
-    def _get_salary_counts(self, people, counts):
+    def get_salary_counts(self, people):
+        counts = [0] * len(salary_colours)
+
         for i in self._direct_reports:
-            people[i]._get_salary_counts(people, counts)
+            res_counts = people[i].get_salary_counts(people)
+            counts = [x + y for x, y in zip(counts, res_counts)]
 
         if self.has_salary() and self.has_location():
             salary = self.get_salary()
@@ -336,9 +335,6 @@ class person(object):
                 log_salary_usd = int((math.log10(salary_usd) - 4) / 0.25)
                 counts[log_salary_usd] += 1
 
-    def get_salary_counts(self, people):
-        counts = [0] * len(salary_colours)
-        self._get_salary_counts(people, counts)
         return counts
 
     def has_salary_band(self):
@@ -443,16 +439,16 @@ class person(object):
 
         return key
 
-    def _get_salary_band_offset_counts(self, people, counts):
+    def get_salary_band_offset_counts(self, people):
+        counts = [0] * len(salary_band_offset_colours)
+
         for i in self._direct_reports:
-            people[i]._get_salary_band_offset_counts(people, counts)
+            res_counts = people[i].get_salary_band_offset_counts(people)
+            counts = [x + y for x, y in zip(counts, res_counts)]
 
         if self.has_salary_band():
             counts[5 + self.get_salary_band_offset_key()] += 1
 
-    def get_salary_band_offset_counts(self, people):
-        counts = [0] * len(salary_band_offset_colours)
-        self._get_salary_band_offset_counts(people, counts)
         return counts
 
     def get_salary_band_mid_point_offset_key(self):
@@ -465,16 +461,16 @@ class person(object):
 
         return key
 
-    def _get_salary_band_mid_point_offset_counts(self, people, counts):
+    def get_salary_band_mid_point_offset_counts(self, people):
+        counts = [0] * len(salary_band_mid_point_offset_colours)
+
         for i in self._direct_reports:
-            people[i]._get_salary_band_mid_point_offset_counts(people, counts)
+            res_counts = people[i].get_salary_band_mid_point_offset_counts(people)
+            counts = [x + y for x, y in zip(counts, res_counts)]
 
         if self.has_salary_band():
             counts[5 + self.get_salary_band_mid_point_offset_key()] += 1
 
-    def get_salary_band_mid_point_offset_counts(self, people):
-        counts = [0] * len(salary_band_mid_point_offset_colours)
-        self._get_salary_band_mid_point_offset_counts(people, counts)
         return counts
 
     def has_rating(self):
@@ -483,33 +479,30 @@ class person(object):
     def get_rating(self):
         return self._ratings[-1]["Rating"]
 
-    def _get_rating_counts(self, people, counts):
+    def get_rating_counts(self, people):
+        counts = [0] * len(rating_colours)
+
         for i in self._direct_reports:
-            people[i]._get_rating_counts(people, counts)
+            res_counts = people[i].get_rating_counts(people)
+            counts = [x + y for x, y in zip(counts, res_counts)]
 
         if self.has_rating():
             counts[list(rating_colours).index(str(self.get_rating()))] += 1
 
-    def get_rating_counts(self, people):
-        counts = [0] * len(rating_colours)
-        self._get_rating_counts(people, counts)
         return counts
 
-    def _get_total_reports(self, people):
+    def get_total_reports(self, people):
         reports = 0
         for i in self._direct_reports:
-            reports += people[i]._get_total_reports(people) + 1
+            reports += people[i].get_total_reports(people) + 1
 
         return reports
 
-    def get_total_reports(self, people):
-        return self._get_total_reports(people)
-
-    def _get_rollup_salaries(self, people):
+    def get_rollup_salaries(self, people):
         rollup_salaries = 0
         missing_salaries = 0
         for i in self._direct_reports:
-            (r, m) = people[i]._get_rollup_salaries(people)
+            (r, m) = people[i].get_rollup_salaries(people)
             rollup_salaries += r
             missing_salaries += m
 
@@ -521,9 +514,6 @@ class person(object):
             rollup_salaries += salary_usd
 
         return (rollup_salaries, missing_salaries)
-
-    def get_rollup_salaries(self, people):
-        return self._get_rollup_salaries(people)
 
     def get_org_depth(self, people):
         depth = 0
