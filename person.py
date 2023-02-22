@@ -60,14 +60,6 @@ class person(object):
 
         if "Employments" in init.keys():
             self._employments = init["Employments"]
-            start_date = init["Employments"][-1]["Start Date"]
-            t = time.strptime(start_date, "%Y-%m-%d")
-            ot = time.strptime("2014-10-31", "%Y-%m-%d")
-            cur_time = time.time()
-            org_elapsed_time = cur_time - time.mktime(ot)
-            worked_time = cur_time - time.mktime(t)
-            self._service_duration = cur_time - time.mktime(t)
-            self._service_duration_fraction = worked_time / org_elapsed_time
 
         if "Supervisors" in init.keys():
             self._supervisors = init["Supervisors"]
@@ -130,10 +122,19 @@ class person(object):
         self._supervisor_fraction = fraction
 
     def get_service_duration(self):
-        return self._service_duration
+        start_date = self._employments[-1]["Start Date"]
+        t = time.strptime(start_date, "%Y-%m-%d")
+        cur_time = time.time()
+        return cur_time - time.mktime(t)
 
     def get_service_duration_fraction(self):
-        return self._service_duration_fraction
+        start_date = self._employments[-1]["Start Date"]
+        t = time.strptime(start_date, "%Y-%m-%d")
+        ot = time.strptime("2014-10-31", "%Y-%m-%d")
+        cur_time = time.time()
+        org_elapsed_time = cur_time - time.mktime(ot)
+        worked_time = cur_time - time.mktime(t)
+        return worked_time / org_elapsed_time
 
     def get_direct_reports(self):
         return self._direct_reports
