@@ -26,8 +26,6 @@ class person(object):
         self._email_address = ""
         self._github = []
         self._employments = []
-        self._service_duration = 0
-        self._service_duration_fraction = 0
         self._supervisors = []
         self._teams = []
         self._locations = []
