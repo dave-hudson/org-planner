@@ -91,37 +91,6 @@ def scan_teams_and_employments(people):
 
     return (teams, employments)
 
-def scan_org_tree(people, locations, supervisor_uen, depth):
-    # Scan each direct report recursively, computing how deep each person is in
-    # the overall org, and how many reports roll up to them in total.
-    p = people[supervisor_uen]
-
-    for i in p.get_direct_reports():
-        scan_org_tree(people, locations, i, depth + 1)
-
-    # Sort the direct reports to put the one with the largest fraction of the
-    # org first.
-    drs = p.get_direct_reports()
-    for i in range(len(drs)):
-        for j in range(len(drs) - i - 1):
-            if (people[drs[j]].get_supervisor_fraction(people)
-                    < people[drs[j + 1]].get_supervisor_fraction(people)):
-                t = drs[j + 1]
-                drs[j + 1] = drs[j]
-                drs[j] = t
-
-    # Then sort any direct reports from the same team to cluster them.  While
-    # this slightly undoes the sort it's a more natural view over the org,
-    # placing people who do the same sorts of things in one grouping.
-    for i in range(0, len(drs) - 1):
-        if people[drs[i]].get_team() == people[drs[i + 1]].get_team():
-            continue
-
-        for j in range(i + 1, len(drs)):
-            if people[drs[i]].get_team() == people[drs[j]].get_team():
-                drs.insert(i + 1, drs.pop(j))
-                break
-
 def scan_json_locations(all_locations_list):
     locations = {}
 
@@ -283,8 +252,6 @@ def main():
     fail, all_people, supervisor_uen = scan_json_people(all_people_list, all_locations)
     if fail:
         exit()
-
-    scan_org_tree(all_people, all_locations, supervisor_uen, 0)
 
     app = QtWidgets.QApplication(sys.argv)
     window = MainWindow()

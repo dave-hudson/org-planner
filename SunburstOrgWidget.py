@@ -38,7 +38,7 @@ class SunburstOrgWidget(QtWidgets.QWidget):
         supervisor_person = self._people[supervisor_uen]
 
         angle = start_angle
-        for i in supervisor_person.get_direct_reports():
+        for i in supervisor_person.get_direct_reports(self._people):
             p = self._people[i]
             sf = p.get_supervisor_fraction(self._people)
             arc = sf * start_arc
@@ -149,7 +149,7 @@ class SunburstOrgWidget(QtWidgets.QWidget):
 
     def _scan_depth(self, supervisor):
         org_depth = self._people[supervisor].get_org_depth(self._people)
-        for i in self._people[supervisor].get_direct_reports():
+        for i in self._people[supervisor].get_direct_reports(self._people):
             d = self._scan_depth(i)
             if d > org_depth:
                 org_depth = d
@@ -175,7 +175,7 @@ class SunburstOrgWidget(QtWidgets.QWidget):
         supervisor_person = self._people[supervisor_uen]
 
         angle = start_angle
-        for i in supervisor_person.get_direct_reports():
+        for i in supervisor_person.get_direct_reports(self._people):
             radius = (depth + 1) * self._ring_width
             p = self._people[i]
             sf = p.get_supervisor_fraction(self._people)

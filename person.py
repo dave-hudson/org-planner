@@ -134,8 +134,31 @@ class person(object):
         worked_time = cur_time - time.mktime(t)
         return worked_time / org_elapsed_time
 
-    def get_direct_reports(self):
-        return self._direct_reports
+    def get_direct_reports(self, people):
+        # Sort the direct reports to put the one with the largest fraction of the
+        # org first.
+        drs = self._direct_reports
+        for i in range(len(drs)):
+            for j in range(len(drs) - i - 1):
+                if (people[drs[j]].get_supervisor_fraction(people)
+                        < people[drs[j + 1]].get_supervisor_fraction(people)):
+                    t = drs[j + 1]
+                    drs[j + 1] = drs[j]
+                    drs[j] = t
+
+        # Then sort any direct reports from the same team to cluster them.  While
+        # this slightly undoes the sort it's a more natural view over the org,
+        # placing people who do the same sorts of things in one grouping.
+        for i in range(0, len(drs) - 1):
+            if people[drs[i]].get_team() == people[drs[i + 1]].get_team():
+                continue
+
+            for j in range(i + 1, len(drs)):
+                if people[drs[i]].get_team() == people[drs[j]].get_team():
+                    drs.insert(i + 1, drs.pop(j))
+                    break
+
+        return drs
 
     def append_direct_report(self, dr):
         self._direct_reports.append(dr)

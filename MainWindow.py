@@ -686,7 +686,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.update()
 
     def _set_people_tree(self, supervisor_uen, supervisor_item):
-        for p in self._people[supervisor_uen].get_direct_reports():
+        for p in self._people[supervisor_uen].get_direct_reports(self._people):
             twi = QtWidgets.QTreeWidgetItem()
             twi.setText(0, self._people[p].get_name())
             supervisor_item.addChild(twi)
