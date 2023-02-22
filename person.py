@@ -112,11 +112,13 @@ class person(object):
     def get_github_profile_url(self):
         return self._github[-1]["Profile URL"]
 
-    def get_supervisor_fraction(self):
-        return self._supervisor_fraction
+    def get_supervisor_fraction(self, people):
+        if not self.has_supervisor():
+            return 1.0
 
-    def set_supervisor_fraction(self, fraction):
-        self._supervisor_fraction = fraction
+        p = people[self.get_supervisor_uen()]
+        num_reports = p.get_total_reports(people)
+        return (self.get_total_reports(people) + 1) / num_reports
 
     def get_service_duration(self):
         start_date = self._employments[-1]["Start Date"]

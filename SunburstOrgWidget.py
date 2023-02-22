@@ -40,7 +40,7 @@ class SunburstOrgWidget(QtWidgets.QWidget):
         angle = start_angle
         for i in supervisor_person.get_direct_reports():
             p = self._people[i]
-            sf = p.get_supervisor_fraction()
+            sf = p.get_supervisor_fraction(self._people)
             arc = sf * start_arc
             if (target_angle >= angle) and (target_angle < (angle + arc)):
                 return self._recurse_find_person(
@@ -178,7 +178,7 @@ class SunburstOrgWidget(QtWidgets.QWidget):
         for i in supervisor_person.get_direct_reports():
             radius = (depth + 1) * self._ring_width
             p = self._people[i]
-            sf = p.get_supervisor_fraction()
+            sf = p.get_supervisor_fraction(self._people)
             arc = sf * start_arc
             self._recurse_draw_widget(painter, i, depth + 1, angle, arc)
             self._setup_brush(painter, i)

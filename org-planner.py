@@ -99,19 +99,13 @@ def scan_org_tree(people, locations, supervisor_uen, depth):
     for i in p.get_direct_reports():
         scan_org_tree(people, locations, i, depth + 1)
 
-    # Scan each direct report, but this time compute the fraction of the overall
-    # team their subteam represents.
-    drs = p.get_direct_reports()
-    num_reports = p.get_total_reports(people)
-    for i in drs:
-        people[i].set_supervisor_fraction((people[i].get_total_reports(people) + 1) / num_reports)
-
     # Sort the direct reports to put the one with the largest fraction of the
     # org first.
+    drs = p.get_direct_reports()
     for i in range(len(drs)):
         for j in range(len(drs) - i - 1):
-            if (people[drs[j]].get_supervisor_fraction()
-                    < people[drs[j + 1]].get_supervisor_fraction()):
+            if (people[drs[j]].get_supervisor_fraction(people)
+                    < people[drs[j + 1]].get_supervisor_fraction(people)):
                 t = drs[j + 1]
                 drs[j + 1] = drs[j]
                 drs[j] = t
@@ -291,7 +285,6 @@ def main():
         exit()
 
     scan_org_tree(all_people, all_locations, supervisor_uen, 0)
-    all_people[supervisor_uen].set_supervisor_fraction(1)
 
     app = QtWidgets.QApplication(sys.argv)
     window = MainWindow()
