@@ -36,7 +36,6 @@ class person(object):
         self._ratings = []
         self._nine_boxes = []
         self._direct_reports = []
-        self._org_depth = -1
         self._supervisor_fraction = 0.0
 
     def load(self, init, locations):
@@ -494,8 +493,13 @@ class person(object):
     def get_rollup_salaries(self, people):
         return self._get_rollup_salaries(people)
 
-    def get_org_depth(self):
-        return self._org_depth
+    def get_org_depth(self, people):
+        depth = 0
+        p = self
 
-    def set_org_depth(self, depth):
-        self._org_depth = depth
+        while p.has_supervisor():
+            depth += 1
+            supervisor_uen = p.get_supervisor_uen()
+            p = people[supervisor_uen]
+
+        return depth

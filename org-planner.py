@@ -99,8 +99,6 @@ def scan_org_tree(people, locations, supervisor_uen, depth):
     for i in p.get_direct_reports():
         scan_org_tree(people, locations, i, depth + 1)
 
-    p.set_org_depth(depth)
-
     # Scan each direct report, but this time compute the fraction of the overall
     # team their subteam represents.
     drs = p.get_direct_reports()

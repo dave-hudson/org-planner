@@ -148,7 +148,7 @@ class SunburstOrgWidget(QtWidgets.QWidget):
         return super().leaveEvent(event)
 
     def _scan_depth(self, supervisor):
-        org_depth = self._people[supervisor].get_org_depth()
+        org_depth = self._people[supervisor].get_org_depth(self._people)
         for i in self._people[supervisor].get_direct_reports():
             d = self._scan_depth(i)
             if d > org_depth:
@@ -227,7 +227,7 @@ class SunburstOrgWidget(QtWidgets.QWidget):
 
     def _set_sizing(self):
         uen = self._uen
-        uen_org_depth = self._people[uen].get_org_depth()
+        uen_org_depth = self._people[uen].get_org_depth(self._people)
 
         # Work out how many layers deep the org goes.
         max_org_depth = self._scan_depth(self._top_level_uen)
