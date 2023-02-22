@@ -19,10 +19,14 @@ class SalaryBandMidPointOffsetInfoWidget(InfoOrgKeyWidget):
 
         self._info_salary = self._add_info_text("Salary")
         self._info_salary_band_mid_point = self._add_info_text("Salary Band Mid Point")
-        self._info_salary_band_mid_point_offset = self._add_info_text("Salary Band Mid Point Offset")
+        self._info_salary_band_mid_point_offset = self._add_info_text(
+            "Salary Band Mid Point Offset"
+        )
         legend = SalaryBandMidPointOffsetColourKey1DWidget(salary_band_mid_point_offset_colours)
         legend.set_labels(salary_band_mid_point_offset_labels)
-        self._org_widget = SunburstOrgKeyWidget(SalaryBandMidPointOffsetSunburstOrgWidget(), legend)
+        self._org_widget = SunburstOrgKeyWidget(
+            SalaryBandMidPointOffsetSunburstOrgWidget(), legend
+        )
         self._layout.addWidget(self._org_widget)
         self._org_widget.person_clicked.connect(self._person_clicked)
 
