@@ -157,11 +157,12 @@ class person(object):
         # this slightly undoes the sort it's a more natural view over the org,
         # placing people who do the same sorts of things in one grouping.
         for i in range(0, len_drs - 1):
-            if people[drs[i]].get_team() == people[drs[i + 1]].get_team():
+            drs_i_team = people[drs[i]].get_team()
+            if drs_i_team == people[drs[i + 1]].get_team():
                 continue
 
             for j in range(i + 1, len_drs):
-                if people[drs[i]].get_team() == people[drs[j]].get_team():
+                if drs_i_team == people[drs[j]].get_team():
                     drs.insert(i + 1, drs.pop(j))
                     break
 
