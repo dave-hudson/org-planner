@@ -118,7 +118,11 @@ def scan_json_people(all_people_list, locations):
 
     for i in all_people_list:
         uen = i["UEN"]
-        if "Supervisors" not in i.keys():
+
+        if not people[uen].is_employed():
+            continue
+
+        if not people[uen].has_supervisor():
             if top_level == 0:
                 top_level = uen
             else:
@@ -172,7 +176,8 @@ def merge_csv(csv_file, people_list):
             if row["Employee Id"].strip() == str(uen):
                 found = True
 
-                if "Supervisors" not in i.keys():
+                if (("Supervisors" not in i.keys()) or
+                        (i["Supervisors"][-1]["Supervisor UEN"] == 0)):
                     i["Supervisors"] = create_supervisors_json(int(row["Reports To"]))
                 break
 

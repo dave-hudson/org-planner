@@ -696,7 +696,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self._people = people
 
         for i in people:
-            self._people_list_widget.addItem(people[i].get_name())
+            if people[i].is_employed():
+                self._people_list_widget.addItem(people[i].get_name())
 
         self._people_list_widget.sortItems(QtGui.Qt.AscendingOrder)
 

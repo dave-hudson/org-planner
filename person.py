@@ -203,6 +203,9 @@ class person(object):
         counts[list(team_colours).index(str(self.get_team()))] += 1
         return counts
 
+    def is_employed(self):
+        return "End Date" not in self._employments[-1].keys()
+
     def get_employment(self):
         return self._employments[-1]["Employment"]
 
