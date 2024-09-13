@@ -1,5 +1,5 @@
 {
-    "python.linting.pylintArgs": [
+    "pylint.args": [
         "--disable=C0103",
         "--extension-pkg-whitelist=PySide6",
         "--disable=missing-module-docstring",
